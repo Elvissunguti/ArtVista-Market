@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../Assets/logo/logo-no-background.png";
 import { Images } from "../Utils/ArtData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { useCookies } from "react-cookie";
 
 
 function getRandomIndex(max) {
@@ -14,9 +16,12 @@ const SignUp = () => {
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
     const [ confirmPassword, setConfirmPassword ] = useState("");
-
+    const [ error, setError ] = useState("");
+    const [ cookies, setCookies ] = useCookies(["token"]);
     const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length));
     const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length));
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Change the images randomly every 5 seconds (5000 milliseconds)
@@ -29,6 +34,42 @@ const SignUp = () => {
           clearInterval(interval); // Cleanup the interval on unmount
         };
       }, []);
+
+      const handleSignUp = async(e) => {
+        e.preventDefault();
+
+        if(password !== confirmPassword){
+            setError("Password and confirm password do not match")
+        }
+
+        const userData = {
+            userName: userName,
+            email: email,
+            password: password
+        }
+
+        try{
+            const response = await makeAuthenticatedPOSTRequest(
+                "/auth/signup", userData
+            );
+            if(response.message === "User created Successfully"){
+                const token = response.token;
+                const date = new Date();
+                date.setDate(date.getDate() + 80);
+                setCookies("token", token, { path: "/", expires: date });
+                localStorage.setItem("token", token);
+                // user logged in successfull
+
+                navigate("/");
+                console.log("User Signed up successfully");
+            } else {
+                console.log("Error creating a new user");
+            }
+
+        } catch (error){
+            console.error("Error signing up new User:", error);
+        }
+      }
 
 
     return (
@@ -43,7 +84,7 @@ const SignUp = () => {
             <div className="flex flex-row">
 
                 <div className="flex justify-end w-1/2">
-                    <form className="flex flex-col justify-end mr-4 w-1/2 space-y-8 ">
+                    <form className="flex flex-col justify-end mr-4 w-1/2 space-y-8" onSubmit={handleSignUp}>
                         <h1 className="text-2xl font-semibold tracking-tight text-green-600">Sign Up</h1>
                         <div>
                           <label htmlFor="userName" className="flex flex-start block font-bold text-lg">
@@ -56,7 +97,7 @@ const SignUp = () => {
                            value={userName}
                            placeholder="Enter username"
                            required
-                           onClick={(e) => setUserName(e.target.value)}
+                           onChange={(e) => setUserName(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
                         </div>
@@ -71,7 +112,7 @@ const SignUp = () => {
                            value={email}
                            placeholder="Enter Email address"
                            required
-                           onClick={(e) => setEmail(e.target.value)}
+                           onChange={(e) => setEmail(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
                         </div>
@@ -86,7 +127,7 @@ const SignUp = () => {
                            value={password}
                            placeholder="Enter password"
                            required
-                           onClick={(e) => setPassword(e.target.value)}
+                           onChange={(e) => setPassword(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
                         </div>
@@ -101,11 +142,14 @@ const SignUp = () => {
                            value={confirmPassword}
                            required
                            placeholder="Confirm password"
-                           onClick={(e) => setConfirmPassword(e.target.value)}
+                           onChange={(e) => setConfirmPassword(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
                         </div>
                         <div>
+                        <div className="text-center  font-medium text-red-600 md:text-lg my-2">
+                           <p>{error}</p>
+                        </div>
                         <button type="submit" className="px-2 py-3 bg-green-500 hover:bg-green-700 text-white shadow-xl rounded">
                             Sign up
                         </button>

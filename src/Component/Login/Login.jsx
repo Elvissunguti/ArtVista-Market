@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../Assets/logo/logo-no-background.png";
 import { Images } from "../Utils/ArtData";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { useCookies } from "react-cookie";
 
 
 function getRandomIndex(max) {
@@ -10,13 +12,14 @@ function getRandomIndex(max) {
 
 const Login = () => {
 
-    const [ userName, setUserName ] = useState("")
     const [ email, setEmail ] = useState("");
     const [ password, setPassword ] = useState("");
-    const [ confirmPassword, setConfirmPassword ] = useState("");
-
+    const [ cookies, setCookies ] = useCookies(["token"]);
+    const [ error, setError ] = useState("");
     const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length));
     const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length));
+
+    const navigate = useNavigate();
 
     useEffect(() => {
         // Change the images randomly every 5 seconds (5000 milliseconds)
@@ -29,6 +32,39 @@ const Login = () => {
           clearInterval(interval); // Cleanup the interval on unmount
         };
       }, []);
+
+
+      const handleLogin = async(e) => {
+        e.preventDefault();
+
+        const userData = {
+            email: email,
+            password: password
+        };
+
+        try{
+            const response = await makeAuthenticatedPOSTRequest(
+                "/auth/login", userData
+            );
+            if (response.message === "Login successfull" && response.token) {
+                const token = response.token;
+                const date = new Date();
+                date.setDate(date.getDate() + 80);
+                setCookies("token", token, { path: "/", expires: date });
+                localStorage.setItem("token", token);
+                // user logged in successfull
+
+                navigate("/");
+                console.log("User Signed up successfully");
+            } else{
+                console.error("Sign up failed");
+                setError("Wrong Email or password");
+            }
+
+        } catch(error){
+            console.error("Error logging in:", error);
+        }
+      };
 
 
     return (
@@ -58,7 +94,7 @@ const Login = () => {
                 </div>
 
                 <div className="flex w-1/2">
-                    <form className="flex flex-col ml-4 w-1/2 space-y-8 ">
+                    <form className="flex flex-col ml-4 w-1/2 space-y-8" onSubmit={handleLogin}>
                         <h1 className="text-2xl font-semibold tracking-tight text-green-600">Login</h1>
                         <div>
                             <label htmlFor="email" className="flex flex-start block font-bold text-lg">
@@ -71,7 +107,7 @@ const Login = () => {
                            value={email}
                            placeholder="Enter Email address"
                            required
-                           onClick={(e) => setEmail(e.target.value)}
+                           onChange={(e) => setEmail(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
                         </div>
@@ -86,9 +122,12 @@ const Login = () => {
                            value={password}
                            placeholder="Enter password"
                            required
-                           onClick={(e) => setPassword(e.target.value)}
+                           onChange={(e) => setPassword(e.target.value)}
                            className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
                         />
+                        </div>
+                        <div className="text-center  font-medium text-red-600 md:text-lg my-2">
+                                <p>{error}</p>
                         </div>
                         <div>
                         <button type="submit" className="px-2 py-3 bg-green-500 hover:bg-green-700 text-lg text-white shadow-xl rounded">

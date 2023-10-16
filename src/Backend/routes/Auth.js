@@ -59,8 +59,6 @@ router.post("/login", async (req , res) => {
             return res.json({ message: "email not found"})
         }
 
-
-
     } catch (error){
         console.error("Error Logging in user", error)
         return res.json({ message: "Failed to login"})
