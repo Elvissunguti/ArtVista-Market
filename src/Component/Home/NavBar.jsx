@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import logo from "../../Assets/logo/logo-no-background.png";
 import { AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { PiHeartStraightThin } from "react-icons/pi";
@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 
 
 const NavBar = () => {
+
+    const [ isOpen, setIsOpen ] = useState(false);
+
     return (
         <section>
             <div className="flex flex-row justify-between">
@@ -41,7 +44,25 @@ const NavBar = () => {
                         </span>
                     </Link>
                     <div>
-                        <CgProfile />
+                        <CgProfile
+                           onClick={() => setIsOpen(!isOpen)}
+                        />
+                            { isOpen && (
+                                <div>
+                                    <ul>
+                                       <li>
+                                        <Link>
+                                        DASHBOARD
+                                        </Link>
+                                        </li>
+                                       <li>
+                                        <Link>
+                                        Logout
+                                        </Link>
+                                        </li>
+                                    </ul>
+                                </div>
+                            )}
                     </div>
                 </div>
 
