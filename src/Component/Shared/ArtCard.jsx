@@ -2,7 +2,7 @@ import React from "react";
 import art from "../../Assets/art Images/art 6.webp";
 import { CiHeart } from "react-icons/ci";
 import { AiOutlineEye } from "react-icons/ai";
-import 'tippy.js/dist/tippy.css'; // Import tippy CSS
+import 'tippy.js/dist/tippy.css'; 
 import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
 
@@ -15,12 +15,14 @@ const ArtCard = () => {
         <section className="group relative w-48 h-48">
             <div>
                 <div>
+                    <div className="relative w-48 h-48 overflow-hidden">
                     <img 
                        src={art}
                        alt="image of art"
-                       className="w-48 h-48"
+                       className="w-48 h-48 transition-transform transform scale-100 hover:scale-110 duration-700 cursor-pointer"
                     />
-                    <ul className="hidden group-hover:block absolute top-0 right-0 m-4 inset text-white bg-black bg-opacity-7 flex  items-end ">
+                    </div>
+                    <ul className="hidden group-hover:block absolute top-0 right-0 m-4 inset text-black bg-white bg-opacity-7 flex  items-end ">
                         <li className="group">
                             <Tooltip
                               title="Add to Wishlist"
@@ -43,7 +45,7 @@ const ArtCard = () => {
                             </Tooltip>
                         </li>
                     </ul>
-                    <p className="hidden group-hover:block absolute inset-x-0 bottom-0 text-white h-8 bg-black bg-opacity-75 flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0">
+                    <p className="hidden group-hover:block absolute inset-x-0 bottom-0 text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
                         ADD TO CARD
                         </p>
                     <div>
