@@ -2,6 +2,7 @@ import React from "react";
 import NavBar from "./NavBar";
 import ArtCard from "../Shared/ArtCard";
 import QuickViewCard from "../Shared/QuickViewCard";
+import ArtPage from "../Shared/ArtPage";
 
 
 const Home = () => {
@@ -10,8 +11,7 @@ const Home = () => {
             <NavBar />
             <div>
                 <h1>welcome to artVista Market</h1>
-                <ArtCard />
-                <QuickViewCard />
+                <ArtPage />
             </div>
             
         </section>
