@@ -4,7 +4,7 @@ import { PiCertificateThin, PiKeyReturnThin } from "react-icons/pi";
 const Details = () => {
     return (
         <section>
-            <div>
+            <div className="flex flex-col items-start space-y-5">
                 <p>Size:</p>
                 <p>Medium:</p>
                 <p>Surface:</p>
