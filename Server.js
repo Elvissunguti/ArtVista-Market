@@ -1,6 +1,10 @@
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
+const passport = require("passport");
+const JwtStrategy = require("passport-jwt").Strategy,
+    ExtractJwt = require("passport-jwt").ExtractJwt;
+  const User = require("./src/Backend/Model/User");
 
 const AuthRoutes = require("./src/Backend/routes/Auth");
 
@@ -34,6 +38,28 @@ app.use((req, res, next) => {
     );
     next();
   });
+
+
+        // setup passport-jwt
+        const opts = {};
+        opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
+        opts.secretOrKey = "SECRETKEY"; // Use environment variable for the secret key
+        
+        passport.use(
+          new JwtStrategy(opts, async function (jwt_payload, done) {
+            try {
+              const user = await User.findOne({ _id: jwt_payload.identifier });
+              if (user) {
+                return done(null, user); // Authentication successful
+              } else {
+                return done(null, false); // User not found
+                // Alternatively, you could create a new account here
+              }
+            } catch (err) {
+              return done(err, false); // Error during user lookup
+            }
+          })
+        );
 
 
 app.use("/auth", AuthRoutes)

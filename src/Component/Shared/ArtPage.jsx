@@ -7,14 +7,15 @@ import { MdEmail } from "react-icons/md";
 import { GrFormPrevious, GrFormNext } from 'react-icons/gr';
 import 'tippy.js/dist/tippy.css'; 
 import { Tooltip } from 'react-tippy';
-import 'react-tippy/dist/tippy.css';
+import 'react-tippy/dist/tippy.css'; 
 import { CiHeart } from "react-icons/ci";
 import Details from "./Details";
 import art1 from "../../Assets/art Images/art 6.webp";
 import art2 from "../../Assets/art Images/art 8.jpg";
 import art3 from "../../Assets/art Images/art 9.webp";
 import art4 from "../../Assets/art Images/art 1.jfif";
-
+import ReactImageMagnify from 'react-image-magnify';
+import "../../App.css";
 
 const ArtPage = () => {
 
@@ -67,12 +68,22 @@ const ArtPage = () => {
                     <div                       
                       onMouseEnter={() => setIsImageHovered(true)}
                       onMouseLeave={() => setIsImageHovered(false)}>
-                    <img
-                      src={images[currentImageIndex]}
-                      alt="image of art"
-                      className="w-full cursor-pointer"
-
-                    />
+                       <ReactImageMagnify
+                        {...{
+                            smallImage: {
+                                src: images[currentImageIndex],
+                                alt: 'Image of art',
+                                isFluidWidth: true,
+                            },
+                            largeImage: {
+                                src: images[currentImageIndex],
+                                width: 1200, // Adjust this value according to your requirements
+                                height: 1200, // Adjust this value according to your requirements
+                            },
+                            isHintEnabled: true,
+                            shouldUsePositiveSpaceLens: true,
+                        }}
+                       />
                     {isImageHovered && (
                       <div className="absolute inset-0 flex items-center justify-between">
                         <button className="text-xl border border-black cursor-pointer" onClick={goToPreviousImage}>
