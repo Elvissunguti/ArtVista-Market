@@ -10,8 +10,6 @@ import art9 from "../../Assets/art Images/art 9.webp";
 import art10 from "../../Assets/art Images/art 10.jfif";
 
 
-
-
 export const Images = [
     art1,
     art2,
@@ -23,4 +21,85 @@ export const Images = [
     art8,
     art9,
     art10,
+];
+
+export const Collections = [
+    "Abstract Drawings",
+    "Abstract Expressionism Drawings",
+    "Abstract paintings",
+    "Acrylic Color",
+    "Art Deco Drawings",
+    "Ball Point Pen",
+    "Canson Paper",
+    "Canvas",
+    "Canvas Board",
+    "Charcoal",
+    "Cityscape Paintings",
+    "Conceptual Drawing",
+    "Documentary Drawings",
+    "Drawing paper",
+    "Drawings",
+    "Enamel Color",
+    "Expressionism Drawings",
+    "Figurative Drawings",
+    "Figurative Paintings",
+    "Fine Art Drawings",
+    "Flower Paintings",
+    "Folk Drawings",
+    "Graffiti Drawings",
+    "Handmade Paper",
+    "Illustration Drawings",
+    "Impressionist Drawings",
+    "Ink Color",
+    "Landscape Paintings",
+    "Minimalist Drawings",
+    "Modern Art Paintings",
+    "Modern Drawings",
+    "Nature Paintings",
+    "OHP Plastic Sheets",
+    "Oil Color",
+    "Paintings", 
+    "Paper",
+    "Pencil Color",
+    "Photorealism Drawings",
+    "Portrait Drawings",
+    "Realism Drawings",
+    "Still Life",
+    "Surrealism Drawings",
+    "Thick Paper",
+    "Watercolor",
+    "Wildlife Paintings",
+    "Zen Drwaings",       
+];
+
+export const Materials = [
+    "Ball Point Pen",
+    "Charcoal",
+    "Enamel Color",
+    "Ink Color",
+    "Oil Color",
+    "Pencil Color",
+    "Poster Color",
+    "Watercolor",
+]; 
+
+export const Surfaces = [
+    "Canson Paper",
+    "Canvas",
+    "Canvas Board",
+    "Drawings Paper",
+    "Fabriano Sheet",
+    "Handmade paper",
+    "OHP Plastic Sheets",
+    "Paper",
+];
+
+
+export const artistList = [
+    "Vista",
+    "artVista",
+    "Elvis",
+    "Proffesor",
+    "Genius",
+    "Billionaire"
 ];
