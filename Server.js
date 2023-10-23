@@ -5,8 +5,8 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy,
     ExtractJwt = require("passport-jwt").ExtractJwt;
   const User = require("./src/Backend/Model/User");
-
 const AuthRoutes = require("./src/Backend/routes/Auth");
+const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
 
 
 const app = express();
@@ -62,7 +62,8 @@ app.use((req, res, next) => {
         );
 
 
-app.use("/auth", AuthRoutes)
+app.use("/auth", AuthRoutes);
+app.use("/artWork", ArtWorkRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`)

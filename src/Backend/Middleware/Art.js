@@ -4,7 +4,7 @@ const path = require("path");
 
 const artStorage = multer.diskStorage({
     destination: (req, file, cb) => {
-        if (file.fieldname === "image"){
+        if (file.fieldname === "artPhoto"){
             cb(null, path.join(__dirname, "../../../public/ArtImages"));
         } else {
             cb(new Error("Invalid fieldname"), null);
@@ -18,5 +18,5 @@ const artStorage = multer.diskStorage({
 })
 
 exports.postUploads = multer({ storage: artStorage}).fields([
-    {name: "image", maxCount: 10},
+    {name: "artPhoto", maxCount: 10},
 ]);
