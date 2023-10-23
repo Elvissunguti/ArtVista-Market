@@ -3,9 +3,11 @@ import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Collections, Materials, Surfaces, artistList } from "../Utils/ArtData";
 import "../../App.css";
+import ArtCard from "../Shared/ArtCard";
 
-const Search = () => {
 
+
+const Search = ({ children }) => {
 
     const minRange = 249;
     const maxRange = 100000000;
@@ -19,7 +21,7 @@ const Search = () => {
 
     return(
         <section className="mx-auto max-w-7xl">
-            <div className="flex flex-row justify-between">
+            <div className="flex flex-row ">
                 <div className="w-1/5">
                     <h1>Filters</h1>
                     <div>
@@ -114,11 +116,13 @@ const Search = () => {
                         </div>
                     </div>
                 </div>
-                <div>
-                    <select>
-                      
-                        <option>Alphabetically, Z-A</option>
-                        <option>Price, low to high</option>
+                <div className="flex flex-col w-4/5">
+                <div className="flex justify-end w-full ">
+                    
+                    <select className="px-2 py-3 border  rounded-full">
+                        <option disabled selected>Sort by:</option>
+                        <option >Alphabetically, Z-A</option>
+                        <option >Price, low to high</option>
                         <option>Price, high to low</option>
                         <option>Date, old to new</option>
                         <option>Date, new to old</option>
@@ -126,8 +130,13 @@ const Search = () => {
                     </select>
                     
                 </div>
+                <div className="mt-8">
+                   {children}
+                 </div>
+                </div>
             </div>
         </section>
+        
     )
 }
 export default Search;

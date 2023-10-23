@@ -103,3 +103,17 @@ export const artistList = [
     "Genius",
     "Billionaire"
 ];
+
+export const Quality = [
+    "Museum Quality - 100% Hand-painted",
+    "Gallery-Worthy - Signed and Numbered",
+    "Archival Quality - Framed or Unframed",
+    "Limited Edition - Certificate of Authenticity",
+    "Original Masterpiece - Mint Condition",
+    "Premium Quality - Professionally Framed",
+    "High-End Collectible - Artist's Proof Available",
+    "Fine Art Print - Giclée on Canvas",
+    "Contemporary Classic - UV-Resistant Coating",
+    "Investment Grade - Stretched and Ready to Hang",
+    "Rare Vintage - Hand-Signed by the Artist"
+];
