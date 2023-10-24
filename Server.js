@@ -63,7 +63,7 @@ app.use((req, res, next) => {
 
 
 app.use("/auth", AuthRoutes);
-app.use("/artWork", ArtWorkRoutes);
+app.use("/artwork", ArtWorkRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`)

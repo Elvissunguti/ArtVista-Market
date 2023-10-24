@@ -1,13 +1,14 @@
 const express = require("express");
-const passport = require("passport");
 const router = express.Router();
+const passport = require("passport");
 const ArtWork = require("../Model/ArtWork");
+const { artUploads } = require("../Middleware/Art");
 
 
-router.create("/create/artwork", 
+router.post("/create", 
 passport.authenticate("jwt", {session: false}),
 (req, res) => {
-    artStorage(req, res, async (err) => {
+    artUploads(req, res, async (err) => {
         if (err) {
             return res.json({ err: "Failed to upload files"});
         }
@@ -16,7 +17,7 @@ passport.authenticate("jwt", {session: false}),
 
             const { title, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
-            const artPhoto = req.files.artPhoto
+            const artPhotos = req.files.artPhoto.map((photo) => photo.filename);
             const userId = req.user._id;
 
             const newArtwork = new ArtWork({
@@ -30,7 +31,7 @@ passport.authenticate("jwt", {session: false}),
                 delivery,
                 description,
                 price,
-                artPhoto: artPhoto.map(image => image.filename),
+                artPhoto: artPhotos,
                 userId,
             });
 
@@ -44,3 +45,5 @@ passport.authenticate("jwt", {session: false}),
         }
     })
 })
+
+module.exports = router;

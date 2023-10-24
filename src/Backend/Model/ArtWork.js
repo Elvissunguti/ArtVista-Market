@@ -16,7 +16,7 @@ const ArtWork = new mongoose.Schema({
         required: true,
         unique: false,
     },
-    Surface: {
+    surface: {
         type: String,
         required: true,
         unique: false,
@@ -26,7 +26,7 @@ const ArtWork = new mongoose.Schema({
         required: true,
         unique: false,
     },
-    CreationYear: {
+    creationYear: {
         type: Number,
         required: true,
         unique: false,
@@ -48,7 +48,7 @@ const ArtWork = new mongoose.Schema({
         required: true
     },
     artPhoto: {
-        type: String,
+        type: [String],
         required: true
     },
     userId: {

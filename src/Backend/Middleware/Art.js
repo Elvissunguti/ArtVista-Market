@@ -17,6 +17,6 @@ const artStorage = multer.diskStorage({
     }
 })
 
-exports.postUploads = multer({ storage: artStorage}).fields([
+exports.artUploads = multer({ storage: artStorage}).fields([
     {name: "artPhoto", maxCount: 10},
 ]);
