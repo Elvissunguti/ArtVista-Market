@@ -17,7 +17,7 @@ passport.authenticate("jwt", {session: false}),
 
             const { title, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
-            const artPhotos = req.files.artPhoto.map((photo) => photo.filename);
+            const artPhoto = req.files.artPhoto.map((photo) => photo.filename);
             const userId = req.user._id;
 
             const newArtwork = new ArtWork({
@@ -31,7 +31,7 @@ passport.authenticate("jwt", {session: false}),
                 delivery,
                 description,
                 price,
-                artPhoto: artPhotos,
+                artPhoto: artPhoto,
                 userId,
             });
 
