@@ -85,7 +85,7 @@ const Product = () => {
                        placeholder="title of the art"
                        value={formData.title}
                        onChange={handleChange}
-                       className=""
+                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
 
                     <h1 className="font-semibold mt-4 text-xl ">Details</h1>
@@ -98,10 +98,12 @@ const Product = () => {
                        placeholder="e.g 16in x 20in"
                        value={formData.size}
                        onChange={handleChange}
-                       className=""
+                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
-                    <label className="mt-4 text-lg">Medium used</label>
-                    <select name="medium" id="medium" className=" border" value={formData.medium} onChange={handleChange}>
+                    <label className="font-medium mt-4 text-lg">Medium used</label>
+                    <select name="medium" id="medium" value={formData.medium} onChange={handleChange}
+                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
                         <option disabled value="">Select Medium</option>
                         {Materials.map((material, index) => (
                             <option key={index} value={material}>
@@ -109,8 +111,10 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
-                    <label className="mt-4 text-lg">Surfaces used</label>
-                    <select name="surface" id="surface" className="" value={formData.surface} onChange={handleChange}>
+                    <label className="font-medium mt-4 text-lg">Surfaces used</label>
+                    <select name="surface" id="surface" value={formData.surface} onChange={handleChange}
+                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
                         <option disabled value="">Select surface</option>
                         {Surfaces.map((surface, index) => (
                             <option key={index} value={surface}>
@@ -118,24 +122,29 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
-                    <label htmlFor="artType" className="mt-4 text-lg">ArtWork type</label>
-                    <select name="artType" id="artType" className="" value={formData.artType} onChange={handleChange}>
+                    <label htmlFor="artType" className="font-medium mt-4 text-lg">ArtWork type</label>
+                    <select name="artType" id="artType" value={formData.artType} onChange={handleChange}
+                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
                         <option disabled value="" >Select ArtWork type</option>
                         <option value="Original">Original</option>
                         <option value="Copy">Copy</option>
                     </select>
-                    <label htmlFor="creationYear" className="mt-4 text-lg">Year of Creation</label>
+                    <label htmlFor="creationYear" className="font-medium mt-4 text-lg">Year of Creation</label>
                     <input
                        type="number"
                        name="creationYear"
                        id="creationYear"
+                       max="2023"
                        placeholder="year created..."
                        value={formData.creationYear}
                        onChange={handleChange}
-                       className=""
+                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
-                    <label htmlFor="quality" className="mt-4 text-lg">Quality</label>
-                    <select name="quality" id="quality" className="" value={formData.quality} onChange={handleChange}>
+                    <label htmlFor="quality" className="font-medium mt-4 text-lg">Quality</label>
+                    <select name="quality" id="quality" value={formData.quality} onChange={handleChange}
+                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
                         <option disabled value="">Select Quality</option>
                         {Quality.map((quality, index) => (
                             <option key={index} value={Quality}>
@@ -143,22 +152,24 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
-                    <label htmlFor="delivery" className="mt-4 text-lg">To be delivered as</label>
-                    <select name="delivery" id="delivery" className="" value={formData.delivery} onChange={handleChange}>
+                    <label htmlFor="delivery" className="font-medium mt-4 text-lg">To be delivered as</label>
+                    <select name="delivery" id="delivery" value={formData.delivery} onChange={handleChange}
+                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
                         <option disabled value="">Select delivery form</option>
                         <option value="Rolled">Rolled</option>
                         <option value="Stretched">Stretched</option>
                     </select>
-                    <label htmlFor="description" className="mt-4 text-lg">Description of the ArtWork</label>
+                    <label htmlFor="description" className="font-medium mt-4 text-lg">Description of the ArtWork</label>
                     <textarea
                       id="description"
                       name="description"
                       placeholder="Description of the art..."
                       value={formData.description}
                       onChange={handleChange}
-                      className=""
+                      className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
-                    <label htmlFor="artPhoto" className="mt-4 text-lg">Photos of the ArtWork</label>
+                    <label htmlFor="artPhoto" className="font-medium mt-4 text-lg">Photos of the ArtWork</label>
                     <input
                        type="file"
                        id="artPhoto"
@@ -167,7 +178,7 @@ const Product = () => {
                        multiple
                        onChange={handleFileChange}
                     />
-                    <label htmlFor="price" className="mt-4 text-lg">Price of the ArtWork</label>
+                    <label htmlFor="price" className="font-medium mt-4 text-lg">Price of the ArtWork</label>
                     <input 
                         type="number"
                         id="price"
@@ -175,10 +186,11 @@ const Product = () => {
                         value={formData.price}
                         onChange={handleChange}
                         placeholder="In Dollars..."
+                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 
                     />
                     <div>
-                        <button type="submit" className="text-white px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 ">
+                        <button type="submit" className="flex justify-center font-medium text-white mt-7 px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 border-transparent focus:outline-none focus:ring-2 focus:ring-[#40AA54]-500 focus:ring-offset-2 cursor-pointer">
                              SUBMIT
                         </button>
                     </div>

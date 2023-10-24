@@ -46,4 +46,23 @@ passport.authenticate("jwt", {session: false}),
     })
 })
 
+router.get("/get/allartwork",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const allArtwork = await ArtWork.find({});
+
+        if (allArtwork.length === 0) {
+            return res.json({ message: "No artwork found." });
+          }
+
+          res.json({ artwork: allArtwork });
+
+    } catch (error) {
+        console.log('Error getting all artworks', error);
+        return res.json({ error: "Error Fetching all the artworks"});
+    }
+})
+
 module.exports = router;
