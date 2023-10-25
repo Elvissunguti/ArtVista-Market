@@ -4,6 +4,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Login from './Component/Login/Login';
 import SignUp from './Component/SignUp/SignUp';
 import Home from './Component/Home/Home';
+import AllArtWork from './Component/AllArtWork/AllArtWork';
 
 function App() {
 
@@ -24,6 +25,8 @@ function App() {
           {loggedIn ? (
             <>
             <Route path="/" element={<Home />} />
+            <Route path="/all artwork" element={<AllArtWork />} />
+            
             </>
           ) : (
             <>

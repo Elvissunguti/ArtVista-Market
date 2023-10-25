@@ -4,7 +4,8 @@ const cors = require("cors");
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy,
     ExtractJwt = require("passport-jwt").ExtractJwt;
-  const User = require("./src/Backend/Model/User");
+const path = require("path");
+const User = require("./src/Backend/Model/User");
 const AuthRoutes = require("./src/Backend/routes/Auth");
 const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
 
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 8080;
 
 app.use(cors());
 app.use(express.json());
+app.use(express.static(path.join(__dirname, "public"))); 
 app.use(express.urlencoded({ extended: true}));
 
 

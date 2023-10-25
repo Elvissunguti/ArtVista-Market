@@ -57,7 +57,19 @@ async (req, res) => {
             return res.json({ message: "No artwork found." });
           }
 
-          res.json({ artwork: allArtwork });
+          const simplifiedArtwork = allArtwork.map(artwork => {
+            
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: `../../../public/ArtImages/${firstPhoto}`,
+            };
+        })
+
+          res.json({ data: simplifiedArtwork });
 
     } catch (error) {
         console.log('Error getting all artworks', error);

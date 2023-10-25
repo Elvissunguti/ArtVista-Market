@@ -22,7 +22,9 @@ const NavBar = () => {
                 </div>
                 <div className="flex flex-row">
                     <ul className="flex flex-row space-x-4 text-xl">
-                        <li>ALL ARTWORKS</li>
+                        <li>
+                            <Link to="/all artwork" className="cursor-pointer">ALL ARTWORKS</Link>
+                            </li>
                         <li>PAITINGS</li>
                         <li>DRAWINGS</li>
                         <li>ARTISTS</li>

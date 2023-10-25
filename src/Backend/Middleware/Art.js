@@ -15,7 +15,7 @@ const artStorage = multer.diskStorage({
         const extension = path.extname(file.originalname);
         cb(null, uniquePrefix + extension);
     }
-})
+});
 
 exports.artUploads = multer({ storage: artStorage}).fields([
     {name: "artPhoto", maxCount: 10},
