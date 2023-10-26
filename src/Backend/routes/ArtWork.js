@@ -75,6 +75,45 @@ async (req, res) => {
         console.log('Error getting all artworks', error);
         return res.json({ error: "Error Fetching all the artworks"});
     }
+});
+
+
+router.get("/get/artwork/:artWorkId",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const artWorkId = req.params.artWorkId;
+
+        const artwork = await ArtWork.findById(artWorkId);
+
+        if(!artwork){
+            return res.json({ error: "Artwork not found" })
+        }
+
+        const firstImage = artwork.artPhoto.length > 0 ? artwork.artPhoto[0] : null;
+
+        const artWorkData = {
+            _id: artwork._id,
+            title: artwork.title,
+            artPhoto: firstImage ? firstImage.replace("../../../public", "") : null,
+            size: artwork.size,
+            medium: artwork.medium,
+            surface: artwork.surface,
+            artType: artwork.artType,
+            creationYear: artwork.creationYear,
+            quality: artwork.quality,
+            delivery: artwork.delivery,
+            description: artwork.description,
+            price: artwork.price
+        };
+
+        res.json({ data : artWorkData })
+
+    } catch (error){
+        console.error("Error fetching the artwork", error);
+        return res.json({ error: "Error fetching the artwork"});
+    }
 })
 
 module.exports = router;

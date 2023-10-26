@@ -32,9 +32,11 @@ const ArtCard = ({ price, title, artPhoto }) => {
                               title="Add to Wishlist"
                               position="left"
                             >
+                            <Link>
                             <CiHeart 
                               className="text-2xl cursor-pointer" 
                             />
+                            </Link>
                             </Tooltip>
                             
                         </li>
@@ -49,7 +51,7 @@ const ArtCard = ({ price, title, artPhoto }) => {
                             </Tooltip>
                         </li>
                     </ul>
-                    <Link className="hidden group-hover:block absolute inset-x-0 bottom-0 text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
+                    <Link className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
                         ADD TO CARD
                         </Link>
                     <div>
