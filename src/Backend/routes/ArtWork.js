@@ -17,7 +17,7 @@ passport.authenticate("jwt", {session: false}),
 
             const { title, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
-            const artPhoto = req.files.artPhoto.map((photo) => photo.filename);
+            const artPhoto = req.files.artPhoto.map((photo) => photo.path);
             const userId = req.user._id;
 
             const newArtwork = new ArtWork({
@@ -65,7 +65,7 @@ async (req, res) => {
                 _id: artwork._id,
                 title: artwork.title,
                 price: artwork.price,
-                artPhoto: `../../../public/ArtImages/${firstPhoto}`,
+                artPhoto: firstPhoto.replace("../../../public", ""),
             };
         })
 

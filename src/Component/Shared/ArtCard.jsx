@@ -10,6 +10,8 @@ import { Link } from "react-router-dom";
 
 const ArtCard = ({ price, title, artPhoto }) => {
 
+  const artPhotoFilename = artPhoto.split("\\").pop();
+  const artPhotoUrl = `/ArtImages/${artPhotoFilename}`;
 
     return (
         <section className="group relative w-48 h-48">
@@ -18,7 +20,7 @@ const ArtCard = ({ price, title, artPhoto }) => {
                     <div className="relative w-48 h-48 overflow-hidden">
                  
                       <img 
-                        src={artPhoto}
+                        src={artPhotoUrl}
                         alt="image of art"
                         className="w-48 h-48 transition-transform transform scale-100 hover:scale-110 duration-700 cursor-pointer"
                       />

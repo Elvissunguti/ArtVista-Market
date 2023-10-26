@@ -28,9 +28,9 @@ const AllArtWork = () => {
             <NavBar />
             <div>
                 <Search>
-                    <div>
+                    <div className="grid grid-cols-4 gap-4 mt-14 mx-6">
                         {artWork.map((artItem, index) => (
-                            <div key={index} className="grid grid-cols-4 gap-4 mt-14">
+                            <div key={index} className="mt-14">
                                 <ArtCard
                                 title={artItem.title}
                                 price={artItem.price}
