@@ -66,6 +66,14 @@ async (req, res) => {
                 title: artwork.title,
                 price: artwork.price,
                 artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
             };
         })
 

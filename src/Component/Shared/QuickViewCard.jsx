@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import logo from "../../Assets/art Images/art 6.webp";
 import { CiHeart } from "react-icons/ci";
 import { BiLogoFacebook, BiLogoPinterestAlt } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
@@ -13,7 +12,7 @@ import 'react-tippy/dist/tippy.css';
 
 
 
-const QuickViewCard = () => {
+const QuickViewCard = ({ artPhoto, title, price, size, medium, surface, artType, creationYear, quality, delivery, description }) => {
 
     const [displayDetails, setDisplayDetails] = useState(true); 
     const [displayDescription, setDisplayDescription] = useState(false);
@@ -27,21 +26,24 @@ const QuickViewCard = () => {
         setDisplayDescription(true);
         setDisplayDetails(false);
       };
+
+      const artPhotoFilename = artPhoto.split("\\").pop();
+      const artPhotoUrl = `/ArtImages/${artPhotoFilename}`;
   
     return(
-        <section>
-            <div className="flex h-96 w-2/3">
+        <section className="h-96 w-2/3">
+            <div className="flex bg-white h-full w-full">
                 <div className="w-1/2">
                     <img 
-                       src={logo}
+                       src={artPhotoUrl}
                        alt="Image of art"
                        className="h-full w-full"
                     />
                 </div>
                 <div className="flex flex-col p-6 h-96 w-1/2 overflow-auto">
                     <div className="flex flex-col items-start border-b-2  border-gray-300 ">
-                        <p className="text-2xl font-semibold my-4">title</p>
-                        <p className="text-xl text-gray-700 mb-4">price</p>
+                        <p className="text-2xl font-semibold my-4">"{title}"</p>
+                        <p className="text-xl text-gray-700 mb-4">{price}</p>
                     </div>
                         <div className="flex flex-col">
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
@@ -76,11 +78,19 @@ const QuickViewCard = () => {
                     <div className="p-3 border-r border-l border-b">
                     { displayDetails && (
                         <Details 
+                          size={size}
+                          medium={medium}
+                          surface={surface}
+                          artType={artType}
+                          creationYear={creationYear}
+                          quality={quality}
+                          delivery={delivery}
+                          
                            
                         />
                     )}
                     { displayDescription && (
-                        <p className="flex flex-start">Description details</p>
+                        <p className="flex flex-start">{description}</p>
                     )}
                     </div>
                     <div className="flex flex-row my-4 space-x-4">

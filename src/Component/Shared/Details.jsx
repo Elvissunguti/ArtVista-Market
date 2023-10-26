@@ -1,17 +1,17 @@
 import React from "react";
 import { PiCertificateThin, PiKeyReturnThin } from "react-icons/pi";
 
-const Details = () => {
+const Details = ({ size, medium, surface, artType, creationYear, quality, delivery }) => {
     return (
         <section>
             <div className="flex flex-col items-start space-y-5">
-                <p>Size:</p>
-                <p>Medium:</p>
-                <p>Surface:</p>
-                <p>Artwork:</p>
-                <p>Created in:</p>
-                <p>Quality:</p>
-                <p>To be delivered as:</p>
+                <p>Size: {size}</p>
+                <p>Medium: {medium}</p>
+                <p>Surface: {surface}</p>
+                <p>Artwork: {artType}</p>
+                <p>Created in: {creationYear}</p>
+                <p>Quality: {quality}</p>
+                <p>To be delivered as: {delivery}</p>
                 <div>
                     <PiCertificateThin />
                     <p>Artist Sign and Certificate Provided</p>
