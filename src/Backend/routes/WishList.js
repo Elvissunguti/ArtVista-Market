@@ -85,6 +85,31 @@ async (req, res) => {
         console.error("Error checking if the artWork is wishlisted", error);
         return res.json({ Error: "Error checking if the artwork is wishlisted"});
     }
-})
+});
+
+
+router.get("/checkwishlistnumber",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const userId = req.user._id;
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.json({ message: "User not found" });
+      }
+
+      const wishListedArt = user.wishList;
+      const numberOfWishlistedArt = wishListedArt.length;
+
+      return res.json({ data: { numberOfWishlistedArt } });
+
+    } catch (error) {
+      console.error("Error checking the number of wishlisted art", error);
+      return res.json({ Error: "Error checking the number of wishlisted art" });
+    }
+  }
+);
+
 
 module.exports = router;
