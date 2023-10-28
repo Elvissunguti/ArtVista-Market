@@ -14,7 +14,14 @@ const User = new mongoose.Schema({
     password: {
         type: String,
         required: true
-    }
+    },
+    wishList: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "artWork"
+        }
+    ],
+
 });
 
 const UserModel = mongoose.model("User", User);

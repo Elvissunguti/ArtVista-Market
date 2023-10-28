@@ -57,6 +57,6 @@ const ArtWork = new mongoose.Schema({
     }
 });
 
-const ArtWorkModel = mongoose.model("Artwork", ArtWork);
+const ArtWorkModel = mongoose.model("ArtWork", ArtWork);
 
 module.exports = ArtWorkModel;
