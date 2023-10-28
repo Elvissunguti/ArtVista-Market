@@ -79,7 +79,7 @@ async (req, res) => {
 
         const wishListedArt = user.wishList.map(art => art.toString());
 
-        return res.json({ data: wishListedArt })
+        return res.json({ data: { wishListedArt }})
 
     } catch (error) {
         console.error("Error checking if the artWork is wishlisted", error);

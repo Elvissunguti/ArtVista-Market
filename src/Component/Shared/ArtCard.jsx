@@ -6,7 +6,7 @@ import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
 import { Link } from "react-router-dom";
 import QuickViewCard from "./QuickViewCard";
-import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 
 
 
@@ -14,6 +14,28 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
 
   const [isQuickViewVisible, setQuickViewVisible] = useState(false);
   const [ isWishList, setIsWishList ] = useState(false);
+
+  const checkIfWishListed = async () => {
+    try{
+      const response = await makeAuthenticatedGETRequest(
+        `/wishList/checkwishlist?artWorkId=${artWorkId}`
+      );
+      if(response && response.data && response.data.wishListedArt && response.data.wishListedArt.includes(artWorkId)){
+        setIsWishList(true);
+      } else {
+        setIsWishList(false);
+      }
+
+    } catch (error) {
+      console.error("Error checking if artwork is wishlisted", error);
+    }
+  }
+
+
+  useEffect(() => {
+
+    checkIfWishListed();
+  }, [artWorkId]);
 
   const addWishList = async (artWorkId) => {
     try{
