@@ -1,17 +1,61 @@
 import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
-import { AiOutlineEye, AiOutlineClose } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineClose, AiFillHeart } from "react-icons/ai";
 import 'tippy.js/dist/tippy.css'; 
 import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
 import { Link } from "react-router-dom";
 import QuickViewCard from "./QuickViewCard";
+import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 
 
 
 const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, artType, creationYear, quality, delivery, description }) => {
 
   const [isQuickViewVisible, setQuickViewVisible] = useState(false);
+  const [ isWishList, setIsWishList ] = useState(false);
+
+  const addWishList = async (artWorkId) => {
+    try{
+
+      const response = await makeAuthenticatedPOSTRequest(
+        `/wishList/addwishlist/${artWorkId}`
+      );
+
+      if(response.error){
+        console.error("Error adding to wishlist:", response.error);
+      }
+
+    } catch (error){
+      console.error("Error adding to wishList:", error);
+    }
+  };
+
+
+  const deleteWishList = async (artWorkId) => {
+    try{
+
+      const response = await makeAuthenticatedPOSTRequest(
+        `/wishList/deletewishlist/${artWorkId}`
+      );
+
+      if(response.error){
+        console.error("Error deleting artwork from wishList:", response.error)
+      };
+
+    } catch (error){
+      console.error("Error deleting the artwork from the wishlist:", error);
+    }
+  };
+
+  const handleWishList = async () => {
+    if (isWishList){
+      await deleteWishList(artWorkId);
+    } else {
+      await addWishList(artWorkId)
+    }
+    setIsWishList(!isWishList)
+  }
 
   const toggleQuickView = () => {
     setQuickViewVisible(!isQuickViewVisible);
@@ -38,17 +82,16 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                     
                     </div>
                     <ul className="hidden group-hover:block absolute top-0 right-0 m-4 inset text-black bg-white bg-opacity-7 flex  items-end ">
-                        <li className="group">
-                            <Tooltip
-                              title="Add to Wishlist"
-                              position="left"
-                            >
-                            <Link>
-                              <CiHeart 
-                                className="text-2xl hover:text-[#9A7B4F] cursor-pointer" 
-                              />
-                            </Link>
+                        <li className="group" onClick={handleWishList}>
+                          { isWishList ? (
+                            <Tooltip title="remove from Wishlist" position="left">
+                              <AiFillHeart  className="text-red-600 text-2xl cursor-pointer"  />
                             </Tooltip>
+                          ) : (
+                            <Tooltip title="Add to Wishlist" position="left">
+                               <CiHeart className="text-2xl hover:text-[#9A7B4F] cursor-pointer" />
+                            </Tooltip>
+                          )}
                             
                         </li>
                         <li className="group">
