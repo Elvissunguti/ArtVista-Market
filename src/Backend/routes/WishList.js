@@ -63,4 +63,28 @@ async(req, res) => {
     }
 });
 
+
+router.get("/checkwishlist",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const userId = req.user._id;
+
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.json({ message: "User not found"});
+        };
+
+        const wishListedArt = user.wishList.map(art => art.toString());
+
+        return res.json({ data: wishListedArt })
+
+    } catch (error) {
+        console.error("Error checking if the artWork is wishlisted", error);
+        return res.json({ Error: "Error checking if the artwork is wishlisted"});
+    }
+})
+
 module.exports = router;
