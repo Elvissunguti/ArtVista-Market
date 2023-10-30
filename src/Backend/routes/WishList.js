@@ -101,10 +101,9 @@ router.get("/checkwishlistnumber",
         return res.json({ message: "User not found" });
       }
 
-      const wishListedArt = user.wishList;
-      const numberOfWishlistedArt = wishListedArt.length;
+      const wishlistNumber = user.wishListNumber;
 
-      return res.json({ data:  numberOfWishlistedArt  });
+      return res.json({ data: wishlistNumber });
 
     } catch (error) {
       console.error("Error checking the number of wishlisted art", error);

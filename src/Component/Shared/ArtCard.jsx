@@ -7,6 +7,7 @@ import 'react-tippy/dist/tippy.css';
 import { Link } from "react-router-dom";
 import QuickViewCard from "./QuickViewCard";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { useWishList } from "../Context/WishListContext";
 
 
 
@@ -14,6 +15,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
 
   const [isQuickViewVisible, setQuickViewVisible] = useState(false);
   const [ isWishList, setIsWishList ] = useState(false);
+  const { wishListedNumber, updateWishListedNumber } = useWishList();
 
   const checkIfWishListed = async () => {
     try{
@@ -47,6 +49,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
       if(response.error){
         console.error("Error adding to wishlist:", response.error);
       }
+      updateWishListedNumber(wishListedNumber + 1);
 
     } catch (error){
       console.error("Error adding to wishList:", error);
@@ -64,6 +67,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
       if(response.error){
         console.error("Error deleting artwork from wishList:", response.error)
       };
+      updateWishListedNumber(wishListedNumber - 1);
 
     } catch (error){
       console.error("Error deleting the artwork from the wishlist:", error);
