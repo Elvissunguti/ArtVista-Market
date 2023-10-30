@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CiHeart } from "react-icons/ci";
 import { BiLogoFacebook, BiLogoPinterestAlt } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
@@ -9,13 +9,85 @@ import Details from "./Details";
 import 'tippy.js/dist/tippy.css'; 
 import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css';
+import { AiFillHeart } from "react-icons/ai";
+import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { useWishList } from "../Context/WishListContext";
 
 
 
-const QuickViewCard = ({ artPhoto, title, price, size, medium, surface, artType, creationYear, quality, delivery, description }) => {
+const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surface, artType, creationYear, quality, delivery, description }) => {
 
     const [displayDetails, setDisplayDetails] = useState(true); 
     const [displayDescription, setDisplayDescription] = useState(false);
+    const [ isWishList, setIsWishList ] = useState(false);
+    const { wishListedNumber, updateWishListedNumber } = useWishList();
+
+
+    const checkIfWishListed = async () => {
+      try{
+        const response = await makeAuthenticatedGETRequest(
+          `/wishList/checkwishlist?artWorkId=${artWorkId}`
+        );
+        if(response && response.data && response.data.wishListedArt && response.data.wishListedArt.includes(artWorkId)){
+          setIsWishList(true);
+        } else {
+          setIsWishList(false);
+        }
+  
+      } catch (error) {
+        console.error("Error checking if artwork is wishlisted", error);
+      }
+    }
+  
+  
+    useEffect(() => {
+  
+      checkIfWishListed();
+    }, [artWorkId]);
+  
+    const addWishList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/wishList/addwishlist/${artWorkId}`
+        );
+  
+        if(response.error){
+          console.error("Error adding to wishlist:", response.error);
+        }
+        updateWishListedNumber(wishListedNumber + 1);
+  
+      } catch (error){
+        console.error("Error adding to wishList:", error);
+      }
+    };
+  
+  
+    const deleteWishList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/wishList/deletewishlist/${artWorkId}`
+        );
+  
+        if(response.error){
+          console.error("Error deleting artwork from wishList:", response.error)
+        };
+        updateWishListedNumber(wishListedNumber - 1);
+  
+      } catch (error){
+        console.error("Error deleting the artwork from the wishlist:", error);
+      }
+    };
+  
+    const handleWishList = async () => {
+      if (isWishList){
+        await deleteWishList(artWorkId);
+      } else {
+        await addWishList(artWorkId)
+      }
+      setIsWishList(!isWishList)
+    }
 
     const toggleDetails = () => {
         setDisplayDetails(true);
@@ -51,10 +123,16 @@ const QuickViewCard = ({ artPhoto, title, price, size, medium, surface, artType,
                                 <button className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
                                     ADD TO CART
                                 </button>
-                                <button className="px-3 py-3 text-2xl border border-black rounded-full hover:text-[#9A7B4F] hover:border-[#9A7B4F]">
-                                    <Tooltip title="Add To Wishlist" position="top">
-                                    <CiHeart  />
-                                    </Tooltip>
+                                <button onClick={handleWishList} className="px-3 py-3 text-2xl border border-black rounded-full hover:text-[#9A7B4F] hover:border-[#9A7B4F]">
+                                { isWishList ? (
+                                   <Tooltip title="remove from Wishlist" position="top">
+                                     <AiFillHeart  className="text-red-600 text-2xl cursor-pointer"  />
+                                   </Tooltip>
+                                ) : (
+                                   <Tooltip title="Add to Wishlist" position="top">
+                                      <CiHeart className="text-2xl hover:text-[#9A7B4F] cursor-pointer" />
+                                   </Tooltip>
+                                )}
                                 </button>
                             </div>
                         </div>
