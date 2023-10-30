@@ -9,6 +9,7 @@ const User = require("./src/Backend/Model/User");
 const AuthRoutes = require("./src/Backend/routes/Auth");
 const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
 const WishListRoutes = require("./src/Backend/routes/WishList");
+const CartListRoutes = require("./src/Backend/routes/CartList");
 
 
 const app = express();
@@ -68,6 +69,7 @@ app.use((req, res, next) => {
 app.use("/auth", AuthRoutes);
 app.use("/artwork", ArtWorkRoutes);
 app.use("/wishList", WishListRoutes);
+app.use("/cartList", CartListRoutes);
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`)

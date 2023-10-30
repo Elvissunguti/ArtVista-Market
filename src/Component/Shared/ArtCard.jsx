@@ -134,7 +134,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                         </li>
                     </ul>
                     <Link className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
-                        ADD TO CARD
+                        ADD TO CART
                         </Link>
                     <div>
                         <p>"{title}"</p>

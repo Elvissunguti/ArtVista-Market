@@ -25,6 +25,16 @@ const User = new mongoose.Schema({
         type: Number,
         default: 0, 
       },
+    cartList: [
+        {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "artWork"
+        }
+    ],
+    cartListNumber: {
+        type: Number,
+        default: 0
+    },
 
 });
 
