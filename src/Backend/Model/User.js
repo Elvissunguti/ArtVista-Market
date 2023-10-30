@@ -21,6 +21,10 @@ const User = new mongoose.Schema({
             ref: "artWork"
         }
     ],
+    wishListNumber: {
+        type: Number,
+        default: 0, 
+      },
 
 });
 

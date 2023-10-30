@@ -1,14 +1,26 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import logo from "../../Assets/logo/logo-no-background.png";
 import { AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { PiHeartStraightThin } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
+import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 
 const NavBar = () => {
 
     const [ isOpen, setIsOpen ] = useState(false);
+    const [ wishListed, setWishListed ] = useState(0);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            const response = await makeAuthenticatedGETRequest(
+                "/wishList/checkwishlistnumber"
+            );
+            setWishListed(response.data);
+        }
+        fetchData();
+    }, []);
 
     return (
         <section>
@@ -36,7 +48,7 @@ const NavBar = () => {
                     <Link className="relative flex">
                         <PiHeartStraightThin  />
                         <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
-                            1
+                            {wishListed}
                         </span>
                     </Link>
                     <Link className="relative flex">

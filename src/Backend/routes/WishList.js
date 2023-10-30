@@ -19,6 +19,7 @@ async (req, res) => {
           }
 
           user.wishList.push(artWorkId);
+          user.wishListNumber = user.wishList.length; 
 
           await user.save();
 
@@ -50,6 +51,7 @@ async(req, res) => {
         if (index !== -1) {
           // Remove the artwork ID from the wishlist
           user.wishList.splice(index, 1);
+          user.wishListNumber = user.wishList.length;
           await user.save();
   
           return res.json({ message: "Artwork removed from wishlist" });
@@ -102,7 +104,7 @@ router.get("/checkwishlistnumber",
       const wishListedArt = user.wishList;
       const numberOfWishlistedArt = wishListedArt.length;
 
-      return res.json({ data: { numberOfWishlistedArt } });
+      return res.json({ data:  numberOfWishlistedArt  });
 
     } catch (error) {
       console.error("Error checking the number of wishlisted art", error);
