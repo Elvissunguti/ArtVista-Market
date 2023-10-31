@@ -4,14 +4,15 @@ import { AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { PiHeartStraightThin } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
 import { Link } from "react-router-dom";
-import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 import { useWishList } from "../Context/WishListContext";
+import { useCartList } from "../Context/CartListContext";
 
 
 const NavBar = () => {
 
     const [ isOpen, setIsOpen ] = useState(false);
     const { wishListedNumber } = useWishList();
+    const { cartListNumber } = useCartList();
     
       
 
@@ -47,7 +48,7 @@ const NavBar = () => {
                     <Link className="relative flex">
                         <AiOutlineShoppingCart />
                         <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
-                            5
+                            {cartListNumber}
                         </span>
                     </Link>
                     <div>

@@ -9,6 +9,7 @@ import QuickViewCard from "./QuickViewCard";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { useWishList } from "../Context/WishListContext";
 import { BsTrash3 } from "react-icons/bs";
+import { useCartList } from "../Context/CartListContext";
 
 
 
@@ -18,6 +19,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
   const [ isWishList, setIsWishList ] = useState(false);
   const { wishListedNumber, updateWishListedNumber } = useWishList();
   const [ isCartList, setIsCartList ] = useState(false);
+  const { cartListNumber, updatedCartListNumber } = useCartList();
 
   const checkIfWishListed = async () => {
     try{
@@ -115,7 +117,9 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
       );
       if(response.error){
         console.error("Error adding to cart list:", response.error);
-      }
+      };
+
+      updatedCartListNumber(cartListNumber + 1);
 
     } catch (error) {
       console.log('Error adding to cart list', error);
@@ -131,7 +135,9 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
       );
       if(response.error){
         console.error("Error deleting from cart list:", response.error);
-      }
+      };
+
+      updatedCartListNumber(cartListNumber - 1);
 
     } catch (error) {
       console.log('Error deleting from cart list', error);

@@ -95,7 +95,7 @@ async (req, res) => {
             return res.json({ message: "Could not find user" });
         };
 
-        const cartListNumber = user.wishListNumber;
+        const cartListNumber = user.cartListNumber;
 
         return res.json({ data: cartListNumber });
 
