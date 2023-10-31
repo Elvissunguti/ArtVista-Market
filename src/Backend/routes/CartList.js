@@ -81,4 +81,28 @@ async(req, res) => {
     };
 });
 
+
+router.get("/checkcartlistnumber",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const userId = req.user._id;
+
+        const user = await User.findById(userId);
+
+        if (!user){
+            return res.json({ message: "Could not find user" });
+        };
+
+        const cartListNumber = user.wishListNumber;
+
+        return res.json({ data: cartListNumber });
+
+    } catch (error) {
+        console.error("Error checking cartList length", error);
+        return res.json({ error: "Error checking cartlist number" });
+    }
+})
+
 module.exports = router;
