@@ -58,4 +58,27 @@ async (req, res) => {
     }
 })
 
+router.get("/checkcartlist",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+
+        const userId = req.user._id;
+
+        const user = await User.findById(userId);
+
+        if(!user){
+            return res.json({ message: "User not found"});
+        };
+
+        const cartListedArt = user.cartList.map(art => art.toString());
+
+        return res.json({ data: {cartListedArt}});
+
+    } catch (error) {
+        console.error("Error checking cartlist", error);
+        return res.json({ error: "Error checking cartlist"});
+    };
+});
+
 module.exports = router;
