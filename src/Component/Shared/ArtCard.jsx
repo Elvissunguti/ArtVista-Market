@@ -59,6 +59,28 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
   };
 
 
+  const checkIfCartListed = async () => {
+    try{
+
+      const response = await makeAuthenticatedGETRequest(
+        `/cartList/checkcartlist?artWorkId=${artWorkId}`
+      );
+      if(response && response.data && response.data.cartListedArt && response.data.cartListedArt.includes(artWorkId)){
+        setIsCartList(true);
+      } else {
+        setIsCartList(false);
+      }
+
+    } catch (error){
+      console.error("Error checking artwork in the cartList", error);
+    }
+  };
+
+  useEffect(() => {
+    checkIfCartListed()
+  },[artWorkId]);
+
+
   const deleteWishList = async (artWorkId) => {
     try{
 
