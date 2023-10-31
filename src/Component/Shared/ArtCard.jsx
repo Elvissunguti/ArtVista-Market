@@ -8,6 +8,7 @@ import { Link } from "react-router-dom";
 import QuickViewCard from "./QuickViewCard";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { useWishList } from "../Context/WishListContext";
+import { BsTrash3 } from "react-icons/bs";
 
 
 
@@ -16,6 +17,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
   const [isQuickViewVisible, setQuickViewVisible] = useState(false);
   const [ isWishList, setIsWishList ] = useState(false);
   const { wishListedNumber, updateWishListedNumber } = useWishList();
+  const [ isCartList, setIsCartList ] = useState(false);
 
   const checkIfWishListed = async () => {
     try{
@@ -78,10 +80,50 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
     if (isWishList){
       await deleteWishList(artWorkId);
     } else {
-      await addWishList(artWorkId)
+      await addWishList(artWorkId);
     }
-    setIsWishList(!isWishList)
-  }
+    setIsWishList(!isWishList);
+  };
+
+  const addCartList = async (artWorkId) => {
+    try{
+
+      const response = await makeAuthenticatedPOSTRequest(
+        `/cartList/addcartlist/${artWorkId}`
+      );
+      if(response.error){
+        console.error("Error adding to cart list:", response.error);
+      }
+
+    } catch (error) {
+      console.log('Error adding to cart list', error);
+    }
+  };
+
+
+  const deleteCartList = async (artWorkId) => {
+    try{
+
+      const response = await makeAuthenticatedPOSTRequest(
+        `/cartList/deletecartlist/${artWorkId}`
+      );
+      if(response.error){
+        console.error("Error deleting from cart list:", response.error);
+      }
+
+    } catch (error) {
+      console.log('Error deleting from cart list', error);
+    }
+  };
+
+  const handleCartList = async () => {
+    if (isCartList) {
+      await deleteCartList(artWorkId);
+    } else {
+      await addCartList(artWorkId);
+    }
+    setIsCartList(!isCartList);
+  };
 
   const toggleQuickView = () => {
     setQuickViewVisible(!isQuickViewVisible);
@@ -133,9 +175,15 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                             </Tooltip>
                         </li>
                     </ul>
-                    <Link className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer flex justify-center items-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
-                        ADD TO CART
-                        </Link>
+                    <div onClick={handleCartList} className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer text-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
+                        {isCartList ? (
+                           <Tooltip title="Remove from Cart" position="top">
+                             <BsTrash3 />
+                           </Tooltip>
+                        ) : (
+                           <p>ADD TO CART</p>
+                        )}
+                    </div>
                     <div>
                         <p>"{title}"</p>
                         <p>$ {price}</p>
@@ -144,9 +192,10 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
             </div>
             {isQuickViewVisible && (
         <div className="fixed top-0 left-0 h-full w-full flex items-center justify-center bg-black bg-opacity-80 z-50">
-          <button className="absolute top-14 right-16 text-white hover:text-[#9A7B4F] text-3xl" onClick={closeQuickView}>
-            <AiOutlineClose />
-          </button>
+           <button className="absolute top-14 right-16 text-white hover:text-[#9A7B4F] text-3xl transform hover:rotate-90 transition-transform duration-300" onClick={closeQuickView}>
+               <AiOutlineClose />
+           </button>
+
           <QuickViewCard
             price={price}
             title={title}
