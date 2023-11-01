@@ -1,6 +1,6 @@
-import React, { useState } from "react";
-import art from "../../Assets/art Images/art 8.jpg";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+
+import { Link, useParams } from "react-router-dom";
 import { BiLogoFacebook, BiLogoPinterestAlt } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
 import { MdEmail } from "react-icons/md";
@@ -10,12 +10,9 @@ import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css'; 
 import { CiHeart } from "react-icons/ci";
 import Details from "./Details";
-import art1 from "../../Assets/art Images/art 6.webp";
-import art2 from "../../Assets/art Images/art 8.jpg";
-import art3 from "../../Assets/art Images/art 9.webp";
-import art4 from "../../Assets/art Images/art 1.jfif";
 import ReactImageMagnify from 'react-image-magnify';
 import "../../App.css";
+import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 const ArtPage = () => {
 
@@ -23,7 +20,29 @@ const ArtPage = () => {
     const [displayDescription, setDisplayDescription] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isImageHovered, setIsImageHovered] = useState(false);
+    const [ artWorkData, setArtWorkData ] = useState(null);
+
+    const { title } = useParams();
+    console.log("Title from URL:", title);
     
+
+    useEffect(() => {
+      const fetchArt = async () => {
+        try {
+          const response = await makeAuthenticatedGETRequest(
+            `/artwork/get/artwork/${title}`
+          );
+          setArtWorkData(response.data);
+          console.log("response", response.data);
+        
+        } catch (error) {
+          console.error("Error fetching artwork data:", error);
+        }
+      }
+      fetchArt();
+    }, [title]);
+
+    console.log(artWorkData);
 
     const toggleDetails = () => {
         setDisplayDetails(true);
@@ -36,14 +55,6 @@ const ArtPage = () => {
     };
 
 
-      const images =[
-        art,
-        art2,
-        art1,
-        art3,
-        art4
-      ];
-
       const goToPreviousImage = () => {
         if (currentImageIndex > 0) {
           setCurrentImageIndex(currentImageIndex - 1);
@@ -51,7 +62,7 @@ const ArtPage = () => {
       };
       
       const goToNextImage = () => {
-        if (currentImageIndex < images.length - 1) {
+        if (currentImageIndex < artWorkData?.artPhoto.length - 1) {
           setCurrentImageIndex(currentImageIndex + 1);
         }
       };
@@ -71,12 +82,12 @@ const ArtPage = () => {
                        <ReactImageMagnify
                         {...{
                             smallImage: {
-                                src: images[currentImageIndex],
+                                src: artWorkData?.artPhoto[currentImageIndex],
                                 alt: 'Image of art',
                                 isFluidWidth: true,
                             },
                             largeImage: {
-                                src: images[currentImageIndex],
+                                src: artWorkData?.artPhoto[currentImageIndex],
                                 width: 1200, // Adjust this value according to your requirements
                                 height: 1200, // Adjust this value according to your requirements
                             },
@@ -97,7 +108,7 @@ const ArtPage = () => {
                     </div>
 
                     <div className="flex flex-wrap ">
-                        {images.map((image, index) => (
+                        {artWorkData?.artPhoto.map((image, index) => (
                             <div className="m-4" key={index}>
                             <img 
                                src={image}
@@ -111,8 +122,8 @@ const ArtPage = () => {
                 </div>
                 <div className="flex flex-col p-6 w-1/3">
                     <div className="flex flex-col items-start border-b-2  border-gray-300 ">
-                        <p className="text-2xl font-semibold my-4">title</p>
-                        <p className="text-xl text-gray-700 mb-4">price</p>
+                        <p className="text-2xl font-semibold my-4">{artWorkData?.title}</p>
+                        <p className="text-xl text-gray-700 mb-4">{artWorkData?.price}</p>
                     </div>
                         <div className="flex flex-col">
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
@@ -146,12 +157,20 @@ const ArtPage = () => {
                     </div>
                     <div className="p-3 border-r border-l border-b">
                     { displayDetails && (
+                        
                         <Details 
+                           size={artWorkData?.size}
+                           surface={artWorkData?.surface}
+                           medium={artWorkData?.medium}
+                           delivery={artWorkData?.delivery}
+                           artType={artWorkData?.artType}
+                           quality={artWorkData?.quality}
+                           creationYear={artWorkData?.creationYear}
                            
                         />
                     )}
                     { displayDescription && (
-                        <p className="flex flex-start">Description details</p>
+                        <p className="flex flex-start">{artWorkData.description}</p>
                     )}
                     </div>
                     <div className="flex flex-row my-4 space-x-4">

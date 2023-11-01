@@ -169,12 +169,13 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
             <div className="group relative w-48 h-48">
                 <div>
                     <div className="relative w-48 h-48 overflow-hidden">
-                 
+                      <Link to={`/artpage/${encodeURIComponent(title)}`}>
                       <img 
                         src={artPhotoUrl}
                         alt="image of art"
                         className="w-48 h-48 transition-transform transform scale-100 hover:scale-110 duration-700 cursor-pointer"
                       />
+                      </Link>
                     
                     </div>
                     <ul className="hidden group-hover:block absolute top-0 right-0 m-4 inset text-black bg-white bg-opacity-7 flex  items-end ">

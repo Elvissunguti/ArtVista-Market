@@ -5,6 +5,7 @@ import Login from './Component/Login/Login';
 import SignUp from './Component/SignUp/SignUp';
 import Home from './Component/Home/Home';
 import AllArtWork from './Component/AllArtWork/AllArtWork';
+import ArtPage from './Component/Shared/ArtPage';
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
             <>
             <Route path="/" element={<Home />} />
             <Route path="/all artwork" element={<AllArtWork />} />
+            <Route path="/artpage/:title" element={<ArtPage />} />
             
             </>
           ) : (
