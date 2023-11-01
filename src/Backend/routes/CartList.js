@@ -93,8 +93,7 @@ async (req, res) => {
 
         if (!user){
             return res.json({ message: "Could not find user" });
-        };
-
+        }; 
         const cartListNumber = user.cartListNumber;
 
         return res.json({ data: cartListNumber });

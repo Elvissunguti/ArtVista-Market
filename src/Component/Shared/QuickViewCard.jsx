@@ -3,7 +3,7 @@ import { CiHeart } from "react-icons/ci";
 import { BiLogoFacebook, BiLogoPinterestAlt } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
 import { MdEmail } from "react-icons/md";
-import { BsArrowRight } from "react-icons/bs";
+import { BsArrowRight, BsTrash3 } from "react-icons/bs";
 import { Link } from "react-router-dom";
 import Details from "./Details";
 import 'tippy.js/dist/tippy.css'; 
@@ -12,6 +12,7 @@ import 'react-tippy/dist/tippy.css';
 import { AiFillHeart } from "react-icons/ai";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { useWishList } from "../Context/WishListContext";
+import { useCartList } from "../Context/CartListContext";
 
 
 
@@ -21,6 +22,8 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
     const [displayDescription, setDisplayDescription] = useState(false);
     const [ isWishList, setIsWishList ] = useState(false);
     const { wishListedNumber, updateWishListedNumber } = useWishList();
+    const [ isCartList, setIsCartList ] = useState(false);
+    const { cartListNumber, updatedCartListNumber } = useCartList();
 
 
     const checkIfWishListed = async () => {
@@ -44,6 +47,28 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
   
       checkIfWishListed();
     }, [artWorkId]);
+
+
+  const checkIfCartListed = async () => {
+    try{
+
+      const response = await makeAuthenticatedGETRequest(
+        `/cartList/checkcartlist?artWorkId=${artWorkId}`
+      );
+      if(response && response.data && response.data.cartListedArt && response.data.cartListedArt.includes(artWorkId)){
+        setIsCartList(true);
+      } else {
+        setIsCartList(false);
+      }
+
+    } catch (error){
+      console.error("Error checking artwork in the cartList", error);
+    }
+  };
+
+  useEffect(() => {
+    checkIfCartListed()
+  },[artWorkId]);
   
     const addWishList = async (artWorkId) => {
       try{
@@ -89,6 +114,51 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
       setIsWishList(!isWishList)
     }
 
+
+    const addCartList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/cartList/addcartlist/${artWorkId}`
+        );
+        if(response.error){
+          console.error("Error adding to cart list:", response.error);
+        };
+  
+        updatedCartListNumber(cartListNumber + 1);
+  
+      } catch (error) {
+        console.log('Error adding to cart list', error);
+      }
+    };
+  
+  
+    const deleteCartList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/cartList/deletecartlist/${artWorkId}`
+        );
+        if(response.error){
+          console.error("Error deleting from cart list:", response.error);
+        };
+  
+        updatedCartListNumber(cartListNumber - 1);
+  
+      } catch (error) {
+        console.log('Error deleting from cart list', error);
+      }
+    };
+  
+    const handleCartList = async () => {
+      if (isCartList) {
+        await deleteCartList(artWorkId);
+      } else {
+        await addCartList(artWorkId);
+      }
+      setIsCartList(!isCartList);
+    };
+
     const toggleDetails = () => {
         setDisplayDetails(true);
         setDisplayDescription(false);
@@ -120,8 +190,14 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
                         <div className="flex flex-col">
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
                             <div className="flex flex-row space-x-4">
-                                <button className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
-                                    ADD TO CART
+                                <button onClick={handleCartList} className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
+                                  {isCartList ? (
+                                     <Tooltip title="Remove from Cart" position="top">
+                                        <BsTrash3 />
+                                     </Tooltip>
+                                  ) : (
+                                    <p>ADD TO CART</p>
+                                   )}
                                 </button>
                                 <button onClick={handleWishList} className="px-3 py-3 text-2xl border border-black rounded-full hover:text-[#9A7B4F] hover:border-[#9A7B4F]">
                                 { isWishList ? (
