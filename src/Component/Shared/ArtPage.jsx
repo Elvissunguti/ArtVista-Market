@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-
 import { Link, useParams } from "react-router-dom";
 import { BiLogoFacebook, BiLogoPinterestAlt } from "react-icons/bi";
 import { RiTwitterXLine } from "react-icons/ri";
@@ -12,7 +11,12 @@ import { CiHeart } from "react-icons/ci";
 import Details from "./Details";
 import ReactImageMagnify from 'react-image-magnify';
 import "../../App.css";
-import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
+import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import NavBar from "../Home/NavBar";
+import { BsTrash3 } from "react-icons/bs";
+import { AiFillHeart } from "react-icons/ai";
+import { useCartList } from "../Context/CartListContext";
+import { useWishList } from "../Context/WishListContext";
 
 const ArtPage = () => {
 
@@ -21,10 +25,12 @@ const ArtPage = () => {
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [isImageHovered, setIsImageHovered] = useState(false);
     const [ artWorkData, setArtWorkData ] = useState(null);
+    const [ isWishList, setIsWishList ] = useState(false);
+    const { wishListedNumber, updateWishListedNumber } = useWishList();
+    const [ isCartList, setIsCartList ] = useState(false);
+    const { cartListNumber, updatedCartListNumber } = useCartList();
 
-    const { title } = useParams();
-    console.log("Title from URL:", title);
-    
+    const { title } = useParams();    
 
     useEffect(() => {
       const fetchArt = async () => {
@@ -32,8 +38,17 @@ const ArtPage = () => {
           const response = await makeAuthenticatedGETRequest(
             `/artwork/get/artwork/${title}`
           );
-          setArtWorkData(response.data);
-          console.log("response", response.data);
+                // Map artPhoto array to create artPhotoUrl values
+            const artWorkDataWithUrls = {
+              ...response.data,
+              artWorkId: response.data._id,
+              artPhoto: response.data.artPhoto.map((artPhoto) => {
+              const artPhotoFilename = artPhoto.split("\\").pop();
+              return `/ArtImages/${artPhotoFilename}`;
+              }),
+            };
+
+          setArtWorkData(artWorkDataWithUrls);
         
         } catch (error) {
           console.error("Error fetching artwork data:", error);
@@ -42,7 +57,145 @@ const ArtPage = () => {
       fetchArt();
     }, [title]);
 
-    console.log(artWorkData);
+    const artWorkId = artWorkData?.artWorkId;
+
+
+    const checkIfWishListed = async () => {
+      try{
+        const response = await makeAuthenticatedGETRequest(
+          `/wishList/checkwishlist?artWorkId=${artWorkId}`
+        );
+        if(response && response.data && response.data.wishListedArt && response.data.wishListedArt.includes(artWorkId)){
+          setIsWishList(true);
+        } else {
+          setIsWishList(false);
+        }
+  
+      } catch (error) {
+        console.error("Error checking if artwork is wishlisted", error);
+      }
+    }
+  
+  
+    useEffect(() => {
+  
+      checkIfWishListed();
+    }, [artWorkId]);
+  
+    const addWishList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/wishList/addwishlist/${artWorkId}`
+        );
+  
+        if(response.error){
+          console.error("Error adding to wishlist:", response.error);
+        }
+        updateWishListedNumber(wishListedNumber + 1);
+  
+      } catch (error){
+        console.error("Error adding to wishList:", error);
+      }
+    };
+  
+  
+    const checkIfCartListed = async () => {
+      try{
+  
+        const response = await makeAuthenticatedGETRequest(
+          `/cartList/checkcartlist?artWorkId=${artWorkId}`
+        );
+        if(response && response.data && response.data.cartListedArt && response.data.cartListedArt.includes(artWorkId)){
+          setIsCartList(true);
+        } else {
+          setIsCartList(false);
+        }
+  
+      } catch (error){
+        console.error("Error checking artwork in the cartList", error);
+      }
+    };
+  
+    useEffect(() => {
+      checkIfCartListed()
+    },[artWorkId]);
+  
+  
+    const deleteWishList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/wishList/deletewishlist/${artWorkId}`
+        );
+  
+        if(response.error){
+          console.error("Error deleting artwork from wishList:", response.error)
+        };
+        updateWishListedNumber(wishListedNumber - 1);
+  
+      } catch (error){
+        console.error("Error deleting the artwork from the wishlist:", error);
+      }
+    };
+  
+    const handleWishList = async () => {
+      if (isWishList){
+        await deleteWishList(artWorkId);
+      } else {
+        await addWishList(artWorkId);
+      }
+      setIsWishList(!isWishList);
+    };
+  
+    const addCartList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/cartList/addcartlist/${artWorkId}`
+        );
+        if(response.error){
+          console.error("Error adding to cart list:", response.error);
+        };
+  
+        updatedCartListNumber(cartListNumber + 1);
+  
+      } catch (error) {
+        console.log('Error adding to cart list', error);
+      }
+    };
+  
+  
+    const deleteCartList = async (artWorkId) => {
+      try{
+  
+        const response = await makeAuthenticatedPOSTRequest(
+          `/cartList/deletecartlist/${artWorkId}`
+        );
+        if(response.error){
+          console.error("Error deleting from cart list:", response.error);
+        };
+  
+        updatedCartListNumber(cartListNumber - 1);
+  
+      } catch (error) {
+        console.log('Error deleting from cart list', error);
+      }
+    };
+  
+    const handleCartList = async () => {
+      if (isCartList) {
+        await deleteCartList(artWorkId);
+      } else {
+        await addCartList(artWorkId);
+      }
+      setIsCartList(!isCartList);
+    };
+
+
+
+
+    
 
     const toggleDetails = () => {
         setDisplayDetails(true);
@@ -74,7 +227,8 @@ const ArtPage = () => {
 
     return (
         <section>
-            <div className="flex justify-center max-w-7xl mx-auto">
+          <NavBar />
+            <div className="flex justify-center mt-8 max-w-7xl mx-auto">
                 <div className="relative w-2/3" >
                     <div                       
                       onMouseEnter={() => setIsImageHovered(true)}
@@ -128,13 +282,25 @@ const ArtPage = () => {
                         <div className="flex flex-col">
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
                             <div className="flex flex-row space-x-4">
-                                <button className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
-                                    ADD TO CART
+                                <button onClick={handleCartList} className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
+                                  {isCartList ? (
+                                     <Tooltip title="Remove from Cart" position="top">
+                                        <BsTrash3 />
+                                     </Tooltip>
+                                   ) : (
+                                   <p>ADD TO CART</p>
+                                  )}
                                 </button>
-                                <button className="px-3 py-3 text-2xl border border-black rounded-full hover:text-[#9A7B4F] hover:border-[#9A7B4F]">
-                                    <Tooltip title="Add To Wishlist" position="top">
-                                    <CiHeart  />
-                                    </Tooltip>
+                                <button onClick={handleWishList} className="px-3 py-3 text-2xl border border-black rounded-full hover:text-[#9A7B4F] hover:border-[#9A7B4F]">
+                                { isWishList ? (
+                                  <Tooltip title="remove from Wishlist" position="left">
+                                     <AiFillHeart  className="text-red-600 text-2xl cursor-pointer"  />
+                                  </Tooltip>
+                                 ) : (
+                                  <Tooltip title="Add to Wishlist" position="left">
+                                     <CiHeart className="text-2xl hover:text-[#9A7B4F] cursor-pointer" />
+                                  </Tooltip>
+                                )}
                                 </button>
                             </div>
                         </div>
