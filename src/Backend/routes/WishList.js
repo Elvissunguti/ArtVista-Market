@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const passport = require("passport");
 const User = require("../Model/User");
+const ArtWork = require("../Model/ArtWork");
 
 
 router.post("/addwishlist/:artWorkId",
@@ -107,10 +108,60 @@ router.get("/checkwishlistnumber",
 
     } catch (error) {
       console.error("Error checking the number of wishlisted art", error);
-      return res.json({ Error: "Error checking the number of wishlisted art" });
+      return res.json({ Error: "Error checking the number of wishlisted artwork" });
     }
   }
 );
+
+
+router.get("/wishlisted",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+  try{
+
+    const userId = req.user._id;
+
+    const user = await User.findById(userId);
+
+    if(!user){
+      return res.json({ Error: "user not found"});
+    }
+
+    const wishListIds = user.wishList;
+
+    if(wishListIds.length === 0 ){
+      return res.json({ Message: "user's wishlist is empty"})
+    };
+
+    const artWorks = await ArtWork.find({_id: { $in: wishListIds }})
+
+    const simplifiedArtwork = artWorks.map(artwork => {
+            
+      const firstPhoto = artwork.artPhoto[0] || null;
+
+      return {
+          _id: artwork._id,
+          title: artwork.title,
+          price: artwork.price,
+          artPhoto: firstPhoto.replace("../../../public", ""),
+          size: artwork.size,
+          medium: artwork.medium,
+          surface: artwork.surface,
+          artType: artwork.artType,
+          creationYear: artwork.creationYear,
+          quality: artwork.quality,
+          delivery: artwork.delivery,
+          description: artwork.description,
+      };
+  })
+
+    res.json({ data: simplifiedArtwork });
+
+  } catch (error){
+    console.error("Error fetching all the artwork in the wishList", error);
+    return res.json({ Error: "Error fetching the number of wishlisted artwork"})
+  }
+})
 
 
 module.exports = router;
