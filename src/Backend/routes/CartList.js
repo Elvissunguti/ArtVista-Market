@@ -146,7 +146,9 @@ async (req, res) => {
             };
         })
       
-          res.json({ data: simplifiedArtwork });
+        const totalPrice = simplifiedArtwork.reduce((total, artwork) => total + artwork.price, 0);
+
+        res.json({ data: simplifiedArtwork, totalPrice }); 
 
     } catch(error){
         console.error("Error fetching all the artwork in the cartlist", error);
