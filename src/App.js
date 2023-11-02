@@ -6,6 +6,7 @@ import SignUp from './Component/SignUp/SignUp';
 import Home from './Component/Home/Home';
 import AllArtWork from './Component/AllArtWork/AllArtWork';
 import ArtPage from './Component/Shared/ArtPage';
+import WishList from './Component/WishList/WishList';
 
 function App() {
 
@@ -28,7 +29,7 @@ function App() {
             <Route path="/" element={<Home />} />
             <Route path="/all artwork" element={<AllArtWork />} />
             <Route path="/artpage/:title" element={<ArtPage />} />
-            
+            <Route path="/wishlist" element={<WishList />} />
             </>
           ) : (
             <>

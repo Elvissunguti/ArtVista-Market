@@ -39,7 +39,7 @@ const NavBar = () => {
                 </div>
                 <div className="flex flex-row space-x-4 text-2xl">
                     <AiOutlineSearch />
-                    <Link className="relative flex">
+                    <Link to="/wishlist" className="relative flex">
                         <PiHeartStraightThin  />
                         <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
                             {wishListedNumber}
