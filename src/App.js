@@ -7,6 +7,7 @@ import Home from './Component/Home/Home';
 import AllArtWork from './Component/AllArtWork/AllArtWork';
 import ArtPage from './Component/Shared/ArtPage';
 import WishList from './Component/WishList/WishList';
+import CartList from './Component/CartList/CartList';
 
 function App() {
 
@@ -30,6 +31,7 @@ function App() {
             <Route path="/all artwork" element={<AllArtWork />} />
             <Route path="/artpage/:title" element={<ArtPage />} />
             <Route path="/wishlist" element={<WishList />} />
+            <Route path="/cartlist" element={<CartList />} />
             </>
           ) : (
             <>

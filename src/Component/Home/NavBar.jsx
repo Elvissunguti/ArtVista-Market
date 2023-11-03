@@ -45,7 +45,7 @@ const NavBar = () => {
                             {wishListedNumber}
                         </span>
                     </Link>
-                    <Link className="relative flex">
+                    <Link to="/cartlist" className="relative flex">
                         <AiOutlineShoppingCart />
                         <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
                             {cartListNumber}

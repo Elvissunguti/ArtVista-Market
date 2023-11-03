@@ -154,6 +154,6 @@ async (req, res) => {
         console.error("Error fetching all the artwork in the cartlist", error);
         return res.json({ error: "Error fetching all the artwork in the cartlist"});
     }
-})
+});
 
 module.exports = router;
