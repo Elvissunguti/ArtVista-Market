@@ -1,13 +1,31 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
 import { Collections, Materials, Surfaces, artistList } from "../Utils/ArtData";
 import "../../App.css";
 import ArtCard from "../Shared/ArtCard";
+import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 
 
 const Search = ({ children }) => {
+
+    const [ artistData, setArtistData ] = useState([]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                const response = await makeAuthenticatedGETRequest(
+                    "/artist/allartist"
+                );
+                setArtistData(response.data);
+
+            } catch(error){
+                console.error("Error fetching artist details", error)
+            }
+        }
+        fetchData();
+    }, []);
 
     const minRange = 249;
     const maxRange = 100000000;
@@ -73,14 +91,14 @@ const Search = ({ children }) => {
                     <div>
                         <p>ARTISTS</p>
                         <div className="h-64 overflow-auto custom-scrollbar">
-                            {artistList.map((artist, index) => (
+                            {artistData.map((artist, index) => (
                                 <div key={index} className="my-3">
                                     <input
                                        type="radio"
                                        name="artist"
-                                       value={artist}
+                                       value={artist.artist}
                                     />
-                                    <label className="ml-3">{artist}</label>
+                                    <label className="ml-3">{artist.artist} <span>{artist.artWorkCount}</span> </label>
                                 </div>
                             ))}
                         </div>
