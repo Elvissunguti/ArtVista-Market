@@ -44,6 +44,11 @@ const CartList = () => {
                     <p>Total Price: ${totalPrice}</p>
                 </div>
             </div>
+            <div>
+                <button className="">
+                    CHECKOUT
+                </button>
+            </div>
         </section>
     );
 };
