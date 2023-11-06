@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Slider from 'rc-slider';
 import 'rc-slider/assets/index.css';
-import { Collections, Materials, Surfaces, artistList } from "../Utils/ArtData";
+import { Collections, Materials, Surfaces } from "../Utils/ArtData";
 import "../../App.css";
-import ArtCard from "../Shared/ArtCard";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 
@@ -11,6 +10,12 @@ import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 const Search = ({ children }) => {
 
     const [ artistData, setArtistData ] = useState([]);
+    const minRange = 249;
+    const maxRange = 1000000;
+
+    const [range, setRange] = useState([minRange, maxRange]);
+    const [minPrice, setMinPrice] = useState(minRange);
+    const [maxPrice, setMaxPrice] = useState(maxRange);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -27,41 +32,60 @@ const Search = ({ children }) => {
         fetchData();
     }, []);
 
-    const minRange = 249;
-    const maxRange = 100000000;
-
-    const [ range, setRange ] = useState([minRange, maxRange]);
-
     const handleRangeChange = (newRange) => {
         setRange(newRange);
-      };
+        setMinPrice(newRange[0]);
+        setMaxPrice(newRange[1]);
+    };
 
+    const handleMinPriceChange = (e) => {
+        const newMinPrice = parseInt(e.target.value, 10);
+        if (!isNaN(newMinPrice) && newMinPrice >= minRange && newMinPrice <= maxRange) {
+            setMinPrice(newMinPrice);
+            setRange([newMinPrice, range[1]]);
+        }
+    };
+
+    const handleMaxPriceChange = (e) => {
+        const newMaxPrice = parseInt(e.target.value, 10);
+        if (!isNaN(newMaxPrice) && newMaxPrice >= minRange && newMaxPrice <= maxRange) {
+            setMaxPrice(newMaxPrice);
+            setRange([range[0], newMaxPrice]);
+        }
+    };
 
     return(
         <section className="mx-auto max-w-7xl">
             <div className="flex flex-row ">
                 <div className="w-1/5">
-                    <h1>Filters</h1>
+                    <h1 className="text-xl font-semibold">Filters</h1>
                     <div>
-                        <h1>PRICE</h1>
+                        <h1 className="text-xl font-semibold">PRICE</h1>
                         <div>
+                            <div className="flex w-3/5 space-x-4">
                             <input
-                               type="text"
+                               type="number"
                                id ="minPrice"
                                name="minPrice"
-                               min="249"
-                               placeholder="249"
-                               className=""
+                               min={minRange}
+                               placeholder={minRange}
+                               value={minPrice}
+                               onChange={handleMinPriceChange}
+                               className="px-1 py-2 w-28 rounded-lg placeholder-gray-500 border border-gary-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                             />
                             <input
-                               type="text"
+                               type="number"
                                id="maxPrice"
                                name="maxPrice"
-                               max={100000000}
-                               placeholder="100,000,000"
-                               className=""
+                               max={maxRange}
+                               min={minRange}
+                               value={maxPrice}
+                               onChange={handleMaxPriceChange}
+                               placeholder={maxRange}
+                               className="px-1 py-2 w-28 rounded-lg placeholder-gray-500 border border-gary-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                             />
-                            <div className="cursor-pointer">
+                            </div>
+                            <div className="my-6 cursor-pointer">
                                 <Slider
                                    min={minRange}
                                    max={maxRange}
@@ -73,8 +97,8 @@ const Search = ({ children }) => {
                         </div>
                     </div>
                     <div>
-                        <p>COLLECTION</p>
-                        <div className="h-64 overflow-auto custom-scrollbar">
+                        <p className="text-xl font-semibold">COLLECTION</p>
+                        <div className="max-h-64 overflow-auto custom-scrollbar">
                             {Collections.map((collection, index) => (
                                <div key={index} className="my-3">
                                   <input 
@@ -89,8 +113,8 @@ const Search = ({ children }) => {
                         </div>
                     </div>
                     <div>
-                        <p>ARTISTS</p>
-                        <div className="h-64 overflow-auto custom-scrollbar">
+                        <p className="text-xl font-semibold">ARTISTS</p>
+                        <div className="max-h-64 overflow-auto custom-scrollbar">
                             {artistData.map((artist, index) => (
                                 <div key={index} className="my-3">
                                     <input
@@ -104,8 +128,8 @@ const Search = ({ children }) => {
                         </div>
                     </div>
                     <div>
-                        <p>MATERIAL</p>
-                        <div className="h-64 overflow-auto custom-scrollbar">
+                        <p className="text-xl font-semibold">MATERIAL</p>
+                        <div className="max-h-64 overflow-auto custom-scrollbar">
                             {Materials.map((material, index) => (
                                 <div key={index} className="my-3">
                                     <input
@@ -119,8 +143,8 @@ const Search = ({ children }) => {
                         </div>
                     </div>
                     <div>
-                        <p>SURFACE</p>
-                        <div className="h-64 overflow-auto custom-scrollbar">
+                        <p className="text-xl font-semibold">SURFACE</p>
+                        <div className="max-h-64 overflow-auto custom-scrollbar">
                             {Surfaces.map((surface, index) => (
                                 <div key={index} className="my-3">
                                     <input
@@ -148,7 +172,7 @@ const Search = ({ children }) => {
                     </select>
                     
                 </div>
-                <div className="mt-8">
+                <div className="mt-1">
                    {children}
                  </div>
                 </div>
