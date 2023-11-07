@@ -5,7 +5,6 @@ const User = require("../Model/User");
 const ArtWork = require("../Model/ArtWork");
 
 
-
 router.get("/allartist",
 passport.authenticate("jwt", {session: false}),
 async (req, res) => {
