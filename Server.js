@@ -11,6 +11,7 @@ const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
 const WishListRoutes = require("./src/Backend/routes/WishList");
 const CartListRoutes = require("./src/Backend/routes/CartList");
 const ArtistRoutes = require("./src/Backend/routes/Artist");
+const ProfileRoutes = require("./src/Backend/routes/Profile");
 
 
 const app = express();
@@ -72,6 +73,8 @@ app.use("/artwork", ArtWorkRoutes);
 app.use("/wishList", WishListRoutes);
 app.use("/cartList", CartListRoutes);
 app.use("/artist", ArtistRoutes);
+app.use("/profile", ProfileRoutes);
+
 
 app.listen(PORT, () => {
     console.log(`Server listening on ${PORT}`)
