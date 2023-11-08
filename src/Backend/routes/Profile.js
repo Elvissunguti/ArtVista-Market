@@ -43,4 +43,21 @@ router.post("/create", passport.authenticate("jwt", { session: false }), async (
     });
 });
 
+
+router.get("/get/profile",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+        const userId = req.user._id;
+
+        const profile = await Profile.findOne({userId});
+
+        return res.json({ data: profile});
+
+    } catch (error){
+        console.error("Error fetching user's profile", error);
+        return res.json({ Error: "Error fetching profile" });
+    }
+});
+
 module.exports = router;
