@@ -1,6 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "../Home/NavBar";
-import { makeAuthenticatedMulterPostRequest } from "../Utils/Helpers";
+import { makeAuthenticatedGETRequest, makeAuthenticatedMulterPostRequest } from "../Utils/Helpers";
 
 const ProfileUpload = () => {
 
@@ -9,36 +9,54 @@ const ProfileUpload = () => {
         location: "",
         description: ""
     });
+    const [ profile, setProfile ] = useState(null);
 
-    const handleSubmit = async (e) => {
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                const response = await makeAuthenticatedGETRequest(
+                    "/profile/get/profile"
+                );
+                setProfile(response.data);
+            } catch(error){
+                console.error("Error in fetching profile:", error)
+            }
+        }
+        fetchData();
+    }, []);
+
+
+    useEffect(() => {
+        if (profile) {
+          setFormData({
+            profilePic: profile.profilePic || "",
+            location: profile.location || "",
+            description: profile.description || ""
+          });
+        }
+      }, [profile]);
+
+      const handleSubmit = async (e) => {
         e.preventDefault();
-
+    
         const formDataToSend = new FormData();
-
-        for (const key in formData) {
-        if (key === "profilePic") {
-        formDataToSend.append(key, formData[key]);
-        } else {
-        formDataToSend.append(key, formData[key]);
-         }
+    
+        // Append data to the FormData object
+        formDataToSend.append("profilePic", formData.profilePic);
+        formDataToSend.append("location", formData.location);
+        formDataToSend.append("description", formData.description);
+    
+        try {
+          const response = await makeAuthenticatedMulterPostRequest("/profile/create", formDataToSend);
+          if (response.error) {
+            console.error("Error creating or updating user profile", response.error);
+          } else {
+            console.log("User profile created or updated successfully", response);
+          }
+        } catch (error) {
+          console.error("Error creating or updating user profile", error);
         }
-
-        try{
-            const response = await makeAuthenticatedMulterPostRequest(
-                "/profile/create", formDataToSend
-            );
-            if (response.error) {
-                // Handle the error
-                console.error("Error creating artwork", response.error);
-              } else {
-                // Handle the successful response
-                console.log("Artwork created successfully", response);
-              }
-
-        } catch (error){
-            console.log("Error uploading profile:", error);
-        }
-    };
+      };
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -53,7 +71,7 @@ const ProfileUpload = () => {
       
         setFormData({
           ...formData,
-          artPhoto: file,
+          profilePic: file,
         });
       };
 
@@ -79,6 +97,7 @@ const ProfileUpload = () => {
                        id="location"
                        placeholder="1115 saika, Nairobi Kenya"
                        onChange={handleChange}
+                       value={formData.location}
                        className=""
 
                     />
@@ -88,11 +107,12 @@ const ProfileUpload = () => {
                        name="description"
                        placeholder="Description of the artist"
                        onChange={handleChange}
+                       value={formData.description}
                        className=""
                     />
                     <div>
                         <button type="submit" className="flex justify-center font-medium text-white mt-7 px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 border-transparent focus:outline-none focus:ring-2 focus:ring-[#40AA54]-500 focus:ring-offset-2 cursor-pointer">
-                            SUBMIT
+                           {profile ? "UPDATE" : "SUBMIT"}
                         </button>
                     </div>
                 </form>

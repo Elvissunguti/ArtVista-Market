@@ -4,7 +4,9 @@ const Profile = require("../Model/Profile");
 const passport = require("passport");
 const router = express.Router();
 
-router.post("/create", passport.authenticate("jwt", { session: false }), async (req, res) => {
+router.post("/create", 
+passport.authenticate("jwt", { session: false }), 
+async (req, res) => {
     profilePicUploads(req, res, async (err) => {
         if (err) {
             return res.json({ err: "Failed to upload files" });
@@ -38,7 +40,7 @@ router.post("/create", passport.authenticate("jwt", { session: false }), async (
             }
         } catch (error) {
             console.error("Error creating or updating user profile", error);
-            return res.json({ Error: "Error creating or updating user profile" });
+            return res.json({ error: "Error creating or updating user profile" });
         }
     });
 });
