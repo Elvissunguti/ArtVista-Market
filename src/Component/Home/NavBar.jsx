@@ -33,7 +33,9 @@ const NavBar = () => {
                             </li>
                         <li>PAITINGS</li>
                         <li>DRAWINGS</li>
-                        <li>ARTISTS</li>
+                        <li>
+                            <Link to="/seller profile" className="cursor-pointer">ARTISTS</Link>
+                            </li>
                         <li>SELL PAINTINGS</li>
                     </ul>
                 </div>

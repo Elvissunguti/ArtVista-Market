@@ -9,6 +9,7 @@ import ArtPage from './Component/Shared/ArtPage';
 import WishList from './Component/WishList/WishList';
 import CartList from './Component/CartList/CartList';
 import ProfileUpload from './Component/Profile/ProfileUpload';
+import Artist from './Component/Artist/Artist';
 
 function App() {
 
@@ -34,6 +35,7 @@ function App() {
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/cartlist" element={<CartList />} />
             <Route path="/profileUpload" element={<ProfileUpload />} />
+            <Route path="/seller profile" element={<Artist />} />
             
             </>
           ) : (
