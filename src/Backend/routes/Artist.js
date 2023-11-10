@@ -59,6 +59,43 @@ async (req, res) => {
         console.error("Error fetching artist details", error);
         return res.json({ error: "Error fetching the details of the artist"});
     }
-})
+});
+
+
+router.get("/profile/:userName", 
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const userName = req.params.userName;
+
+        const user = await User.findOne({ userName });
+
+        const userId = user._id;
+
+        const artworks = await ArtWork.find({userId});
+
+        if(artworks === 0) {
+            return res.json({ message: "No artworks found"})
+        };
+
+        const simplifiedArtwork = artworks.map(artwork => {
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                title: artwork.title,
+                price: artwork.price,
+                
+            }
+        });
+
+        return res.json({ data: simplifiedArtwork });
+
+    } catch (error) {
+        console.error("Error fetching user proifile", error);
+        return res.json({ error: "Error fetching details of an artist" });
+    }
+});
 
 module.exports = router
