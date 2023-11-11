@@ -3,6 +3,7 @@ import NavBar from "../Home/NavBar";
 import { IoIosSearch } from "react-icons/io";
 import thumbnail from "../../Assets/thumbnail.webp";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
+import { Link } from "react-router-dom";
 
 const Artist = () => {
     const [profileData, setProfileData] = useState(null);
@@ -13,17 +14,26 @@ const Artist = () => {
                 const response = await makeAuthenticatedGETRequest(
                     "/artist/get/artist"
                 );
-                response.data = response.data.map(item => ({
-                    ...item,
-                    profilePic: item.profilePic ? `/ProfilePic/${item.profilePic.split("\\").pop()}` : null,
-                }));
-                setProfileData(response.data);
+                if (response.data) {
+                    const updatedData = response.data.map((item) => ({
+                        ...item,
+                        profilePic: item.profilePic
+                            ? `/ProfilePic/${item.profilePic.split("\\").pop()}`
+                            : null,
+                    }));
+                    setProfileData(updatedData);
+                } else {
+                    console.error("Response data is undefined or null");
+                }
             } catch (error) {
                 console.error("Error fetching user's profile", error);
             }
         };
         fetchData();
     }, []);
+
+
+
 
     return (
         <section>
@@ -52,6 +62,7 @@ const Artist = () => {
             <div className="grid grid-row-5 mt-8">
                 {profileData !== null ? (
                     profileData.map((item, index) => (
+                        <Link>
                         <div key={index}>
                             <div>
                                 {item.profilePic ? (
@@ -72,6 +83,7 @@ const Artist = () => {
                                 <p>{item.userName}</p>
                             </div>
                         </div>
+                        </Link>
                     ))
                 ) : (
                     <p>Loading...</p>
