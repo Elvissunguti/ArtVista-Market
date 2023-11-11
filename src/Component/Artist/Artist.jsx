@@ -62,7 +62,7 @@ const Artist = () => {
             <div className="grid grid-row-5 mt-8">
                 {profileData !== null ? (
                     profileData.map((item, index) => (
-                        <Link>
+                        <Link to={`/seller-profile/${item.userName}`}>
                         <div key={index}>
                             <div>
                                 {item.profilePic ? (

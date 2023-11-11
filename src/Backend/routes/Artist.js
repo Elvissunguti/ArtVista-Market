@@ -76,6 +76,11 @@ async (req, res) => {
         const user = await User.findOne({ userName });
 
         const userId = user._id;
+        
+        const profile = await Profile.findOne({ userId });
+
+        const profilePic = profile.profilePic ? profile.profilePic.replace("../../../public", "") : null;
+        const location = profile.location || null;
 
         const artworks = await ArtWork.find({userId});
 
@@ -87,14 +92,30 @@ async (req, res) => {
             const firstPhoto = artwork.artPhoto[0] || null;
 
             return {
-                artPhoto: firstPhoto.replace("../../../public", ""),
+                _id: artwork._id,
                 title: artwork.title,
                 price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
                 
             }
         });
 
-        return res.json({ data: simplifiedArtwork });
+        return res.json({ data: {
+            userName,
+            userId,
+            profilePic,
+            location,
+            artworkCount: artworks.length,
+            artworks: simplifiedArtwork
+        } });
 
     } catch (error) {
         console.error("Error fetching user proifile", error);

@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import NavBar from "../Home/NavBar";
+import { useParams } from "react-router-dom";
+import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
+import ArtCard from "../Shared/ArtCard";
 
 
 const ArtistPage = () => {
@@ -8,6 +11,32 @@ const ArtistPage = () => {
     const [ artWorkData, setArtWorkData ] = useState([]);
     const [ displayDescription, setDisplayDescription ] = useState(false);
 
+    const { userName } = useParams();
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try{
+                const response = await makeAuthenticatedGETRequest(
+                `/artist/profile/${userName}`
+                );
+                if (response.data) {
+                    const updatedData = {
+                        ...response.data,
+                        profilePic: response.data.profilePic
+                            ? `/ProfilePic/${response.data.profilePic.split("\\").pop()}`
+                            : null,
+                    };
+                    setArtWorkData(updatedData);
+                } else {
+                    console.error("Response data is undefined or null");
+                }
+
+            } catch (error){
+                console.error("Error fetching profile of an artist", error);
+            }
+        }
+        fetchData();
+    }, [userName]);
 
     const toggleArtWork = () => {
         setArtWork(true);
@@ -27,14 +56,14 @@ const ArtistPage = () => {
             <div>
                 <div>
                     <img 
-                      src={profilePic}
+                      src={artWorkData.profilePic}
                       alt="profilePic"
                       className=""
                     />
                     <div>
-                        <p>userName</p>
-                        <p>location</p>
-                        <p>Total Artwork no</p>
+                        <p>{artWorkData.userName}</p>
+                        <p>{artWorkData.location}</p>
+                        <p>Total Artwork {artWorkData.artworkCount}</p>
                     </div>
                 </div>
             </div>
@@ -87,13 +116,22 @@ const ArtistPage = () => {
                                 <div>
                                 <label>Filter by category</label>
                                 </div>
-                                <div>
-                                    { artWorkData.map((item, index) => (
+                                <div className="grid grid-cols-3 gap-3">
+                                    { artWorkData.artworks && artWorkData.artworks.map((item, index) => (
                                         <div>
                                             <ArtCard
                                               artPhoto={item.artPhoto}
                                               title={item.title}
                                               price={item.price}
+                                              artWorkId={item._id}
+                                              size={item.size}
+                                              medium={item.medium}
+                                              surface={item.surface}
+                                              artType={item.artType}
+                                              creation={item.creation}
+                                              quality={item.quality}
+                                              delivery={item.delivery}
+                                              description={item.description}
 
                                             />
                                         </div>
@@ -104,7 +142,7 @@ const ArtistPage = () => {
                         )}
                         {displayDescription && (
                             <div>
-                                <p>{description}</p>
+                                <p>{artWorkData.description}</p>
                             </div>
                         )}
                     </div>
