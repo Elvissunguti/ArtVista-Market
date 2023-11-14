@@ -7,7 +7,7 @@ import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 
 
-const Search = ({ children }) => {
+const Search = ({ onSortChange, children }) => {
 
     const [ artistData, setArtistData ] = useState([]);
     const minRange = 249;
@@ -161,13 +161,14 @@ const Search = ({ children }) => {
                 <div className="flex flex-col w-4/5">
                 <div className="flex justify-end w-full ">
                     
-                    <select className="px-2 py-3 border  rounded-full">
-                        <option disabled selected>Sort by:</option>
-                        <option >Alphabetically, Z-A</option>
-                        <option >Price, low to high</option>
-                        <option>Price, high to low</option>
-                        <option>Date, old to new</option>
-                        <option>Date, new to old</option>
+                    <select onChange={onSortChange} className="px-2 py-3 border  rounded-full">
+                        <option disabled >Sort by:</option>
+                        <option value="alphabeticalAsc">Alphabetically, A-Z</option>
+                        <option value="alphabeticalDesc">Alphabetically, Z-A</option>
+                        <option value="priceAsc" >Price, low to high</option>
+                        <option value="priceDesc">Price, high to low</option>
+                        <option value="dateAsc">Date, old to new</option>
+                        <option value="dateDesc">Date, new to old</option>
                       
                     </select>
                     

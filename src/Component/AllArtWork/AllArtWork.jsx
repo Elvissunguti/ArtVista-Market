@@ -7,6 +7,7 @@ import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 const AllArtWork = () => {
 
     const [ artWork, setArtWork ] = useState([]);
+    const [sortBy, setSortBy] = useState(null);
 
     useEffect(() => {
         const fetchData = async() => {
@@ -14,20 +15,42 @@ const AllArtWork = () => {
                 const response = await makeAuthenticatedGETRequest(
                     "/artwork/get/allartwork",
                 );
-                setArtWork(response.data);
+                let sortedArtWork = response.data;
+
+                if (sortBy === "alphabeticalDesc") {
+                    sortedArtWork.sort((a, b) => b.title.localeCompare(a.title));
+                  } else if (sortBy === "priceAsc") {
+                    sortedArtWork.sort((a, b) => a.price - b.price);
+                  } else if (sortBy === "priceDesc") {
+                    sortedArtWork.sort((a, b) => b.price - a.price);
+                  } else if (sortBy === "dateAsc") {
+                    sortedArtWork.sort((a, b) => new Date(a.creationYear) - new Date(b.creationYear));
+                  } else if (sortBy === "dateDesc") {
+                    sortedArtWork.sort((a, b) => new Date(b.creationYear) - new Date(a.creationYear));
+                  } else if (sortBy === "alpabeticalAsc"){
+                    sortedArtWork.sort((a, b) => a.title.localeCompare(b.title));
+                  }
+
+
+                setArtWork(sortedArtWork);
             } catch (error){
                 console.log("Error fetching all artworks", error);
 
             }
         }
         fetchData()
-    }, [])
+    }, [sortBy]);
+
+    const handleSortChange = (e) => {
+        const selectedSortBy = e.target.value;
+        setSortBy(selectedSortBy);
+      };
 
     return (
         <section>
             <NavBar />
             <div>
-                <Search>
+                <Search onSortChange={handleSortChange}>
                     <div className="grid grid-cols-4 gap-4 mt-14 mx-6">
                         {artWork.map((artItem, index) => (
                             <div key={index} className="mt-14">
