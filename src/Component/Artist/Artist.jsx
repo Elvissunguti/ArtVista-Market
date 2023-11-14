@@ -7,6 +7,9 @@ import { Link } from "react-router-dom";
 
 const Artist = () => {
     const [profileData, setProfileData] = useState(null);
+    const [ searchText, setSearchText ] = useState("");
+    const [searchResults, setSearchResults] = useState(null);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -32,6 +35,40 @@ const Artist = () => {
         fetchData();
     }, []);
 
+    useEffect(() => {
+        // Refetch data when searchText changes
+        fetchSearchResults();
+      }, [searchText]);
+
+      const fetchSearchResults = async () => {
+        try {
+          // Adjust the API route and query parameter based on your backend implementation
+          const response = await makeAuthenticatedGETRequest(
+            `/search/artistsearch?searchText=${searchText}`
+          );
+          if (response.data) {
+            const updatedData = response.data.map((item) => ({
+              ...item,
+              profilePic: item.profilePic
+                ? `/ProfilePic/${item.profilePic.split("\\").pop()}`
+                : null,
+            }));
+            setSearchResults(updatedData);
+          } else {
+            setSearchResults(null);
+            console.error("Response data is undefined or null");
+          }
+        } catch (error) {
+          console.error("Error fetching search results", error);
+        }
+      };
+
+      const handleSearch = () => {
+        // Trigger a refetch when the search button is clicked
+        fetchSearchResults();
+      };
+
+      const displayData = searchText ? searchResults : profileData;
 
 
 
@@ -52,16 +89,18 @@ const Artist = () => {
                         name="search"
                         id="search"
                         placeholder="Search"
+                        value={searchText}
+                        onChange={(e) => setSearchText(e.target.value)}
                         className=""
                     />
-                    <button>
+                    <button onClick={handleSearch}>
                         <IoIosSearch /> Search
                     </button>
                 </div>
             </div>
             <div className="grid grid-cols-4 mt-8">
-                {profileData !== null ? (
-                    profileData.map((item, index) => (
+                {displayData !== null ? (
+                    displayData.map((item, index) => (
                         <Link to={`/seller-profile/${item.userName}`} className="grid grid-cols-4 mt-8">
                         <div key={index} >
                             <div className="">
