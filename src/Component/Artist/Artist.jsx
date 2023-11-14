@@ -38,8 +38,8 @@ const Artist = () => {
     return (
         <section>
             <NavBar />
-            <div className="flex flex-row">
-                <div>
+            <div className="flex flex-row justify-between mt-6">
+                <div className="flex flex-row">
                     <p>Sort By:</p>
                     <select>
                         <option>Name Ascending</option>
@@ -59,23 +59,23 @@ const Artist = () => {
                     </button>
                 </div>
             </div>
-            <div className="grid grid-row-5 mt-8">
+            <div className="grid grid-cols-4 mt-8">
                 {profileData !== null ? (
                     profileData.map((item, index) => (
-                        <Link to={`/seller-profile/${item.userName}`}>
-                        <div key={index}>
-                            <div>
+                        <Link to={`/seller-profile/${item.userName}`} className="grid grid-cols-4 mt-8">
+                        <div key={index} >
+                            <div className="">
                                 {item.profilePic ? (
                                     <img
                                         src={item.profilePic}
                                         alt="user thumbnail"
-                                        className="h-48 w-48 object-cover"
+                                        className="h-48 w-48 "
                                     />
                                 ) : (
                                     <img
                                         src={thumbnail}
                                         alt="user thumbnail"
-                                        className=""
+                                        className="h-48 w-48"
                                     />
                                 )}
                             </div>

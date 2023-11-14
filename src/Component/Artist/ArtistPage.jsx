@@ -53,15 +53,15 @@ const ArtistPage = () => {
     return (
         <section>
             <NavBar />
-            <div>
-                <div>
+            <div className='mt-6'>
+                <div className="flex flex-row">
                     <img 
                       src={artWorkData.profilePic}
                       alt="profilePic"
-                      className=""
+                      className="h-32 w-32"
                     />
                     <div>
-                        <p>{artWorkData.userName}</p>
+                        <p className="text-2xl font-semibold">{artWorkData.userName}</p>
                         <p>{artWorkData.location}</p>
                         <p>Total Artwork {artWorkData.artworkCount}</p>
                     </div>

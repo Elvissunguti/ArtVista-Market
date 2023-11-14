@@ -12,6 +12,7 @@ const WishListRoutes = require("./src/Backend/routes/WishList");
 const CartListRoutes = require("./src/Backend/routes/CartList");
 const ArtistRoutes = require("./src/Backend/routes/Artist");
 const ProfileRoutes = require("./src/Backend/routes/Profile");
+const SearchRoutes = require("./src/Backend/routes/Search");
 
 
 const app = express();
@@ -74,6 +75,7 @@ app.use("/wishList", WishListRoutes);
 app.use("/cartList", CartListRoutes);
 app.use("/artist", ArtistRoutes);
 app.use("/profile", ProfileRoutes);
+app.use("/search", SearchRoutes);
 
 
 app.listen(PORT, () => {

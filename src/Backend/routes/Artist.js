@@ -81,6 +81,7 @@ async (req, res) => {
 
         const profilePic = profile.profilePic ? profile.profilePic.replace("../../../public", "") : null;
         const location = profile.location || null;
+        const description = profile.description || null;
 
         const artworks = await ArtWork.find({userId});
 
@@ -113,6 +114,7 @@ async (req, res) => {
             userId,
             profilePic,
             location,
+            description,
             artworkCount: artworks.length,
             artworks: simplifiedArtwork
         } });
