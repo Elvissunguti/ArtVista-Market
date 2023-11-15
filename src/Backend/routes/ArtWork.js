@@ -124,4 +124,34 @@ async (req, res) => {
     }
 });
 
+
+router.get("/medium",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const mediumCounts = await ArtWork.aggregate([
+            {
+              $group: {
+                _id: "$medium",
+                count: { $sum: 1 }
+              }
+            },
+            {
+              $project: {
+                medium: "$_id",
+                count: 1,
+                _id: 0
+              }
+            }
+          ]);
+    
+          return res.json({ mediumCounts });
+
+    } catch (error){
+        console.error("Error fetching all the different types of medium in artWork", error);
+        return res.json({ error: "Error fetching different types of medium in the artworks" });
+    }
+});
+
 module.exports = router;
