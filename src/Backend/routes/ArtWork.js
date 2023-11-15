@@ -146,7 +146,7 @@ async (req, res) => {
             }
           ]);
     
-          return res.json({ mediumCounts });
+          return res.json({ data: mediumCounts });
 
     } catch (error){
         console.error("Error fetching all the different types of medium in artWork", error);

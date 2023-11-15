@@ -10,6 +10,7 @@ import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 const Search = ({ onSortChange, children }) => {
 
     const [ artistData, setArtistData ] = useState([]);
+    const [ medium, setMedium ] = useState([]);
     const minRange = 249;
     const maxRange = 1000000;
 
@@ -30,6 +31,24 @@ const Search = ({ onSortChange, children }) => {
             }
         }
         fetchData();
+    }, []);
+
+    useEffect(() => {
+        const mediumData = async () => {
+            try{
+                const response = await makeAuthenticatedGETRequest(
+                    "/artwork/medium"
+                );
+                const modifiedMedium = response.data.map(item => ({
+                    value: item.medium,
+                    count: item.count
+                }));
+                setMedium(modifiedMedium);
+            } catch (error){
+                console.error("Error fetching the different medium used", error);
+            }
+        };
+        mediumData();
     }, []);
 
     const handleRangeChange = (newRange) => {
@@ -130,14 +149,14 @@ const Search = ({ onSortChange, children }) => {
                     <div>
                         <p className="text-xl font-semibold">MATERIAL</p>
                         <div className="max-h-64 overflow-auto custom-scrollbar">
-                            {Materials.map((material, index) => (
+                            {medium.map((material, index) => (
                                 <div key={index} className="my-3">
                                     <input
                                        type="radio"
                                        name="material"
-                                       value={material}
+                                       value={material.value}
                                     />
-                                    <label className="ml-3">{material}</label>
+                                    <label className="ml-3">{material.value} ({material.count}) </label>
                                 </div>
                             ))}
                         </div>
