@@ -11,6 +11,7 @@ const Search = ({ onSortChange, children }) => {
 
     const [ artistData, setArtistData ] = useState([]);
     const [ medium, setMedium ] = useState([]);
+    const [ surface, setSurface ] = useState([]);
     const minRange = 249;
     const maxRange = 1000000;
 
@@ -50,6 +51,25 @@ const Search = ({ onSortChange, children }) => {
         };
         mediumData();
     }, []);
+
+
+    useEffect(() => {
+        const surfaceData = async () => {
+            try{
+                const response = await makeAuthenticatedGETRequest(
+                    "/artwork/surface"
+                );
+                const modifiedSurface = response.data.map(item => ({
+                    value: item.surface,
+                    count: item.count
+                }));
+                setSurface(modifiedSurface)
+
+            } catch (error){
+                console.error("Error fetching the different surface used in the artworks", error);
+            }
+        }
+    })
 
     const handleRangeChange = (newRange) => {
         setRange(newRange);
@@ -164,14 +184,14 @@ const Search = ({ onSortChange, children }) => {
                     <div>
                         <p className="text-xl font-semibold">SURFACE</p>
                         <div className="max-h-64 overflow-auto custom-scrollbar">
-                            {Surfaces.map((surface, index) => (
+                            {surface.map((surface, index) => (
                                 <div key={index} className="my-3">
                                     <input
                                         type="radio"
                                         name="surface"
-                                        value={surface}
+                                        value={surface.value}
                                     />
-                                    <label className="ml-3">{surface}</label>
+                                    <label className="ml-3">{surface.value} ({surface.count})</label>
                                 </div>
                             ))}
                         </div>
