@@ -154,4 +154,34 @@ async (req, res) => {
     }
 });
 
+
+router.get("/surface",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const surfaceCounts = await ArtWork.aggregate([
+            {
+              $group: {
+                _id: "$surface",
+                count: { $sum: 1 }
+              }
+            },
+            {
+              $project: {
+                surface: "$_id",
+                count: 1,
+                _id: 0
+              }
+            }
+          ]);
+    
+          return res.json({ data: surfaceCounts });
+
+    } catch (error){
+        console.error("Error fetching all the different types of surface used in the artwork", error);
+        return res.json({ error: "Error fetching different types of surfaces used in the artworks" });
+    }
+})
+
 module.exports = router;
