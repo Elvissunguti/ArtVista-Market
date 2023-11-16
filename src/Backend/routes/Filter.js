@@ -1,6 +1,7 @@
 const express = require("express");
 const passport = require("passport");
 const ArtWork = require("../Model/ArtWork");
+const User = require("../Model/User");
 const router = express.Router();
 
 
@@ -8,11 +9,17 @@ router.get("/all",
 passport.authenticate("jwt", {session: false}),
 async (req, res) => {
     try{
-        const { userId, medium, surface } = req.query;
+        const { userName, medium, surface } = req.query;
 
-        if (userId) {
-            // If userId is provided, find artworks by the user
-            const userArtwork = await ArtWork.find({ userId });
+        if (userName) {
+          const user = await User.findOne({ userName });
+  
+          if (!user) {
+            return res.json({ error: "User not found" });
+          }
+  
+          // Use the found userId to fetch artworks by the user
+          const userArtwork = await ArtWork.find({ userId: user._id });
 
             // Extract unique medium and surface values along with counts
             const mediumCounts = {};
