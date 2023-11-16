@@ -11,26 +11,29 @@ passport.authenticate("jwt", {session: false}),
 async (req, res) => {
     try{
 
-        const artists = await User.find({}, 'userName');
+        const artistsWithArtwork = await User.find({
+            _id: {
+                $in: await ArtWork.distinct("userId")
+            }
+        }, 'userName');
 
-        const artistInfo = await Promise.all(artists.map( async (artist) => {
+        const artistInfo = await Promise.all(artistsWithArtwork.map(async (artist) => {
             const artistId = artist._id;
-            const artWorkCount = await ArtWork.countDocuments({ userId: artistId})
+            const artWorkCount = await ArtWork.countDocuments({ userId: artistId })
 
             return {
                 artist: artist.userName,
-                artWorkCount : artWorkCount
+                artWorkCount: artWorkCount
             };
         }));
 
         return res.json({ data: artistInfo });
 
-
     } catch (error){
         console.error("Error fetching the name of all the artist", error);
-        return res.json({ error: "Error fetcing the name of all the artist"})
+        return res.json({ error: "Error fetcing the name of all the artist"});
     }
-})
+});
 
 router.get("/get/artist",
 passport.authenticate("jwt", {session: false}),
