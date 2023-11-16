@@ -218,7 +218,7 @@ async (req, res) => {
         return res.json({ data: simplifiedArtwork })
 
     } catch (error){
-        console.error("Error fetching the specific type of medium");
+        console.error("Error fetching the specific type of medium", error);
         return res.json({ error: "Error fetching the specific type of medium"});
     }
 });

@@ -1,0 +1,109 @@
+const express = require("express");
+const passport = require("passport");
+const ArtWork = require("../Model/ArtWork");
+const router = express.Router();
+
+
+router.get("/all",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+        const { userId, medium, surface } = req.query;
+
+        if (userId) {
+            // If userId is provided, find artworks by the user
+            const userArtwork = await ArtWork.find({ userId });
+
+            // Extract unique medium and surface values along with counts
+            const mediumCounts = {};
+            const surfaceCounts = {};
+
+            userArtwork.forEach((artwork) => {
+                // Count medium occurrences
+                if (artwork.medium) {
+                    mediumCounts[artwork.medium] = (mediumCounts[artwork.medium] || 0) + 1;
+                }
+
+                // Count surface occurrences
+                if (artwork.surface) {
+                    surfaceCounts[artwork.surface] = (surfaceCounts[artwork.surface] || 0) + 1;
+                }
+            });
+
+            const simplifiedArtwork = userArtwork.map((artwork) => {
+                const firstPhoto = artwork.artPhoto[0] || null;
+                return {
+                    _id: artwork._id,
+                    title: artwork.title,
+                    price: artwork.price,
+                    artPhoto: firstPhoto.replace("../../../public", ""),
+                    size: artwork.size,
+                    medium: artwork.medium,
+                    surface: artwork.surface,
+                    artType: artwork.artType,
+                    creationYear: artwork.creationYear,
+                    quality: artwork.quality,
+                    delivery: artwork.delivery,
+                    description: artwork.description,
+                };
+            });
+
+            return res.json({
+                mediumCounts,
+                surfaceCounts,
+                simplifiedArtwork,
+            });
+        }
+
+        // If userId is not provided, proceed with the original logic to fetch and return artwork
+        const filters = {};
+        if (medium) filters.medium = medium;
+        if (surface) filters.surface = surface;
+
+        const artWork = await ArtWork.find(filters);
+
+        const mediumCounts = {};
+        const surfaceCounts = {};
+
+        artWork.forEach((artwork) => {
+            // Count medium occurrences
+            if (artwork.medium) {
+                mediumCounts[artwork.medium] = (mediumCounts[artwork.medium] || 0) + 1;
+            }
+
+            // Count surface occurrences
+            if (artwork.surface) {
+                surfaceCounts[artwork.surface] = (surfaceCounts[artwork.surface] || 0) + 1;
+            }
+        });
+
+        const simplifiedArtwork = artWork.map((artwork) => {
+            const firstPhoto = artwork.artPhoto[0] || null;
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
+            };
+        });
+
+        return res.json({
+            mediumCounts,
+            surfaceCounts,
+            simplifiedArtwork,
+        });
+
+    } catch(error){
+        console.error("Error fetching artwork according to the filters", error);
+        return res.json({ error: "Error fetching artwork according to the filter" });
+    }
+});
+module.exports = router;

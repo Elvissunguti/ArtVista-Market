@@ -13,6 +13,7 @@ const CartListRoutes = require("./src/Backend/routes/CartList");
 const ArtistRoutes = require("./src/Backend/routes/Artist");
 const ProfileRoutes = require("./src/Backend/routes/Profile");
 const SearchRoutes = require("./src/Backend/routes/Search");
+const FilterRoutes = require("./src/Backend/routes/Filter");
 
 
 const app = express();
@@ -76,6 +77,7 @@ app.use("/cartList", CartListRoutes);
 app.use("/artist", ArtistRoutes);
 app.use("/profile", ProfileRoutes);
 app.use("/search", SearchRoutes);
+app.use("/filter", FilterRoutes);
 
 
 app.listen(PORT, () => {

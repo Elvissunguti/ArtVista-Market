@@ -68,8 +68,9 @@ const Search = ({ onSortChange, children }) => {
             } catch (error){
                 console.error("Error fetching the different surface used in the artworks", error);
             }
-        }
-    })
+        };
+        surfaceData();
+    }, [])
 
     const handleRangeChange = (newRange) => {
         setRange(newRange);
