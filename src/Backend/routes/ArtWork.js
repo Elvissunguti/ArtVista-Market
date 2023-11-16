@@ -182,6 +182,45 @@ async (req, res) => {
         console.error("Error fetching all the different types of surface used in the artwork", error);
         return res.json({ error: "Error fetching different types of surfaces used in the artworks" });
     }
-})
+});
+
+router.get("/get/medium",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const selectedMedium = req.query.medium;
+
+        const artWork = await ArtWork.find({ medium: selectedMedium });
+
+        
+        const simplifiedArtwork = artWork.map(artwork => {
+            
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
+            };
+        })
+
+
+        return res.json({ data: simplifiedArtwork })
+
+    } catch (error){
+        console.error("Error fetching the specific type of medium");
+        return res.json({ error: "Error fetching the specific type of medium"});
+    }
+});
 
 module.exports = router;
