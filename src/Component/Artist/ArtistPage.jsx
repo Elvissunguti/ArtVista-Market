@@ -3,6 +3,7 @@ import NavBar from "../Home/NavBar";
 import { useParams } from "react-router-dom";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 import ArtCard from "../Shared/ArtCard";
+import thumbnail from "../../Assets/thumbnail.webp";
 
 
 const ArtistPage = () => {
@@ -55,11 +56,21 @@ const ArtistPage = () => {
             <NavBar />
             <div className='mt-6'>
                 <div className="flex flex-row">
-                    <img 
-                      src={artWorkData.profilePic}
-                      alt="profilePic"
-                      className="h-32 w-32"
-                    />
+                    {artWorkData ? (
+                        <img 
+                           src={artWorkData.profilePic}
+                           alt="profilePic"
+                           className="h-32 w-32"
+                        />
+
+                    ) : (
+                        <img  
+                        src={thumbnail}
+                        alt="user thumbnail"
+                        className="h-32 w-32"
+                        />
+                    )}
+
                     <div>
                         <p className="text-2xl font-semibold">{artWorkData.userName}</p>
                         <p>{artWorkData.location}</p>
