@@ -21,6 +21,8 @@ const Search = ({ onSortChange, onFilterChange, children }) => {
     const [ userName, setUserName ] = useState(null);
     const [selectedMedium, setSelectedMedium] = useState(null);
     const [selectedSurface, setSelectedSurface] = useState(null);
+    const [ filteredMedium, setFilteredMedium ] = useState([]);
+    const [ filteredSurface, setFilteredSurface ] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -81,9 +83,21 @@ const Search = ({ onSortChange, onFilterChange, children }) => {
             try {
                 console.log("Filter Parameters:", userName, selectedMedium, selectedSurface);
                 const response = await makeAuthenticatedGETRequest(
-                    `/filter/all?userName=${userName}&medium=${selectedMedium}&surface=${selectedSurface}`
+                    `/filter/all?userName=${userName || ''}&medium=${selectedMedium || ''}&surface=${selectedSurface || ''}`
                 );
                 console.log("Response:", response.data);
+                const modifiedMedium = response.data.mediumCounts.map(item => ({
+                    value: item.medium,
+                    count: item.count
+                }));
+                setFilteredMedium(modifiedMedium);
+    
+                const modifiedSurface = response.data.surfaceCounts.map(item => ({
+                    value: item.surface,
+                    count: item.count
+                }));
+                setFilteredSurface(modifiedSurface);
+
                 onFilterChange(response.data);
             } catch (error) {
                 console.error("Error fetching filtered artworks", error);
@@ -193,7 +207,7 @@ const Search = ({ onSortChange, onFilterChange, children }) => {
                     <div>
                         <p className="text-xl font-semibold">MATERIAL</p>
                         <div className="max-h-64 overflow-auto custom-scrollbar">
-                            {medium.map((material, index) => (
+                           {( filteredMedium.length > 0 ? filteredMedium : medium).map((material, index) => (
                                 <div key={index} className="my-3">
                                     <input
                                        type="checkbox"
@@ -209,7 +223,7 @@ const Search = ({ onSortChange, onFilterChange, children }) => {
                     <div>
                         <p className="text-xl font-semibold">SURFACE</p>
                         <div className="max-h-64 overflow-auto custom-scrollbar">
-                            {surface.map((surface, index) => (
+                          {(filteredSurface.length > 0 ? filteredSurface : surface).map((surface, index) => (
                                 <div key={index} className="my-3">
                                     <input
                                         type="checkbox"

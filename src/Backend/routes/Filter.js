@@ -37,6 +37,16 @@ async (req, res) => {
                 }
             });
 
+            const mediumCountsArray = Object.keys(mediumCounts).map((medium) => ({
+                medium,
+                count: mediumCounts[medium],
+              }));
+        
+            const surfaceCountsArray = Object.keys(surfaceCounts).map((surface) => ({
+                surface,
+                count: surfaceCounts[surface],
+              }));
+
             const simplifiedArtwork = userArtwork.map((artwork) => {
                 const firstPhoto = artwork.artPhoto[0] || null;
                 return {
@@ -56,8 +66,8 @@ async (req, res) => {
             });
 
             return res.json({ data: {
-                mediumCounts,
-                surfaceCounts,
+                mediumCounts: mediumCountsArray,
+                surfaceCounts: surfaceCountsArray,
                 simplifiedArtwork,
             },
             });
@@ -85,6 +95,16 @@ async (req, res) => {
             }
         });
 
+        const mediumCountsArray = Object.keys(mediumCounts).map((medium) => ({
+            medium,
+            count: mediumCounts[medium],
+          }));
+    
+        const surfaceCountsArray = Object.keys(surfaceCounts).map((surface) => ({
+            surface,
+            count: surfaceCounts[surface],
+          }));
+
         const simplifiedArtwork = artWork.map((artwork) => {
             const firstPhoto = artwork.artPhoto[0] || null;
             return {
@@ -104,8 +124,8 @@ async (req, res) => {
         });
 
         return res.json({ data: {
-            mediumCounts,
-            surfaceCounts,
+            mediumCounts: mediumCountsArray,
+            surfaceCounts: surfaceCountsArray,
             simplifiedArtwork,
         },
         });

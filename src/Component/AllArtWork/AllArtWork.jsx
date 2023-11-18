@@ -82,17 +82,17 @@ const AllArtWork = () => {
                                   <div key={index} className="mt-14">
                                       <ArtCard
                                           artWorkId={artItem._id}
-                                                                         title={artItem.title}
-                                                                         price={artItem.price}
-                                                                         artPhoto={artItem.artPhoto}
-                                                                         size={artItem.size}
-                                                                         medium={artItem.medium}
-                                                                         surface={artItem.surface}
-                                                                         artType={artItem.artType}
-                                                                         creationYear={artItem.creationYear}
-                                                                         quality={artItem.quality}
-                                                                         delivery={artItem.delivery}
-                                                                         description={artItem.description}
+                                          title={artItem.title}
+                                          price={artItem.price}
+                                          artPhoto={artItem.artPhoto}
+                                          size={artItem.size}
+                                          medium={artItem.medium}
+                                          surface={artItem.surface}
+                                          artType={artItem.artType}
+                                          creationYear={artItem.creationYear}
+                                          quality={artItem.quality}
+                                          delivery={artItem.delivery}
+                                          description={artItem.description}
                                       />
                                   </div>
                               ))}
