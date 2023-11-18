@@ -7,7 +7,7 @@ import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
 
 
-const Search = ({ onSortChange, children }) => {
+const Search = ({ onSortChange, onFilterChange, children }) => {
 
     const [ artistData, setArtistData ] = useState([]);
     const [ medium, setMedium ] = useState([]);
@@ -18,6 +18,9 @@ const Search = ({ onSortChange, children }) => {
     const [range, setRange] = useState([minRange, maxRange]);
     const [minPrice, setMinPrice] = useState(minRange);
     const [maxPrice, setMaxPrice] = useState(maxRange);
+    const [ userName, setUserName ] = useState(null);
+    const [selectedMedium, setSelectedMedium] = useState(null);
+    const [selectedSurface, setSelectedSurface] = useState(null);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -70,7 +73,26 @@ const Search = ({ onSortChange, children }) => {
             }
         };
         surfaceData();
-    }, [])
+    }, []);
+
+
+    useEffect(() => {
+        const handleFilterChange = async () => {
+            try {
+                console.log("Filter Parameters:", userName, selectedMedium, selectedSurface);
+                const response = await makeAuthenticatedGETRequest(
+                    `/filter/all?userName=${userName}&medium=${selectedMedium}&surface=${selectedSurface}`
+                );
+                console.log("Response:", response.data);
+                onFilterChange(response.data);
+            } catch (error) {
+                console.error("Error fetching filtered artworks", error);
+            }
+        };
+    
+        handleFilterChange();
+    }, [userName, selectedMedium, selectedSurface]);
+    
 
     const handleRangeChange = (newRange) => {
         setRange(newRange);
@@ -142,7 +164,7 @@ const Search = ({ onSortChange, children }) => {
                             {Collections.map((collection, index) => (
                                <div key={index} className="my-3">
                                   <input 
-                                     type="radio" 
+                                     type="checkbox" 
                                      name="collection"
                                      value={collection}
                                     />
@@ -158,9 +180,10 @@ const Search = ({ onSortChange, children }) => {
                             {artistData.map((artist, index) => (
                                 <div key={index} className="my-3">
                                     <input
-                                       type="radio"
+                                       type="checkbox"
                                        name="artist"
                                        value={artist.artist}
+                                       onChange={() => setUserName(artist.artist)}
                                     />
                                     <label className="ml-3">{artist.artist} <span>{artist.artWorkCount}</span> </label>
                                 </div>
@@ -173,9 +196,10 @@ const Search = ({ onSortChange, children }) => {
                             {medium.map((material, index) => (
                                 <div key={index} className="my-3">
                                     <input
-                                       type="radio"
+                                       type="checkbox"
                                        name="material"
                                        value={material.value}
+                                       onChange={() => setSelectedMedium(material.value)}
                                     />
                                     <label className="ml-3">{material.value} ({material.count}) </label>
                                 </div>
@@ -188,9 +212,10 @@ const Search = ({ onSortChange, children }) => {
                             {surface.map((surface, index) => (
                                 <div key={index} className="my-3">
                                     <input
-                                        type="radio"
+                                        type="checkbox"
                                         name="surface"
                                         value={surface.value}
+                                        onChange={() => setSelectedSurface(surface.value)}
                                     />
                                     <label className="ml-3">{surface.value} ({surface.count})</label>
                                 </div>

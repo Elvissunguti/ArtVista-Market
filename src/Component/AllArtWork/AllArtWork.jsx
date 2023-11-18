@@ -8,6 +8,7 @@ const AllArtWork = () => {
 
     const [ artWork, setArtWork ] = useState([]);
     const [sortBy, setSortBy] = useState(null);
+    const [filteredArtWork, setFilteredArtWork] = useState([]);
 
     useEffect(() => {
         const fetchData = async() => {
@@ -46,31 +47,56 @@ const AllArtWork = () => {
         setSortBy(selectedSortBy);
       };
 
+
+      const handleFilterChange = (filteredArtWork) => {
+        console.log("Filtered Artwork:", filteredArtWork);
+        setFilteredArtWork(filteredArtWork);
+    };
+
     return (
         <section>
             <NavBar />
             <div>
-                <Search onSortChange={handleSortChange}>
+                <Search onSortChange={handleSortChange} onFilterChange={handleFilterChange}>
                     <div className="grid grid-cols-4 gap-4 mt-14 mx-6">
-                        {artWork.map((artItem, index) => (
-                            <div key={index} className="mt-14">
-                                <ArtCard
-                                artWorkId={artItem._id}
-                                title={artItem.title}
-                                price={artItem.price}
-                                artPhoto={artItem.artPhoto}
-                                size={artItem.size}
-                                medium={artItem.medium}
-                                surface={artItem.surface}
-                                artType={artItem.artType}
-                                creationYear={artItem.creationYear}
-                                quality={artItem.quality}
-                                delivery={artItem.delivery}
-                                description={artItem.description}
-                                   
-                                />
-                            </div>
-                        ))}
+                    {filteredArtWork && filteredArtWork.simplifiedArtwork  && filteredArtWork.simplifiedArtwork.length> 0
+                            ? filteredArtWork.simplifiedArtwork.map((artItem, index) => (
+                                  <div key={index} className="mt-14">
+                                      <ArtCard
+                                         artWorkId={artItem._id}
+                                         title={artItem.title}
+                                         price={artItem.price}
+                                         artPhoto={artItem.artPhoto}
+                                         size={artItem.size}
+                                         medium={artItem.medium}
+                                         surface={artItem.surface}
+                                         artType={artItem.artType}
+                                         creationYear={artItem.creationYear}
+                                         quality={artItem.quality}
+                                         delivery={artItem.delivery}
+                                         description={artItem.description}
+                                      />
+                                  </div>
+                              ))
+                            : artWork.map((artItem, index) => (
+                                  <div key={index} className="mt-14">
+                                      <ArtCard
+                                          artWorkId={artItem._id}
+                                                                         title={artItem.title}
+                                                                         price={artItem.price}
+                                                                         artPhoto={artItem.artPhoto}
+                                                                         size={artItem.size}
+                                                                         medium={artItem.medium}
+                                                                         surface={artItem.surface}
+                                                                         artType={artItem.artType}
+                                                                         creationYear={artItem.creationYear}
+                                                                         quality={artItem.quality}
+                                                                         delivery={artItem.delivery}
+                                                                         description={artItem.description}
+                                      />
+                                  </div>
+                              ))}
+                        
                     </div>
                 </Search>
             </div>

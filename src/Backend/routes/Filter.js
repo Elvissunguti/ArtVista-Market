@@ -55,10 +55,11 @@ async (req, res) => {
                 };
             });
 
-            return res.json({
+            return res.json({ data: {
                 mediumCounts,
                 surfaceCounts,
                 simplifiedArtwork,
+            },
             });
         }
 
@@ -102,10 +103,11 @@ async (req, res) => {
             };
         });
 
-        return res.json({
+        return res.json({ data: {
             mediumCounts,
             surfaceCounts,
             simplifiedArtwork,
+        },
         });
 
     } catch(error){
