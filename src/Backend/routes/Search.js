@@ -3,6 +3,7 @@ const passport = require("passport");
 const User = require("../Model/User");
 const Profile = require("../Model/Profile");
 const router = express.Router();
+const ArtWork = require("../Model/ArtWork");
 
 router.get("/artistsearch",
 passport.authenticate("jwt", { session: false }),
@@ -39,6 +40,54 @@ async (req, res) => {
   } catch (error) {
     console.error("Error searching for artist", error);
     return res.json({ error: "Error searching for artist" });
+  }
+});
+
+
+router.get("/artwork",
+passport.authenticate("jwt", { session: false}),
+async (req, res) => {
+  try{
+    const searchText = req.query.searchText;
+
+    const artWorks =  await ArtWork.find({
+      $or: [
+        {title: {$regex: searchText, $options: "i"} },
+        {description: {$regex: searchText, $options: "i"} },
+        {medium: {$regex: searchText, $options: "i"} },
+        {surface: {$regex: searchText, $options: "i"} },
+      ],
+    });
+
+    if(artWorks.length === 0) {
+      return res.json({ message: "search Result is empty"})
+    };
+
+    const simplifiedArtwork = artWorks.map(artwork => {
+            
+      const firstPhoto = artwork.artPhoto[0] || null;
+
+      return {
+          _id: artwork._id,
+          title: artwork.title,
+          price: artwork.price,
+          artPhoto: firstPhoto.replace("../../../public", ""),
+          size: artwork.size,
+          medium: artwork.medium,
+          surface: artwork.surface,
+          artType: artwork.artType,
+          creationYear: artwork.creationYear,
+          quality: artwork.quality,
+          delivery: artwork.delivery,
+          description: artwork.description,
+      };
+  })
+
+    res.json({ data: simplifiedArtwork });
+    
+  } catch (error){
+    console.log("Error getting search results", error);
+    return res.json({ error: "error searching for artwork" });
   }
 });
 
