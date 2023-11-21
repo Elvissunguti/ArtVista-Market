@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Search from "../Search/Search";
+import Filter from "../Filter/Filter";
 import ArtCard from "../Shared/ArtCard";
 import NavBar from "../Home/NavBar";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
@@ -57,7 +57,7 @@ const AllArtWork = () => {
         <section>
             <NavBar />
             <div>
-                <Search onSortChange={handleSortChange} onFilterChange={handleFilterChange}>
+                <Filter onSortChange={handleSortChange} onFilterChange={handleFilterChange}>
                     <div className="grid grid-cols-4 gap-4 mt-14 mx-6">
                     {filteredArtWork && filteredArtWork.simplifiedArtwork  && filteredArtWork.simplifiedArtwork.length> 0
                             ? filteredArtWork.simplifiedArtwork.map((artItem, index) => (
@@ -98,7 +98,7 @@ const AllArtWork = () => {
                               ))}
                         
                     </div>
-                </Search>
+                </Filter>
             </div>
         </section>
     )
