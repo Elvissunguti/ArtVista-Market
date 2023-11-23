@@ -10,7 +10,12 @@ const Search = () => {
                     <p>Search results</p>
                 </div>
                 <div>
-                    
+                    <input 
+                      type="text"
+                      name="searchText"
+                      id='searchText'
+                      placeholder="search for artwork"
+                    />
                 </div>
             </div>
         </section>

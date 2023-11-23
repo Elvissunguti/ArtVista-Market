@@ -97,7 +97,8 @@ const NavBar = () => {
                             {searchResults && searchResults.length > 0 ? (
                                 <div>
                                     {searchResults.map((item, index) => (
-                                        <div key={index}>
+                                        <div key={index} className="flex ">
+                                            <Link to={`/artpage/${encodeURIComponent(item.title)}`}>
                                             <img 
                                                src={item.artPhoto}
                                                alt="art Photo"
@@ -105,6 +106,7 @@ const NavBar = () => {
 
                                             />
                                             <p>{item.title}</p>
+                                            </Link>
 
                                         </div>
                                     ))}

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Materials, Quality, Surfaces } from "../Utils/ArtData" 
+import { Collections, Materials, Quality, Surfaces,  } from "../Utils/ArtData" 
 import { makeAuthenticatedMulterPostRequest } from "../Utils/Helpers";
 
 
@@ -7,6 +7,7 @@ const Product = () => {
 
     const [formData, setFormData] = useState({
         title: "",
+        category: "",
         size: "",
         medium: "",
         surface: "",
@@ -89,6 +90,18 @@ const Product = () => {
                     />
 
                     <h1 className="font-semibold mt-4 text-xl ">Details</h1>
+                    <label className="font-medium mt-4 text-lg">Category</label>
+                    <select name="category" id="category" value={formData.category} onChange={handleChange}
+                      className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                    >
+                      <option disabled value="">Select Category</option>
+                      {Collections.map((item, index) => {
+                        <option key={index} value={item}>
+                          {item}
+                        </option>
+                      })}
+                    </select>
+                    
                     <label htmlFor="size" className="text-lg">Artwork Size</label>
                     <input
                        type="text"
@@ -100,6 +113,7 @@ const Product = () => {
                        onChange={handleChange}
                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
+
                     <label className="font-medium mt-4 text-lg">Medium used</label>
                     <select name="medium" id="medium" value={formData.medium} onChange={handleChange}
                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -111,6 +125,7 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
+
                     <label className="font-medium mt-4 text-lg">Surfaces used</label>
                     <select name="surface" id="surface" value={formData.surface} onChange={handleChange}
                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -122,6 +137,7 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
+
                     <label htmlFor="artType" className="font-medium mt-4 text-lg">ArtWork type</label>
                     <select name="artType" id="artType" value={formData.artType} onChange={handleChange}
                          className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -130,6 +146,7 @@ const Product = () => {
                         <option value="Original">Original</option>
                         <option value="Copy">Copy</option>
                     </select>
+
                     <label htmlFor="creationYear" className="font-medium mt-4 text-lg">Year of Creation</label>
                     <input
                        type="number"
@@ -141,6 +158,7 @@ const Product = () => {
                        onChange={handleChange}
                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
+
                     <label htmlFor="quality" className="font-medium mt-4 text-lg">Quality</label>
                     <select name="quality" id="quality" value={formData.quality} onChange={handleChange}
                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -152,6 +170,7 @@ const Product = () => {
                             </option>
                         ))}
                     </select>
+
                     <label htmlFor="delivery" className="font-medium mt-4 text-lg">To be delivered as</label>
                     <select name="delivery" id="delivery" value={formData.delivery} onChange={handleChange}
                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
@@ -160,6 +179,7 @@ const Product = () => {
                         <option value="Rolled">Rolled</option>
                         <option value="Stretched">Stretched</option>
                     </select>
+
                     <label htmlFor="description" className="font-medium mt-4 text-lg">Description of the ArtWork</label>
                     <textarea
                       id="description"
@@ -169,6 +189,7 @@ const Product = () => {
                       onChange={handleChange}
                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
+
                     <label htmlFor="artPhoto" className="font-medium mt-4 text-lg">Photos of the ArtWork</label>
                     <input
                        type="file"
@@ -178,19 +199,21 @@ const Product = () => {
                        multiple
                        onChange={handleFileChange}
                     />
+
                     <label htmlFor="price" className="font-medium mt-4 text-lg">Price of the ArtWork</label>
                     <input 
                         type="number"
                         id="price"
                         name="price"
+                        min="0"
                         value={formData.price}
                         onChange={handleChange}
                         placeholder="In Dollars..."
                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                 
                     />
-                    <div>
-                        <button type="submit" className="flex justify-center font-medium text-white mt-7 px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 border-transparent focus:outline-none focus:ring-2 focus:ring-[#40AA54]-500 focus:ring-offset-2 cursor-pointer">
+                    <div className="flex justify-center items-center">
+                        <button type="submit" className="font-medium text-white mt-7 px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 border-transparent focus:outline-none focus:ring-2 focus:ring-[#40AA54]-500 focus:ring-offset-2 cursor-pointer">
                              SUBMIT
                         </button>
                     </div>

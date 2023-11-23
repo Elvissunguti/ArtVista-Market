@@ -27,19 +27,12 @@ export const Collections = [
     "Abstract Drawings",
     "Abstract Expressionism Drawings",
     "Abstract paintings",
-    "Acrylic Color",
     "Art Deco Drawings",
-    "Ball Point Pen",
-    "Canson Paper",
-    "Canvas",
-    "Canvas Board",
-    "Charcoal",
     "Cityscape Paintings",
     "Conceptual Drawing",
     "Documentary Drawings",
     "Drawing paper",
     "Drawings",
-    "Enamel Color",
     "Expressionism Drawings",
     "Figurative Drawings",
     "Figurative Paintings",
@@ -47,29 +40,22 @@ export const Collections = [
     "Flower Paintings",
     "Folk Drawings",
     "Graffiti Drawings",
-    "Handmade Paper",
     "Illustration Drawings",
     "Impressionist Drawings",
-    "Ink Color",
     "Landscape Paintings",
     "Minimalist Drawings",
     "Modern Art Paintings",
     "Modern Drawings",
     "Nature Paintings",
     "OHP Plastic Sheets",
-    "Oil Color",
     "Paintings", 
-    "Paper",
-    "Pencil Color",
     "Photorealism Drawings",
     "Portrait Drawings",
     "Realism Drawings",
-    "Still Life",
+    "Still Life Drawings",
     "Surrealism Drawings",
-    "Thick Paper",
-    "Watercolor",
     "Wildlife Paintings",
-    "Zen Drwaings",       
+    "Zen Drawings",       
 ];
 
 export const Materials = [
@@ -94,15 +80,6 @@ export const Surfaces = [
     "Paper",
 ];
 
-
-export const artistList = [
-    "Vista",
-    "artVista",
-    "Elvis",
-    "Proffesor",
-    "Genius",
-    "Billionaire"
-];
 
 export const Quality = [
     "Museum Quality - 100% Hand-painted",

@@ -15,13 +15,14 @@ passport.authenticate("jwt", {session: false}),
 
         try {
 
-            const { title, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
+            const { title, category, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
             const artPhoto = req.files.artPhoto.map((photo) => photo.path);
             const userId = req.user._id;
 
             const newArtwork = new ArtWork({
                 title,
+                category,
                 size,
                 medium,
                 surface,
