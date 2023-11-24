@@ -128,6 +128,48 @@ async(req, res) => {
     }
 });
 
+router.get("/allpaintings",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+        const categoryRegex = /Paintings/i;
+
+        const artworks = await ArtWork.find({ category: categoryRegex });
+
+        if(!artworks){
+            return res.json({ error: "Artwork not found" })
+        };
+
+        const simplifiedArtwork = artworks.map(artwork => {
+            
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
+            };
+        })
+
+          res.json({ data: simplifiedArtwork });
+
+
+    } catch (error){
+        console.log("Error fetching all the artwork which are drawn", error);
+        return res.json({ error: "Error fetching drawn artwork" });
+    }
+});
+
+
 
 router.get("/get/artwork/:title",
 passport.authenticate("jwt", {session: false}),
