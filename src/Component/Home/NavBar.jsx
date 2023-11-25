@@ -61,7 +61,9 @@ const NavBar = () => {
                         <li>
                             <Link to="/all artwork/drawings" className="cursor-pointer">DRAWINGS</Link>
                             </li>
-                        <li>PAITINGS</li>
+                        <li>
+                            <Link to="/all artwork/paintings" className="cursor-pointer">PAITINGS</Link>
+                            </li>
                         <li>
                             <Link to="/seller profile" className="cursor-pointer">ARTISTS</Link>
                             </li>
