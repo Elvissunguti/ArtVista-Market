@@ -58,8 +58,10 @@ const NavBar = () => {
                         <li>
                             <Link to="/all artwork" className="cursor-pointer">ALL ARTWORKS</Link>
                             </li>
+                        <li>
+                            <Link to="/all artwork/drawings" className="cursor-pointer">DRAWINGS</Link>
+                            </li>
                         <li>PAITINGS</li>
-                        <li>DRAWINGS</li>
                         <li>
                             <Link to="/seller profile" className="cursor-pointer">ARTISTS</Link>
                             </li>

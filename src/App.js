@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import './App.css';
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
 import Login from './Component/Login/Login';
 import SignUp from './Component/SignUp/SignUp';
 import Home from './Component/Home/Home';
@@ -11,6 +11,7 @@ import CartList from './Component/CartList/CartList';
 import ProfileUpload from './Component/Profile/ProfileUpload';
 import Artist from './Component/Artist/Artist';
 import ArtistPage from './Component/Artist/ArtistPage';
+import Drawings from './Component/Drawings/Drawings';
 
 function App() {
 
@@ -32,6 +33,7 @@ function App() {
             <>
             <Route path="/" element={<Home />} />
             <Route path="/all artwork" element={<AllArtWork />} />
+            <Route path="/all artwork/drawings" element={<Drawings />} />
             <Route path="/artpage/:title" element={<ArtPage />} />
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/cartlist" element={<CartList />} />
@@ -55,7 +57,7 @@ function App() {
 };
 
 function NotFound() {
-  return <h1>Page not found.</h1>;
+  return <h1>Page not found. <Link to="/all artwork">Go to Homepage</Link></h1>;
 }
 
 export default App;

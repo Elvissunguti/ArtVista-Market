@@ -95,11 +95,11 @@ const Product = () => {
                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     >
                       <option disabled value="">Select Category</option>
-                      {Collections.map((item, index) => {
-                        <option key={index} value={item}>
+                      {Collections.map((item, index) => (
+                        <option key={index} value={item} className="overflow-auto">
                           {item}
                         </option>
-                      })}
+                      ))}
                     </select>
                     
                     <label htmlFor="size" className="text-lg">Artwork Size</label>
@@ -153,6 +153,7 @@ const Product = () => {
                        name="creationYear"
                        id="creationYear"
                        max="2023"
+                       min="0"
                        placeholder="year created..."
                        value={formData.creationYear}
                        onChange={handleChange}
