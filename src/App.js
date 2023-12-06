@@ -13,6 +13,7 @@ import Artist from './Component/Artist/Artist';
 import ArtistPage from './Component/Artist/ArtistPage';
 import Drawings from './Component/Drawings/Drawings';
 import Paintings from './Component/Paintings/Paintings';
+import ChatPage from './Component/Shared/ChatPage';
 
 function App() {
 
@@ -42,6 +43,7 @@ function App() {
             <Route path="/profileUpload" element={<ProfileUpload />} />
             <Route path="/seller profile" element={<Artist />} />
             <Route path="/seller-profile/:userName" element={<ArtistPage />} />
+            <Route path="/chatpage/:artistId" element={<ChatPage />} />
             
             </>
           ) : (

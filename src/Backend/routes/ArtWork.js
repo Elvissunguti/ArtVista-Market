@@ -198,7 +198,8 @@ async (req, res) => {
             quality: artwork.quality,
             delivery: artwork.delivery,
             description: artwork.description,
-            price: artwork.price
+            price: artwork.price,
+            artistId: artwork.userId
         };
 
         res.json({ data : artWorkData });
