@@ -2,6 +2,7 @@ const express = require("express");
 const { profilePicUploads } = require("../Middleware/Profile");
 const Profile = require("../Model/Profile");
 const passport = require("passport");
+const User = require("../Model/User");
 const router = express.Router();
 
 router.post("/create", 
@@ -59,6 +60,34 @@ async (req, res) => {
     } catch (error){
         console.error("Error fetching user's profile", error);
         return res.json({ Error: "Error fetching profile" });
+    }
+});
+
+
+router.get("/:artistId",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const artistId = req.params.artistId;
+
+        const profile = await Profile.findOne({userId: artistId});
+
+        const user = await User.findOne({_id: artistId});
+
+        const userName = user.userName;
+
+        const profileInfo = {
+            userId: profile.userId,
+            profilePic: profile.profilePic,
+            userName,
+        }
+
+        return res.json({ data: profileInfo})
+
+    } catch(error){
+        console.error("Error fetching profile of the artist", error);
+        return res.json({ Error: "Error fetching profile of the artist" });
     }
 });
 
