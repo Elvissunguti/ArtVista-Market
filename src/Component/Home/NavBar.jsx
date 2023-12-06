@@ -137,19 +137,25 @@ const NavBar = () => {
                             {cartListNumber}
                         </span>
                     </Link>
-                    <div>
+                    <div className="relative">
                         <CgProfile
                            onClick={() => setIsOpen(!isOpen)}
                         />
+                    </div>
                             { isOpen && (
-                                <div>
-                                    <ul>
-                                       <li>
+                                <div className="absolute top-6 right-3">
+                                    <ul className="flex flex-col items-center justify-center bg-[#9A7B4F] px-2 py-2 shadow-xl">
+                                       <li className="   hover:text-white">
                                         <Link>
-                                        DASHBOARD
+                                        DashBoard
                                         </Link>
                                         </li>
-                                       <li>
+                                        <li className=" hover:text-white">
+                                            <Link>
+                                            Messages
+                                            </Link>
+                                        </li>
+                                       <li className=" hover:text-white">
                                         <Link>
                                         Logout
                                         </Link>
@@ -157,7 +163,6 @@ const NavBar = () => {
                                     </ul>
                                 </div>
                             )}
-                    </div>
                 </div>
 
             </div>

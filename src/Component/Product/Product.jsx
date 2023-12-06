@@ -166,7 +166,7 @@ const Product = () => {
                     >
                         <option disabled value="">Select Quality</option>
                         {Quality.map((quality, index) => (
-                            <option key={index} value={Quality}>
+                            <option key={index} value={quality}>
                                 {quality}
                             </option>
                         ))}

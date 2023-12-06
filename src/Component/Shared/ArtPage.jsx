@@ -9,7 +9,7 @@ import { Tooltip } from 'react-tippy';
 import 'react-tippy/dist/tippy.css'; 
 import { CiHeart } from "react-icons/ci";
 import Details from "./Details";
-import ReactImageMagnify from 'react-image-magnify';
+import Magnifier from "react-magnifier";
 import "../../App.css";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import NavBar from "../Home/NavBar";
@@ -233,22 +233,14 @@ const ArtPage = () => {
                     <div                       
                       onMouseEnter={() => setIsImageHovered(true)}
                       onMouseLeave={() => setIsImageHovered(false)}>
-                       <ReactImageMagnify
-                        {...{
-                            smallImage: {
-                                src: artWorkData?.artPhoto[currentImageIndex],
-                                alt: 'Image of art',
-                                isFluidWidth: true,
-                            },
-                            largeImage: {
-                                src: artWorkData?.artPhoto[currentImageIndex],
-                                width: 1200, // Adjust this value according to your requirements
-                                height: 1200, // Adjust this value according to your requirements
-                            },
-                            isHintEnabled: true,
-                            shouldUsePositiveSpaceLens: true,
-                        }}
-                       />
+                      <Magnifier
+                        src={artWorkData?.artPhoto[currentImageIndex]}
+                        alt="Image of art"
+                        width={600}
+                        mgWidth={200}
+                        mgHeight={200}
+                      />
+                    </div>
                     {isImageHovered && (
                       <div className="absolute inset-0 flex items-center justify-between">
                         <button className="text-xl border border-black cursor-pointer" onClick={goToPreviousImage}>
@@ -259,7 +251,7 @@ const ArtPage = () => {
                         </button>
                       </div>
                     )}
-                    </div>
+                    
 
                     <div className="flex flex-wrap ">
                         {artWorkData?.artPhoto.map((image, index) => (
@@ -302,6 +294,11 @@ const ArtPage = () => {
                                   </Tooltip>
                                 )}
                                 </button>
+                            </div>
+                            <div>
+                              <button className="w-full mt-4 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
+                                Chat With Artist
+                              </button>
                             </div>
                         </div>
                     
