@@ -294,7 +294,7 @@ const ArtPage = () => {
                                 )}
                                 </button>
                             </div>
-                            <Link to={`/chatpage/:${artWorkData?.artistId}`}>
+                            <Link to={`/chatpage/${artWorkData?.artistId}`}>
                               <button className="w-full mt-4 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
                                 Chat With Artist
                               </button>

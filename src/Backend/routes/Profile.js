@@ -79,7 +79,7 @@ async (req, res) => {
 
         const profileInfo = {
             userId: profile.userId,
-            profilePic: profile.profilePic,
+            profilePic: profile.profilePic.replace("../../../public", ""),
             userName,
         }
 
