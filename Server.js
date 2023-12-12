@@ -5,6 +5,8 @@ const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy,
     ExtractJwt = require("passport-jwt").ExtractJwt;
 const path = require("path");
+const http = require("http"); 
+const socketIo = require("socket.io");
 const User = require("./src/Backend/Model/User");
 const AuthRoutes = require("./src/Backend/routes/Auth");
 const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
@@ -18,6 +20,8 @@ const MessageRoutes = require("./src/Backend/routes/Message");
 
 
 const app = express();
+const server = http.createServer(app);
+const io = socketIo(server);
 const PORT = process.env.PORT || 8080;
 
 app.use(cors());
@@ -69,6 +73,19 @@ app.use((req, res, next) => {
             }
           })
         );
+
+// WebSocket connection handling
+io.on("connection", (socket) => {
+  console.log("A user connected");
+
+  // Example: Accessing authenticated user (if authentication middleware is set up)
+  const userId = socket.request.user ? socket.request.user._id : null;
+
+  // Handle disconnect event
+  socket.on("disconnect", () => {
+    console.log("User disconnected");
+  });
+});
 
 
 app.use("/auth", AuthRoutes);
