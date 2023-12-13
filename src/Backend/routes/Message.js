@@ -2,20 +2,9 @@ const express = require("express");
 const router = express.Router();
 const Message = require("../Model/Message");
 const passport = require("passport");
-const { WebSocketServer } = require("ws");
+const createWebSocketServer = require("../routes/WebSocketServer");
 
-const wss = new WebSocketServer({ noServer: true });
-
-const clients = new Map();
-
-wss.on("connection", (ws, req) => {
-  const userId = req.user._id;
-  clients.set(userId, ws);
-
-  ws.on("close", () => {
-    clients.delete(userId);
-  });
-});
+const { wss, clients } = createWebSocketServer();
 
 router.post(
   "/create/:artistId",
@@ -30,7 +19,7 @@ router.post(
 
       await newMessage.save();
 
-      const artistSocket = clients.get(artistId); // Assuming artistId is unique
+      const artistSocket = clients.get(artistId); 
       const userSocket = clients.get(userId);
 
       if (artistSocket) {

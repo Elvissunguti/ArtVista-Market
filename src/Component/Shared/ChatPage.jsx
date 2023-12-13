@@ -16,7 +16,6 @@ const ChatPage = () => {
     const fetchData = async () => {
       try {
         const response = await makeAuthenticatedGETRequest(`/profile/${artistId}`);
-        console.log(response.data);
         const modifiedProfile = {
           ...response.data,
           profilePic: `/ProfilePic/${response.data.profilePic.split("\\").pop()}`,
@@ -30,10 +29,11 @@ const ChatPage = () => {
   }, [artistId]);
 
   useEffect(() => {
-    const ws = new WebSocket("ws://localhost:8081");
+    const ws = new WebSocket(`ws://localhost:8080`);
 
     ws.onopen = () => {
       console.log("WebSocket connection opened");
+      setWebsocket(ws);
     };
 
     ws.onmessage = (event) => {
@@ -41,11 +41,15 @@ const ChatPage = () => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     };
 
+    ws.onerror = (error) => {
+      console.error("WebSocket error:", error);
+    };
+
     ws.onclose = () => {
       console.log("WebSocket connection closed");
     };
 
-    setWebsocket(ws);
+    
 
     return () => {
       ws.close();
@@ -63,6 +67,8 @@ const ChatPage = () => {
 
       if (websocket && websocket.readyState === WebSocket.OPEN) {
         websocket.send(JSON.stringify({ newMessage }));
+      } else {
+        console.error("WebSocket connection not open");
       }
 
       setMessages([...messages, newMessage]);
