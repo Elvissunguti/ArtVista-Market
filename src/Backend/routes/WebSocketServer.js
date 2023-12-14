@@ -1,31 +1,68 @@
-const { WebSocketServer } = require("ws");
+const socketIo = require("socket.io");
+const passportSocketIo = require("passport.socketio");
 
-const createWebSocketServer = () => {
-  const wss = new WebSocketServer({ noServer: true });
+// Define onAuthorizeSuccess function
+function onAuthorizeSuccess(data, accept) {
+  console.log("Successful WebSocket connection authentication.");
+  accept();
+}
+
+// Define onAuthorizeFail function
+function onAuthorizeFail(data, message, error, accept) {
+  console.error("Failed WebSocket connection authentication:", message);
+  if (error) {
+    accept(new Error(message));
+  } else {
+    // If no error, continue without accepting
+    accept(null, false);
+  } 
+}
+
+const createWebSocketServer = (httpServer, sessionStore) => {
+  const io = socketIo(httpServer, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
+
   const clients = new Map();
 
-  wss.on("headers", (headers, req) => {
-    headers.push("Access-Control-Allow-Origin: *");
-    headers.push("Access-Control-Allow-Headers: *");
+  io.use((socket, next) => {
+    // Passport authentication middleware for Socket.io
+    passportSocketIo.authorize({
+      cookieParser: require("cookie-parser"),
+      key: "connect.sid",
+      secret: "SECRETKEY",
+      store: sessionStore,
+      success: onAuthorizeSuccess,  // Reference the onAuthorizeSuccess function
+      fail: onAuthorizeFail,
+    })(socket.request, {}, next);
   });
 
-  wss.on("connection", (ws, req) => {
-    const userId = req.user._id;
-    clients.set(userId, ws);
+  io.on("connection", (socket) => {
+    console.log("A user connected");
 
-    ws.on("close", () => {
+    // Accessing authenticated user
+    const userId = socket.request.user ? socket.request.user._id : null;
+    console.log("userId", userId);
+
+    clients.set(userId, socket);
+
+    // Handle disconnect event
+    socket.on("disconnect", () => {
+      console.log("User disconnected");
       clients.delete(userId);
-      console.log(`WebSocket connection closed for user ${userId}`);
     });
 
-    ws.on("error", (error) => {
-      console.error(`WebSocket error for user ${userId}:`, error);
+    // Additional logging for debugging
+    socket.on("error", (error) => {
+      console.error("WebSocket error:", error);
     });
-
-    console.log(`WebSocket connection opened for user ${userId}`);
   });
 
-  return { wss, clients };
+  return { io, clients };
 };
 
 module.exports = createWebSocketServer;

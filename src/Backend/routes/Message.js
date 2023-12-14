@@ -23,11 +23,11 @@ router.post(
       const userSocket = clients.get(userId);
 
       if (artistSocket) {
-        artistSocket.send(JSON.stringify({ newMessage }));
+        wss.to(artistSocket.id).emit("newMessage", newMessage);
       }
 
       if (userSocket) {
-        userSocket.send(JSON.stringify({ newMessage }));
+        wss.to(userSocket.id).emit("newMessage", newMessage);
       }
 
       res.json({ newMessage });

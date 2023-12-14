@@ -3,12 +3,14 @@ import NavBar from "../Home/NavBar";
 import thumbnail from "../../Assets/thumbnail.webp";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { useParams } from "react-router-dom";
+import io from "socket.io-client"; 
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
   const [messageInput, setMessageInput] = useState("");
-  const [profile, setProfile] = useState([]);
-  const [websocket, setWebsocket] = useState(null);
+  const [profile, setProfile] = useState(null);
+  const [socket, setSocket] = useState(null); 
+  const [socketConnected, setSocketConnected] = useState(false);
 
   const { artistId } = useParams();
 
@@ -29,30 +31,25 @@ const ChatPage = () => {
   }, [artistId]);
 
   useEffect(() => {
-    const ws = new WebSocket(`ws://localhost:8080`);
+    const newSocket = io("ws://localhost:8080"); // Connect to the WebSocket server
+    setSocket(newSocket);
 
-    ws.onopen = () => {
+    newSocket.on("connect", () => {
       console.log("WebSocket connection opened");
-      setWebsocket(ws);
-    };
+      setSocketConnected(true);
+    });
 
-    ws.onmessage = (event) => {
-      const newMessage = JSON.parse(event.data);
+    newSocket.on("message", (newMessage) => {
       setMessages((prevMessages) => [...prevMessages, newMessage]);
-    };
+    });
 
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-    };
-
-    ws.onclose = () => {
+    newSocket.on("disconnect", () => {
       console.log("WebSocket connection closed");
-    };
-
-    
+      setSocketConnected(false);
+    });
 
     return () => {
-      ws.close();
+      newSocket.disconnect();
     };
   }, []);
 
@@ -60,13 +57,16 @@ const ChatPage = () => {
     try {
       const response = await makeAuthenticatedPOSTRequest(
         `/message/create/${artistId}`, {
-        content: messageInput,
-      });
+          content: messageInput,
+        });
 
-      const newMessage = response.data.newMessage;
+      console.log("Response:", response);
 
-      if (websocket && websocket.readyState === WebSocket.OPEN) {
-        websocket.send(JSON.stringify({ newMessage }));
+      const newMessage = response?.data?.newMessage;
+
+      if (socketConnected) {
+        // Emit the new message event to the server
+        socket.emit("newMessage", newMessage);
       } else {
         console.error("WebSocket connection not open");
       }
@@ -88,7 +88,7 @@ const ChatPage = () => {
           ) : (
             <img src={thumbnail} alt="Profile pic" className="rounded-full w-12 h-12" />
           )}
-          <h1 className="text-2xl font-semibold pl-4">{profile.userName}</h1>
+          <h1 className="text-2xl font-semibold pl-4">{profile?.userName}</h1>
         </div>
         <div>
           {messages.map((msg, index) => (
@@ -107,7 +107,6 @@ const ChatPage = () => {
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Type your message..."
-            className=""
           />
           <button onClick={sendMessage}>Send</button>
         </div>
