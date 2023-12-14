@@ -56,27 +56,36 @@ const ChatPage = () => {
   const sendMessage = async () => {
     try {
       const response = await makeAuthenticatedPOSTRequest(
-        `/message/create/${artistId}`, {
+        `/message/create/${artistId}`,
+        {
           content: messageInput,
-        });
-
+        }
+      );
+  
       console.log("Response:", response);
-
+  
       const newMessage = response?.data?.newMessage;
-
+  
       if (socketConnected) {
         // Emit the new message event to the server
         socket.emit("newMessage", newMessage);
       } else {
         console.error("WebSocket connection not open");
       }
-
-      setMessages([...messages, newMessage]);
+  
+      // Update the structure of the new message to include the 'sentByUser' property
+      const updatedNewMessage = {
+        ...newMessage,
+        sentByUser: true,
+      };
+  
+      setMessages([...messages, updatedNewMessage]);
       setMessageInput("");
     } catch (error) {
       console.error("Error sending message", error);
     }
   };
+  
 
   return (
     <section>
@@ -97,6 +106,7 @@ const ChatPage = () => {
               className={`mb-2 text-${msg.sentByUser ? "right" : "left"}`}
               style={{ textAlign: msg.sentByUser ? "right" : "left" }}
             >
+              {msg.sentByUser ? "You: " : ""}
               {msg.content}
             </div>
           ))}

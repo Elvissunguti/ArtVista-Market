@@ -38,4 +38,28 @@ router.post(
   }
 );
 
+
+router.get("/sent/:artistId",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+  try{
+    const artistId = req.params.artistId;
+    const userId = req.user._id;
+
+    const messages = await Message.find({
+      $or: [
+        { userId: userId, artistId: artistId },
+        { userId: artistId, artistId: userId }
+      ]
+    }).sort({ timeStamp: 'asc' });
+        
+
+    res.json({ messages });
+
+  } catch (error){
+    console.error("Error fetching messages", error);
+    res.json({ error: "Error fetching messages" });
+  }
+});
+
 module.exports = router;
