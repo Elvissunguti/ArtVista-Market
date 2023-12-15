@@ -52,9 +52,17 @@ async (req, res) => {
         { userId: artistId, artistId: userId }
       ]
     }).sort({ timeStamp: 'asc' });
+
+    const formattedMessages = messages.map(message => {
+      return {
+        content: message.content,
+        timeStamp: message.timeStamp,
+        role: message.userId.toString() === userId.toString() ? 'sender' : 'receiver'
+      };
+    });
         
 
-    res.json({ messages });
+    res.json({ data: formattedMessages });
 
   } catch (error){
     console.error("Error fetching messages", error);
