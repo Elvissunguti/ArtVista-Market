@@ -30,6 +30,24 @@ const ChatPage = () => {
     fetchData();
   }, [artistId]);
 
+
+  useEffect(() => {
+    const fetchMessages = async () => {
+      try{
+        const response = await makeAuthenticatedGETRequest(
+          `/message/sent/${artistId}`
+        );
+
+        setMessages(response.data);
+
+      } catch (error){
+        console.error("Error fetching messages", error);
+      }
+    };
+    fetchMessages();
+  }, [artistId]);
+
+
   useEffect(() => {
     const newSocket = io("ws://localhost:8080"); // Connect to the WebSocket server
     setSocket(newSocket);
@@ -103,10 +121,10 @@ const ChatPage = () => {
           {messages.map((msg, index) => (
             <div
               key={index}
-              className={`mb-2 text-${msg.sentByUser ? "right" : "left"}`}
-              style={{ textAlign: msg.sentByUser ? "right" : "left" }}
+              className={`mb-2 text-${msg.role === 'sender' ? "right" : "left"}`}
+              style={{ textAlign: msg.role === 'sender' ? "right" : "left" }}
             >
-              {msg.sentByUser ? "You: " : ""}
+              {msg.role === 'sender' ? "You: " : ""}
               {msg.content}
             </div>
           ))}
