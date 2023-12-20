@@ -2,7 +2,8 @@ const express = require("express");
 const router = express.Router();
 const User = require("../Model/User");
 const bcrypt = require("bcrypt");
-const { getToken } = require("../Utils/Helpers");
+const { getToken, invalidateToken } = require("../Utils/Helpers");
+const passport = require("passport");
 
 
 router.post("/signup", async (req, res) => {
@@ -64,6 +65,25 @@ router.post("/login", async (req , res) => {
         return res.json({ message: "Failed to login"})
 
     }
-})
+});
+
+
+// logout Route
+router.post("/logout",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+      // Invalidate the JWT token used for authentication
+      const token = req.headers.authorization;
+      invalidateToken(token);
+
+      return res.json({ message: "Logout successful" });
+
+    } catch(error){
+        console.error("Error logging out user", error);
+        return res.json({ message: "Error logging out user" });
+    }
+});
 
 module.exports = router;

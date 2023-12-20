@@ -110,7 +110,7 @@ const ChatPage = () => {
       <NavBar />
       <div className="flex flex-col">
         <div className="flex">
-          {profile && profile.profilePic ? (
+          {profile && profile.profilePic !== null  ? (
             <img src={profile.profilePic} alt="profile photo" className="rounded-full w-16 w-12" />
           ) : (
             <img src={thumbnail} alt="Profile pic" className="rounded-full w-12 h-12" />

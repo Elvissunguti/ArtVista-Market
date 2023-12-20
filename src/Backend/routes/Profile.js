@@ -76,10 +76,17 @@ async (req, res) => {
         const user = await User.findOne({_id: artistId});
 
         const userName = user.userName;
+        const userId = user._id;
+
+        let profilePic = null;
+
+        if (profile && profile.profilePic) {
+            profilePic = profile.profilePic.replace("../../../public", "");
+        }
 
         const profileInfo = {
-            userId: profile.userId,
-            profilePic: profile.profilePic.replace("../../../public", ""),
+            userId,
+            profilePic,
             userName,
         }
 
