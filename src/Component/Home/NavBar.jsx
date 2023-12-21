@@ -3,12 +3,17 @@ import logo from "../../Assets/logo/logo-no-background.png";
 import { AiOutlineClose, AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { PiHeartStraightThin } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useWishList } from "../Context/WishListContext";
 import { useCartList } from "../Context/CartListContext";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 
+// Define a function to remove cookies
+function removeCookies(name, options) {
+    document.cookie = `${encodeURIComponent(name)}=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${options.path || "/"}`;
+  }
 
+  
 const NavBar = () => {
 
     const [ isOpen, setIsOpen ] = useState(false);
@@ -17,6 +22,9 @@ const NavBar = () => {
     const { cartListNumber } = useCartList();
     const [ searchText, setSearchText ] = useState(null);
     const [ searchResults, setSearchResults ] = useState([]);
+    
+
+    const navigate = useNavigate();
     
 
     useEffect(() => {
@@ -42,6 +50,40 @@ const NavBar = () => {
     const handleSearchInputChange = (event) => {
         setSearchText(event.target.value);
     };
+
+
+    const handleLogout = async () => {
+        const confirmLogout = window.confirm("Do you want to logout?");
+        if (confirmLogout) {
+          try {
+            const token = localStorage.getItem("token"); // Get the token from localStorage
+      
+            const response = await fetch("http://localhost:8080/auth/logout", {
+              method: 'POST',
+              headers: {
+                'Authorization': token, // Include the token in the Authorization header
+                'Content-Type': 'application/json',
+              },
+            });
+      
+            if (response.ok) {
+              // Clear token from localStorage and cookies
+              localStorage.removeItem("token");
+              removeCookies("token", { path: "/" });
+      
+              // Logout successful
+            
+              navigate("/login");
+              console.log("Logout successful");
+            } else {
+              console.error("Logout failed");
+              
+            }
+          } catch (error) {
+            console.error("Error during logout:", error);
+          }
+        }
+      };
 
     return (
         <section>
@@ -155,10 +197,8 @@ const NavBar = () => {
                                             Messages
                                             </Link>
                                         </li>
-                                       <li className=" hover:text-white">
-                                        <Link>
+                                       <li className=" hover:text-white cursor-pointer" onClick={handleLogout}>
                                         Logout
-                                        </Link>
                                         </li>
                                     </ul>
                                 </div>

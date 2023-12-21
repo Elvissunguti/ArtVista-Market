@@ -3,7 +3,7 @@ const router = express.Router();
 const User = require("../Model/User");
 const bcrypt = require("bcrypt");
 const { getToken, invalidateToken } = require("../Utils/Helpers");
-const passport = require("passport");
+const jwtUtils = require('../Utils/Helpers');
 
 
 router.post("/signup", async (req, res) => {
@@ -68,22 +68,41 @@ router.post("/login", async (req , res) => {
 });
 
 
-// logout Route
-router.post("/logout",
-passport.authenticate("jwt", {session: false}),
-async (req, res) => {
-    try{
-
-      // Invalidate the JWT token used for authentication
-      const token = req.headers.authorization;
-      invalidateToken(token);
-
-      return res.json({ message: "Logout successful" });
-
-    } catch(error){
-        console.error("Error logging out user", error);
-        return res.json({ message: "Error logging out user" });
+router.post("/logout", async (request, response) => {
+    try {
+      // Verify the token
+      const token = request.headers.authorization;
+  
+      // Check if the token is invalid
+      if (jwtUtils.isTokenInvalid(token)) {
+        console.error("Invalid token:", token);
+        return response.status(401).send({
+          message: "Invalid token",
+        });
+      }
+  
+      // Verify the token
+      const decodedToken = jwtUtils.verifyToken(token);
+  
+      if (!decodedToken) {
+        console.error("Invalid token:", token);
+        return response.status(401).send({
+          message: "Invalid token",
+        });
+      }
+  
+      // Invalidate the token
+      jwtUtils.invalidateToken(token);
+  
+      return response.status(200).json({
+        message: "Logout successful",
+      });
+    } catch (error) {
+      return response.status(500).send({
+        message: "Internal Server Error",
+        error,
+      });
     }
-});
+  });
 
 module.exports = router;
