@@ -309,4 +309,56 @@ async (req, res) => {
     }
 });
 
+// router to fetch artwork that are similar with the one being currently viewed
+router.get("/get/similarArtwork/:title",
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
+    try{
+
+        const title = req.params.title;
+
+        const currentArtwork = await ArtWork.findOne({ title }).exec();
+
+        
+        if (!currentArtwork) {
+            return res.json({ error: "Artwork not found" });
+        };
+
+        const similarArtwork = await ArtWork.find({
+            category: currentArtwork.category,
+            $or: [
+                { medium: currentArtwork.medium },
+                { surface: currentArtwork.surface },
+            ],
+            _id: { $ne: currentArtwork._id },
+        }).limit(5).exec();
+
+        const simplifiedArtwork = similarArtwork.map(artwork => {
+            
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
+            };
+        })
+
+        return res.json({ data: simplifiedArtwork });
+
+    } catch(error){
+        console.error("Error Fetching artwok similar to the one being viewed", error);
+        return res.json({ error: "Error fetching artwork similar to the one being viewed"});
+    }
+})
+
 module.exports = router;
