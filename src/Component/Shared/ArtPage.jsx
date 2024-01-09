@@ -17,6 +17,7 @@ import { BsTrash3 } from "react-icons/bs";
 import { AiFillHeart } from "react-icons/ai";
 import { useCartList } from "../Context/CartListContext";
 import { useWishList } from "../Context/WishListContext";
+import ArtCard from "./ArtCard";
 
 const ArtPage = () => {
 
@@ -29,6 +30,7 @@ const ArtPage = () => {
     const { wishListedNumber, updateWishListedNumber } = useWishList();
     const [ isCartList, setIsCartList ] = useState(false);
     const { cartListNumber, updatedCartListNumber } = useCartList();
+    const [ similarArtwork, setSimilarArtwork ] = useState([]);
 
     const { title } = useParams();    
 
@@ -119,6 +121,24 @@ const ArtPage = () => {
     useEffect(() => {
       checkIfCartListed()
     },[artWorkId]);
+
+
+    // useEffect to fetch the artworks similar to the one being viewed
+    useEffect(() => {
+      const fetchSimilarArtwork = async () => {
+        try{
+          const response = await makeAuthenticatedGETRequest(
+            `/artwork/get/similarArtwork/${title}`
+          );
+          console.log("similar artwork", response.data);
+          setSimilarArtwork(response.data);
+
+        } catch (error){
+          console.error("Failed to fetch similar artwork:", error);
+        }
+      }
+      fetchSimilarArtwork();
+    }, [title])
   
   
     const deleteWishList = async (artWorkId) => {
@@ -225,7 +245,7 @@ const ArtPage = () => {
 
 
     return (
-        <section>
+        <section className="">
           <NavBar />
             <div className="flex justify-center mt-8 max-w-7xl mx-auto">
                 <div className="relative w-2/3" >
@@ -372,10 +392,37 @@ const ArtPage = () => {
                 </div>
             </div>
             <div>
-                    <div>
-                        <h1>You may also like</h1>
-                    </div>
-                </div>
+             <div>
+                 <h1>You may also like</h1>
+             </div>
+            <div>
+               {similarArtwork && similarArtwork.length > 0 ? (
+             <div className="flex flex-row  ">
+                {similarArtwork.map((artItem, index) => (
+                 <div key={index} className="">
+                   <ArtCard
+                      artWorkId={artItem._id}
+                      title={artItem.title}
+                      price={artItem.price}
+                      artPhoto={artItem.artPhoto}
+                      size={artItem.size}
+                      medium={artItem.medium}
+                      surface={artItem.surface}
+                      artType={artItem.artType}
+                      creationYear={artItem.creationYear}
+                      quality={artItem.quality}
+                      delivery={artItem.delivery}
+                      description={artItem.description}
+                  />
+               </div>
+             ))}
+            </div>
+              ) : (
+               <p>No similar items found.</p>
+              )}
+               </div>
+              </div>
+
         </section>
     )
 }
