@@ -194,6 +194,11 @@ const NavBar = () => {
                                         DashBoard
                                         </Link>
                                         </li>
+                                        <li>
+                                            <Link>
+                                             My Artworks
+                                            </Link>
+                                        </li>
                                         <li className=" hover:text-white">
                                             <Link>
                                             Messages

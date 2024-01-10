@@ -45,6 +45,48 @@ passport.authenticate("jwt", {session: false}),
             return res.json({ error: "Error creating artwork"});
         }
     })
+});
+
+//router to fetch all the artwork posted by the current user
+router.get("/get/myartworks",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+
+        const userId = req.user._id;
+
+        const artWorks = await ArtWork.find({userId});
+
+        if (!artWorks || artWorks.length === 0) {
+            return res.json({ message: "No artworks found for the current user" });
+          }
+
+          const simplifiedArtwork = artWorks.map(artwork => {
+            
+            const firstPhoto = artwork.artPhoto[0] || null;
+
+            return {
+                _id: artwork._id,
+                title: artwork.title,
+                price: artwork.price,
+                artPhoto: firstPhoto.replace("../../../public", ""),
+                size: artwork.size,
+                medium: artwork.medium,
+                surface: artwork.surface,
+                artType: artwork.artType,
+                creationYear: artwork.creationYear,
+                quality: artwork.quality,
+                delivery: artwork.delivery,
+                description: artwork.description,
+            };
+           })
+
+         return res.json({ data: simplifiedArtwork });
+        
+    }catch (error){
+        console.error("Error fetching artwork of the current user:", error);
+        return res.json({ error: "error fetching all the artwork posted by the current user"});
+    }
 })
 
 router.get("/get/allartwork",
