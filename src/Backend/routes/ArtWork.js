@@ -359,6 +359,40 @@ async (req, res) => {
         console.error("Error Fetching artwok similar to the one being viewed", error);
         return res.json({ error: "Error fetching artwork similar to the one being viewed"});
     }
-})
+});
+
+
+// router to flag off an artwork as sold
+router.post("/sold/:artworkId",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+
+        const artworkId = req.params.artworkId;
+
+        const artWork = await ArtWork.findById(artworkId);
+
+        if (!artWork) {
+        return res.status(404).json({ error: "Artwork not found" });
+        };
+
+              // Check if the artwork is already marked as sold
+        if (artWork.isSold) {
+          return res.status(400).json({ error: "Artwork is already sold" });
+        }
+
+         // Mark the artwork as sold
+         artWork.isSold = true;
+
+         // Save the updated artwork
+         await artWork.save();
+
+        return res.json({ message: "Artwork marked as sold successfully" });
+
+    } catch (error){
+        console.error("couldn't mark the artwork as sold:", error);
+        return res.json({ error: "error marking the artwork as sold" });
+    }
+});
 
 module.exports = router;

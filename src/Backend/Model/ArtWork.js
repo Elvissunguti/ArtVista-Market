@@ -58,7 +58,11 @@ const ArtWork = new mongoose.Schema({
     userId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-    }
+    },
+    isSold: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const ArtWorkModel = mongoose.model("ArtWork", ArtWork);
