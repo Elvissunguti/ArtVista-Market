@@ -71,38 +71,41 @@ const ChatPage = () => {
     };
   }, []);
 
-  const sendMessage = async () => {
+  const sendMessage = () => {
     try {
-      const response = await makeAuthenticatedPOSTRequest(
-        `/message/create/${artistId}`,
-        {
-          content: messageInput,
-        }
-      );
+      // Create a new message locally
+      const newMessage = {
+        content: messageInput,
+        sentByUser: true,
+        role: 'sender', // Assuming 'sender' as the role for user-sent messages
+      };
   
-      console.log("Response:", response);
+      // Update the state immediately
+      setMessages((prevMessages) => [...prevMessages, newMessage]);
+      setMessageInput("");
   
-      const newMessage = response?.data?.newMessage;
-  
+      // Emit the new message event to the server
       if (socketConnected) {
-        // Emit the new message event to the server
         socket.emit("newMessage", newMessage);
       } else {
         console.error("WebSocket connection not open");
       }
   
-      // Update the structure of the new message to include the 'sentByUser' property
-      const updatedNewMessage = {
-        ...newMessage,
-        sentByUser: true,
-      };
+      // Make the actual API call to store the message on the server
+      makeAuthenticatedPOSTRequest(`/message/create/${artistId}`, {
+        content: messageInput,
+      }).then((response) => {
+        console.log("Response:", response);
   
-      setMessages([...messages, updatedNewMessage]);
-      setMessageInput("");
+        // If needed, you can update the state with the server response here
+      });
     } catch (error) {
       console.error("Error sending message", error);
     }
   };
+
+
+  
   
 
   return (
@@ -135,8 +138,11 @@ const ChatPage = () => {
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Type your message..."
+            style={{ wordWrap: 'break-word' }}
+            className="my-5 pr-10 pl-4 py-2 w-96 border border-gray-300 focus:z-10 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F] resize-none whitespace-normal overflow-y-auto max-h-[100px] min-h-[32px]"
           />
-          <button onClick={sendMessage}>Send</button>
+          <button className="bg-[#9A7B4F] px-2 py-3 text-white font-semibold rounded-xl hover:bg-green-500 cursor-pointer" 
+              onClick={sendMessage}>Send</button>
         </div>
       </div>
     </section>

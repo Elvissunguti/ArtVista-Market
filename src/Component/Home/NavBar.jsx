@@ -120,12 +120,12 @@ const NavBar = () => {
                        />
                     </div>
                        {isSearchOpen && (
-                        <div className="absolute right-0 mt-6 top-0 px-2 py-2 bg-green-300 w-80 h-screen">
+                        <div className="absolute z-10 right-0 mt-6 top-0 px-2 py-2 bg-green-300 w-80 h-screen">
                           <div className="flex justify-between mt-7">
                             <p className="text-xl font-semibold">SEARCH OUR SITE</p>
-                            <AiOutlineClose onClick={() => setIsSearchOpen(false)}/>
+                            <AiOutlineClose onClick={() => setIsSearchOpen(false)} className="hover:text-red-500 cursor-pointer"/>
                           </div>
-                          <div>
+                          <div className="relative">
                             <input
                               type="text"
                               name="searchText"
@@ -133,15 +133,17 @@ const NavBar = () => {
                               placeholder="Search for artwork"
                               value={searchText || ""}
                               onChange={handleSearchInputChange}
-                              className="my-5"
+                              className="my-5 pr-10 pl-4 py-2 w-full border border-gray-300 focus:z-10 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F]"
 
 
                             />
+                            <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
                             <AiOutlineSearch />
+                            </div>
                           </div>
                           <div>
                             {searchResults && searchResults.length > 0 ? (
-                                <div>
+                                <div className="absolute overflow-auto">
                                     {searchResults.map((item, index) => (
                                         <div key={index} className="flex ">
                                             <Link to={`/artpage/${encodeURIComponent(item.title)}`}>
