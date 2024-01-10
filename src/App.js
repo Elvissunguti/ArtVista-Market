@@ -14,6 +14,7 @@ import ArtistPage from './Component/Artist/ArtistPage';
 import Drawings from './Component/Drawings/Drawings';
 import Paintings from './Component/Paintings/Paintings';
 import ChatPage from './Component/Shared/ChatPage';
+import MyArtWork from './Component/MyArtWork/MyArtWork';
 
 function App() {
 
@@ -37,6 +38,7 @@ function App() {
             <Route path="/all artwork" element={<AllArtWork />} />
             <Route path="/all artwork/drawings" element={<Drawings />} />
             <Route path="/all artwork/paintings" element={<Paintings />} />
+            <Route path="/my artworks" element={<MyArtWork /> } />
             <Route path="/artpage/:title" element={<ArtPage />} />
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/cartlist" element={<CartList />} />

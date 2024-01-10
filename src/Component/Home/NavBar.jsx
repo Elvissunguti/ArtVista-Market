@@ -195,7 +195,7 @@ const NavBar = () => {
                                         </Link>
                                         </li>
                                         <li>
-                                            <Link>
+                                            <Link to="/my artworks">
                                              My Artworks
                                             </Link>
                                         </li>

@@ -70,14 +70,8 @@ async(req, res) => {
                 title: artwork.title,
                 price: artwork.price,
                 artPhoto: firstPhoto.replace("../../../public", ""),
-                size: artwork.size,
-                medium: artwork.medium,
-                surface: artwork.surface,
-                artType: artwork.artType,
-                creationYear: artwork.creationYear,
-                quality: artwork.quality,
-                delivery: artwork.delivery,
-                description: artwork.description,
+                isSold: artwork.isSold,
+
             };
            })
 
@@ -405,29 +399,24 @@ async (req, res) => {
 
 
 // router to flag off an artwork as sold
-router.post("/sold/:artworkId",
+router.post("/sold/:artWorkId",
 passport.authenticate("jwt", {session: false}),
 async(req, res) => {
     try{
 
-        const artworkId = req.params.artworkId;
+        const artWorkId = req.params.artWorkId;
 
-        const artWork = await ArtWork.findById(artworkId);
 
-        if (!artWork) {
-        return res.status(404).json({ error: "Artwork not found" });
-        };
+        // Update the artwork as sold and return the updated document
+        const updatedArtWork = await ArtWork.findByIdAndUpdate(
+            artWorkId,
+            { isSold: true },
+            { new: true }
+        );
 
-              // Check if the artwork is already marked as sold
-        if (artWork.isSold) {
-          return res.status(400).json({ error: "Artwork is already sold" });
+        if (!updatedArtWork) {
+            return res.status(404).json({ error: "Artwork not found" });
         }
-
-         // Mark the artwork as sold
-         artWork.isSold = true;
-
-         // Save the updated artwork
-         await artWork.save();
 
         return res.json({ message: "Artwork marked as sold successfully" });
 

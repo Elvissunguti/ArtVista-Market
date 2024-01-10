@@ -41,7 +41,7 @@ const ArtWork = new mongoose.Schema({
     },
     delivery: {
         type: String,
-        rerquired: true
+        required: true
     },
     description: {
         type: String,
