@@ -62,6 +62,7 @@ async (req, res) => {
                     quality: artwork.quality,
                     delivery: artwork.delivery,
                     description: artwork.description,
+                    isSold: artwork.isSold,
                 };
             });
 
@@ -120,6 +121,7 @@ async (req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         });
 

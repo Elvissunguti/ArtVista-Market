@@ -76,6 +76,7 @@ const Paintings = () => {
                                           quality={artItem.quality}
                                           delivery={artItem.delivery}
                                           description={artItem.description}
+                                          isSold={artItem.isSold}
                                       />
                                   </div>
                               ))}

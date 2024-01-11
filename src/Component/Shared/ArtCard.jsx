@@ -13,7 +13,7 @@ import { useCartList } from "../Context/CartListContext";
 
 
 
-const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, artType, creationYear, quality, delivery, description }) => {
+const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, artType, creationYear, quality, delivery, description, isSold }) => {
 
   const [isQuickViewVisible, setQuickViewVisible] = useState(false);
   const [ isWishList, setIsWishList ] = useState(false);
@@ -178,6 +178,14 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                       </Link>
                     
                     </div>
+
+                    <div>
+                      {isSold && (
+                      <p className="absolute top-0 left-0 m-2 bg-red-500 text-white p-1">SOLD</p>
+                      )}
+                    </div>
+
+                    {!isSold && (
                     <ul className="hidden group-hover:block absolute top-0 right-0 m-4 inset text-black bg-white bg-opacity-7 flex  items-end ">
                         <li className="group" onClick={handleWishList}>
                           { isWishList ? (
@@ -204,6 +212,9 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                             </Tooltip>
                         </li>
                     </ul>
+                    )}
+
+                    {!isSold && (
                     <div onClick={handleCartList} className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer text-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
                         {isCartList ? (
                            <Tooltip title="Remove from Cart" position="top">
@@ -213,6 +224,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                            <p>ADD TO CART</p>
                         )}
                     </div>
+                    )}
                     <div>
                         <p>"{title}"</p>
                         <p>$ {price}</p>

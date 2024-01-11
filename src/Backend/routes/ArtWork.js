@@ -111,6 +111,7 @@ async (req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         })
 
@@ -152,6 +153,7 @@ async(req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         })
 
@@ -193,6 +195,7 @@ async(req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         })
 
@@ -235,7 +238,8 @@ async (req, res) => {
             delivery: artwork.delivery,
             description: artwork.description,
             price: artwork.price,
-            artistId: artwork.userId
+            artistId: artwork.userId,
+            isSold: artwork.isSold,
         };
 
         res.json({ data : artWorkData });
@@ -333,6 +337,7 @@ async (req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         })
 
@@ -386,6 +391,7 @@ async (req, res) => {
                 quality: artwork.quality,
                 delivery: artwork.delivery,
                 description: artwork.description,
+                isSold: artwork.isSold,
             };
         })
 

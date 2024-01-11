@@ -42,6 +42,8 @@ const AllArtWork = () => {
         fetchData()
     }, [sortBy]);
 
+    console.log("sorted artwork:", artWork);
+
     const handleSortChange = (e) => {
         const selectedSortBy = e.target.value;
         setSortBy(selectedSortBy);
@@ -75,6 +77,7 @@ const AllArtWork = () => {
                                          quality={artItem.quality}
                                          delivery={artItem.delivery}
                                          description={artItem.description}
+                                         isSold={artItem.isSold}
                                       />
                                   </div>
                               ))
@@ -93,6 +96,7 @@ const AllArtWork = () => {
                                           quality={artItem.quality}
                                           delivery={artItem.delivery}
                                           description={artItem.description}
+                                          isSold={artItem.isSold}
                                       />
                                   </div>
                               ))}
