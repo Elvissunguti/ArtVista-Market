@@ -260,6 +260,9 @@ const ArtPage = () => {
                         mgHeight={200}
                       />
                     </div>
+                    {artWorkData?.isSold &&(
+                      <p className="absolute top-0 left-0 m-2 bg-red-500 text-white p-1">SOLD</p>
+                    )}
                     {isImageHovered && (
                       <div className="absolute inset-0 flex items-center justify-between">
                         <button className="text-xl border border-black cursor-pointer" onClick={goToPreviousImage}>
@@ -290,8 +293,10 @@ const ArtPage = () => {
                         <p className="text-2xl font-semibold my-4">{artWorkData?.title}</p>
                         <p className="text-xl text-gray-700 mb-4">{artWorkData?.price}</p>
                     </div>
+                      
                         <div className="flex flex-col">
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
+                            {!artWorkData?.isSold && (
                             <div className="flex flex-row space-x-4">
                                 <button onClick={handleCartList} className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
                                   {isCartList ? (
@@ -314,12 +319,14 @@ const ArtPage = () => {
                                 )}
                                 </button>
                             </div>
+                            )}
                             <Link to={`/chatpage/${artWorkData?.artistId}`}>
                               <button className="w-full mt-4 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
                                 Chat With Artist
                               </button>
                             </Link>
                         </div>
+
                     
                     <div className="flex mt-10">
                     <ul className="grid grid-cols-2 w-full divide-x-4 border">
