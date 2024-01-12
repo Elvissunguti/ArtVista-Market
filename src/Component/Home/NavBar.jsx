@@ -200,7 +200,7 @@ const NavBar = () => {
                                             </Link>
                                         </li>
                                         <li className=" hover:text-white">
-                                            <Link>
+                                            <Link to="/chats">
                                             Messages
                                             </Link>
                                         </li>

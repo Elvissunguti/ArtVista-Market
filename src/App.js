@@ -15,6 +15,7 @@ import Drawings from './Component/Drawings/Drawings';
 import Paintings from './Component/Paintings/Paintings';
 import ChatPage from './Component/Shared/ChatPage';
 import MyArtWork from './Component/MyArtWork/MyArtWork';
+import Messages from './Component/Messages/Messages';
 
 function App() {
 
@@ -45,6 +46,7 @@ function App() {
             <Route path="/profileUpload" element={<ProfileUpload />} />
             <Route path="/seller profile" element={<Artist />} />
             <Route path="/seller-profile/:userName" element={<ArtistPage />} />
+            <Route path='/chats' element={<Messages />} />
             <Route path="/chatpage/:artistId" element={<ChatPage />} />
             
             </>
