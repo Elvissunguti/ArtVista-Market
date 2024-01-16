@@ -20,9 +20,12 @@ const ChatPage = () => {
         const response = await makeAuthenticatedGETRequest(`/profile/${artistId}`);
         const modifiedProfile = {
           ...response.data,
-          profilePic: `/ProfilePic/${response.data.profilePic.split("\\").pop()}`,
+          profilePic: response.data.profilePic 
+          ? `/ProfilePic/${response.data.profilePic.split("\\").pop()}`
+          : null,
         };
         setProfile(modifiedProfile);
+        console.log("profile details:", modifiedProfile);
       } catch (error) {
         console.log("Error fetching artist profile", error);
       }

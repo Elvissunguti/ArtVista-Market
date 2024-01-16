@@ -111,7 +111,7 @@ router.get("/get/chat",
       const userProfiles = usersDetails.map((user) => {
         const profile = profilesDetails.find((profile) => profile && profile.userId && profile.userId.equals(user._id));
         return {
-          userId: user._id,
+          artistId: user._id,
           userName: user.userName,
           profilePic: profile ? profile.profilePic : null,
         };

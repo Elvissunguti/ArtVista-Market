@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 import NavBar from "../Home/NavBar";
 import thumbnail from "../../Assets/thumbnail.webp";
+import { Link } from "react-router-dom";
 
 
 const Messages = () => {
@@ -36,26 +37,29 @@ const Messages = () => {
                 {chats.length > 0 ? (
                     <div className=" ">
                         {chats.map((chat) => (
-                            <div key={chat.userId} className="flex">
+                            <Link to={`/chatpage/${chat?.artistId}`}>
+                            
+                            <div key={chat.artistId} className="flex  items-center ">
                               {chat.artPhoto ? (
                              <img
                         src={`/ArtImages/${chat.artPhoto.split("\\").pop()}`}
                         alt="Profile pic"
-                        className=""
+                        className="w-12 h-12 rounded-full"
                     />
                 ) : (
                   <div>
                    <img
                      src={thumbnail}
                      alt="thumbnail"
-                     className=""
+                     className="w-12 h-12 rounded-full ml-5"
                     />
                   </div>
                 )}
-                        <p>{chat.userName}</p>
+                        <p className="font-semibold text-lg">{chat.userName}</p>
                             </div>
+                            </Link>
                         ))}
-
+                        
                     </div>
                 ) : (
                     <div>
