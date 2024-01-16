@@ -72,6 +72,7 @@ const ChatPage = () => {
     });
 
     newSocket.on("message", (newMessage) => {
+      newMessage.timeStamp = new Date().toISOString();
       setMessages((prevMessages) => [...prevMessages, newMessage]);
     });
 
@@ -92,6 +93,7 @@ const ChatPage = () => {
         content: messageInput,
         sentByUser: true,
         role: 'sender', // Assuming 'sender' as the role for user-sent messages
+        timeStamp: new Date().toISOString(),
       };
   
       // Update the state immediately

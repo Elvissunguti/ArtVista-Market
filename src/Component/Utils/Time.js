@@ -4,13 +4,12 @@ export function formatTime(time, includeMeridian = false) {
     const hours = time.getHours();
     const minutes = time.getMinutes();
   
-    let formattedTime = `${hours % 12 || 12}:${minutes < 10 ? "0" : ""}${minutes}`;
-  
-    if (includeMeridian) {
-      formattedTime += hours >= 12 ? " PM" : " AM";
-    }
-  
-    return formattedTime;
+      // Format the time in 12-hour format
+    const formattedHours = hours % 12 || 12;
+    const formattedMinutes = minutes < 10 ? "0" + minutes : minutes;
+    const meridian = hours >= 12 ? "PM" : "AM";
+
+  return `${formattedHours}:${formattedMinutes} ${meridian}`
   }
   
   // Function to format date
