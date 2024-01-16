@@ -48,12 +48,12 @@ const Messages = () => {
                     <div className="">
                         {chats.map((chat) => (
                             <Link key={chat.artistId} to={`/chatpage/${chat?.artistId}`}>
-                                <div className="flex items-center" key={chat.artistId}>
+                                <div className="flex items-center my-5" key={chat.artistId}>
                                     {chat.profilePic ? (
                                         <img
                                             src={chat.profilePic}
                                             alt="Profile pic"
-                                            className="w-12 h-12 rounded-full"
+                                            className="w-12 h-12 ml-5 rounded-full"
                                         />
                                     ) : (
                                         <div>
@@ -64,7 +64,7 @@ const Messages = () => {
                                             />
                                         </div>
                                     )}
-                                    <p className="font-semibold text-lg">{chat.userName}</p>
+                                    <p className="font-semibold ml-4 text-lg">{chat.userName}</p>
                                 </div>
                             </Link>
                         ))}

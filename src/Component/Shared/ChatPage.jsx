@@ -4,6 +4,7 @@ import thumbnail from "../../Assets/thumbnail.webp";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client"; 
+import { formatTime, formatDate, formatDay } from "../Utils/Time";
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
@@ -11,6 +12,7 @@ const ChatPage = () => {
   const [profile, setProfile] = useState(null);
   const [socket, setSocket] = useState(null); 
   const [socketConnected, setSocketConnected] = useState(false);
+  const [currentTime, setCurrentTime] = useState(new Date());
 
   const { artistId } = useParams();
 
@@ -49,6 +51,15 @@ const ChatPage = () => {
     };
     fetchMessages();
   }, [artistId]);
+
+  useEffect(() => {
+    // Update current time every minute
+    const intervalId = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 60000);
+
+    return () => clearInterval(intervalId);
+  }, []);
 
 
   useEffect(() => {
@@ -132,7 +143,11 @@ const ChatPage = () => {
             >
               {msg.role === 'sender' ? "You: " : ""}
               {msg.content}
+              <div className="text-xs text-gray-500">
+              {formatMessageTime(msg.timeStamp)}
             </div>
+            </div>
+
           ))}
         </div>
         <div>
@@ -150,6 +165,32 @@ const ChatPage = () => {
       </div>
     </section>
   );
-};
+
+    // Function to format the message timestamp
+    function formatMessageTime(timestamp) {
+      const messageTime = new Date(timestamp);
+      const now = currentTime;
+  
+      // Check if the message was sent today
+      if (
+        now.getDate() === messageTime.getDate() &&
+        now.getMonth() === messageTime.getMonth() &&
+        now.getFullYear() === messageTime.getFullYear()
+      ) {
+        return formatTime(messageTime);
+      } else if (
+        now - messageTime <= 6 * 24 * 60 * 60 * 1000 &&
+        now.getDate() > messageTime.getDate()
+      ) {
+        // Check if the message was sent within the last 6 days
+        return `${formatDay(messageTime.getDay())} ${formatTime(messageTime)}`;
+      } else {
+        // Display full date and time
+        return `${formatDate(messageTime)} ${formatTime(messageTime, true)}`;
+      }
+    }
+  };
+  
+
 
 export default ChatPage;
