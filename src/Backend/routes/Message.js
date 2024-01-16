@@ -106,14 +106,25 @@ router.get("/get/chat",
       // Exclude the current user from the list of fetched user details
       const usersDetails = await User.find({ _id: { $in: uniqueUserIds, $ne: userId } }, { userName: 1 });
 
-      const profilesDetails = await Profile.find({ userId: { $in: uniqueUserIds } }, { profilePic: 1 });
+      const profilesDetails = await Profile.find(
+        { userId: { $in: uniqueUserIds }, profilePic: { $exists: true } },
+        { userId: 1, profilePic: 1 }
+      );
+      
 
       const userProfiles = usersDetails.map((user) => {
-        const profile = profilesDetails.find((profile) => profile && profile.userId && profile.userId.equals(user._id));
+        const profile = profilesDetails.find((profile) => {
+          const match = profile && profile.userId && profile.userId.toString() === user._id.toString();
+          return match;
+        });
+      
+        const profilePic = profile ? (profile.profilePic ? profile.profilePic.replace("../../../public", "") : null) : null;
+
+      
         return {
           artistId: user._id,
           userName: user.userName,
-          profilePic: profile ? profile.profilePic : null,
+          profilePic: profilePic,
         };
       });
 

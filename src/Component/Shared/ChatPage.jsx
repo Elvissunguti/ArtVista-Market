@@ -144,7 +144,7 @@ const ChatPage = () => {
             style={{ wordWrap: 'break-word' }}
             className="my-5 pr-10 pl-4 py-2 w-96 border border-gray-300 focus:z-10 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F] resize-none whitespace-normal overflow-y-auto max-h-[100px] min-h-[32px]"
           />
-          <button className="bg-[#9A7B4F] px-2 py-3 text-white font-semibold rounded-xl hover:bg-green-500 cursor-pointer" 
+          <button className="bg-[#9A7B4F] px-2 py-3 ml-5 text-white font-semibold rounded-lg hover:bg-green-500 cursor-pointer" 
               onClick={sendMessage}>Send</button>
         </div>
       </div>
