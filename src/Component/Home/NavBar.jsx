@@ -86,42 +86,77 @@ const NavBar = () => {
       };
 
     return (
-        <section>
-            <div className="flex flex-row justify-between">
-                <div>
-                    <img 
-                       src={logo}
-                       alt="App logo"
-                       className="w-32 h-10"
-                    />
-                </div>
-                <div className="flex flex-row">
-                    <ul className="flex flex-row space-x-4 text-xl">
-                        <li>
-                            <Link to="/all artwork" className="cursor-pointer">ALL ARTWORKS</Link>
-                            </li>
-                        <li>
-                            <Link to="/all artwork/drawings" className="cursor-pointer">DRAWINGS</Link>
-                            </li>
-                        <li>
-                            <Link to="/all artwork/paintings" className="cursor-pointer">PAITINGS</Link>
-                            </li>
-                        <li>
-                            <Link to="/seller profile" className="cursor-pointer">ARTISTS</Link>
-                            </li>
-                        <li>SELL PAINTINGS</li>
-                    </ul>
-                </div>
-                <div className="flex flex-row space-x-4 text-2xl">
-                    <div className="relative">
-                    <AiOutlineSearch 
-                       className="cursor-pointer"
-                       onClick={() => setIsSearchOpen(!isSearchOpen)} 
-                       />
-                    </div>
-                       {isSearchOpen && (
-                        <div className="absolute z-10 right-0 mt-6 top-0 px-2 py-2 bg-green-300 w-80 h-screen">
-                          <div className="flex justify-between mt-7">
+            <section className="bg-gray-900 text-white py-3">
+      <div className="container mx-auto flex items-center justify-between">
+        <Link to="/">
+          <img src={logo} alt="App logo" className="w-32 h-10" />
+        </Link>
+
+        <div className="flex items-center space-x-4">
+          <ul className="flex space-x-4 text-lg">
+            <li>
+              <Link to="/all artwork">ALL ARTWORKS</Link>
+            </li>
+            <li>
+              <Link to="/drawings">DRAWINGS</Link>
+            </li>
+            <li>
+              <Link to="/paintings">PAINTINGS</Link>
+            </li>
+            <li>
+              <Link to="/seller profile">ARTISTS</Link>
+            </li>
+            <li>SELL PAINTINGS</li>
+          </ul>
+
+          <div className="flex items-center space-x-4 text-xl">
+            <div className="relative">
+              <AiOutlineSearch className="cursor-pointer" onClick={() => setIsSearchOpen(!isSearchOpen)} />
+            </div>
+
+            <Link to="/wishlist" className="relative flex ">
+              <PiHeartStraightThin />
+              <span className="absolute -right-0 -top-2 rounded-full bg-[#9A7B4F] w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
+                {wishListedNumber}
+              </span>
+            </Link>
+
+            <Link to="/cartlist" className="relative flex ">
+              <AiOutlineShoppingCart />
+              <span className="absolute -right-1 -top-2  rounded-full bg-[#9A7B4F] w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
+                {cartListNumber}
+              </span>
+            </Link>
+
+            <div className="relative">
+              <CgProfile onClick={() => setIsOpen(!isOpen)} />
+            </div>
+
+            {isOpen && (
+              <div className="absolute top-14 right-0">
+                <ul className="flex flex-col items-center bg-[#9A7B4F] px-2 py-2 shadow-xl rounded">
+                  <li className="hover:text-white">
+                    <Link to="/dashboard">DASHBOARD</Link>
+                  </li>
+                  <li>
+                    <Link to="/my-artworks">MY ARTWORKS</Link>
+                  </li>
+                  <li className="hover:text-white">
+                    <Link to="/chats">MESSAGES</Link>
+                  </li>
+                  <li className="hover:text-white cursor-pointer" onClick={handleLogout}>
+                    LOGOUT
+                  </li>
+                </ul>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+            {isSearchOpen && (
+                        <div className="absolute z-10 text-black right-0 mt-16 top-0 px-2 py-2 bg-green-300 w-80 h-screen">
+                          <div className="flex justify-between items-center mt-7">
                             <p className="text-xl font-semibold">SEARCH OUR SITE</p>
                             <AiOutlineClose onClick={() => setIsSearchOpen(false)} className="hover:text-red-500 cursor-pointer"/>
                           </div>
@@ -168,52 +203,7 @@ const NavBar = () => {
                         </div>
 
                        )}
-                    
-                    <Link to="/wishlist" className="relative flex">
-                        <PiHeartStraightThin  />
-                        <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
-                            {wishListedNumber}
-                        </span>
-                    </Link>
-                    <Link to="/cartlist" className="relative flex">
-                        <AiOutlineShoppingCart />
-                        <span className="absolute right-0 top-0 rounded-full bg-blue-200 w-4 h-4 top right p-0 m-0 text-sm leading-tight text-center">
-                            {cartListNumber}
-                        </span>
-                    </Link>
-                    <div className="relative">
-                        <CgProfile
-                           onClick={() => setIsOpen(!isOpen)}
-                        />
-                    </div>
-                            { isOpen && (
-                                <div className="absolute top-6 right-3">
-                                    <ul className="flex flex-col items-center justify-center bg-[#9A7B4F] px-2 py-2 shadow-xl">
-                                       <li className="   hover:text-white">
-                                        <Link>
-                                        DashBoard
-                                        </Link>
-                                        </li>
-                                        <li>
-                                            <Link to="/my artworks">
-                                             My Artworks
-                                            </Link>
-                                        </li>
-                                        <li className=" hover:text-white">
-                                            <Link to="/chats">
-                                            Messages
-                                            </Link>
-                                        </li>
-                                       <li className=" hover:text-white cursor-pointer" onClick={handleLogout}>
-                                        Logout
-                                        </li>
-                                    </ul>
-                                </div>
-                            )}
-                </div>
-
-            </div>
-        </section>
+    </section>
     )
 }
 

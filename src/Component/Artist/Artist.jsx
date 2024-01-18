@@ -76,17 +76,23 @@ const Artist = () => {
     const displayData = searchText ? searchResults : profileData;
 
     return (
-        <section>
-            <NavBar />
-            <div className="flex flex-row justify-between mt-6">
-                <div className="flex flex-row">
-                    <p>Sort By:</p>
-                    <select onChange={handleSortChange} value={sortOption}>
+        <section className="bg-gray-100 min-h-screen">
+        <NavBar />
+        <div className="container mx-auto p-8">
+            <div className="flex flex-row justify-between items-center mb-6">
+                <div className="flex items-center">
+                    <p className="mr-2">Sort By:</p>
+                    <select
+                        onChange={handleSortChange}
+                        value={sortOption}
+                        className="border p-2 rounded"
+                    >
                         <option value="nameAsc">Name Ascending</option>
                         <option value="nameDesc">Name Descending</option>
                     </select>
                 </div>
-                <div>
+                <div className="relative flex items-center">
+                    <div className="relative">
                     <input
                         type="text"
                         name="search"
@@ -94,44 +100,59 @@ const Artist = () => {
                         placeholder="Search"
                         value={searchText}
                         onChange={(e) => setSearchText(e.target.value)}
-                        className=""
+                        className="border p-2 rounded mr-2 pr-8 pl-2"
                     />
-                    <button onClick={handleSearch}>
-                        <IoIosSearch /> Search
+                    <div className="absolute z-10 inset-y-0 right-0 flex items-center pr-3 pointer-events-none ">
+                    <IoIosSearch className="text-gray-400"  />
+                    </div>
+                    </div>
+                    
+                    <button
+                        onClick={handleSearch}
+                        className="bg-blue-500 text-white p-2 rounded"
+                    >
+                        
+                        Search
                     </button>
+                    
                 </div>
             </div>
-            <div className="grid grid-cols-4 mt-8">
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8">
                 {displayData !== null ? (
                     displayData.map((item, index) => (
-                        <Link to={`/seller-profile/${item.userName}`} className="grid grid-cols-4 mt-8" key={index}>
+                        <Link
+                            to={`/seller-profile/${item.userName}`}
+                            className="bg-white p-4 rounded shadow-md transition-transform transform hover:scale-105"
+                            key={index}
+                        >
+                            <div className="mb-4">
+                                {item.profilePic ? (
+                                    <img
+                                        src={item.profilePic}
+                                        alt="user thumbnail"
+                                        className="w-full h-40 object-cover rounded"
+                                    />
+                                ) : (
+                                    <img
+                                        src={thumbnail}
+                                        alt="user thumbnail"
+                                        className="w-full h-40 object-cover rounded"
+                                    />
+                                )}
+                            </div>
                             <div>
-                                <div className="">
-                                    {item.profilePic ? (
-                                        <img
-                                            src={item.profilePic}
-                                            alt="user thumbnail"
-                                            className="h-48 w-48 "
-                                        />
-                                    ) : (
-                                        <img
-                                            src={thumbnail}
-                                            alt="user thumbnail"
-                                            className="h-48 w-48"
-                                        />
-                                    )}
-                                </div>
-                                <div>
-                                    <p>{item.userName}</p>
-                                </div>
+                                <p className="text-lg font-semibold">{item.userName}</p>
                             </div>
                         </Link>
                     ))
                 ) : (
-                    <p>Loading...</p>
+                  <div className="min-h-screen flex  justify-center overflow-none">
+                    <div className="animate-spin w-20 h-20 border-t-4 border-[#9A7B4F] border-solid rounded-full"></div>
+                  </div> 
                 )}
             </div>
-        </section>
+        </div>
+    </section>
     );
 };
 

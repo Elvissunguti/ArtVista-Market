@@ -37,8 +37,8 @@ function App() {
             <>
             <Route path="/" element={<Home />} />
             <Route path="/all artwork" element={<AllArtWork />} />
-            <Route path="/all artwork/drawings" element={<Drawings />} />
-            <Route path="/all artwork/paintings" element={<Paintings />} />
+            <Route path="/drawings" element={<Drawings />} />
+            <Route path="/paintings" element={<Paintings />} />
             <Route path="/my artworks" element={<MyArtWork /> } />
             <Route path="/artpage/:title" element={<ArtPage />} />
             <Route path="/wishlist" element={<WishList />} />
