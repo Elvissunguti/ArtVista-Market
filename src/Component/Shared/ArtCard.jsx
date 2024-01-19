@@ -166,7 +166,7 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
 
     return (
         <section className="relative" >
-            <div className="group relative w-48 h-48">
+            <div className="group relative w-48 h-48 border border-gray-300 overflow-hidden rounded-md">
                 <div>
                     <div className="relative w-48 h-48 overflow-hidden">
                       <Link to={`/artpage/${encodeURIComponent(title)}`}>
@@ -218,16 +218,16 @@ const ArtCard = ({ price, title, artPhoto, artWorkId, size, medium, surface, art
                     <div onClick={handleCartList} className="hidden group-hover:block absolute inset-x-0 bottom-0 w-full text-white h-8 bg-[#9A7B4F] hover:bg-[#80471c] bg-opacity-75 py-1 cursor-pointer text-center transition-transform transform translate-y-full group-hover:translate-y-0 duration-500">
                         {isCartList ? (
                            <Tooltip title="Remove from Cart" position="top">
-                             <BsTrash3 />
+                             <BsTrash3 className="text-white text-lg"/>
                            </Tooltip>
                         ) : (
-                           <p>ADD TO CART</p>
+                           <p className="text-white">ADD TO CART</p>
                         )}
                     </div>
                     )}
-                    <div>
-                        <p>"{title}"</p>
-                        <p>$ {price}</p>
+                    <div className="">
+                        <p className="text-lg font-semibold">"{title}"</p>
+                        <p className="text-base">$ {price}</p>
                     </div>
                 </div>
             </div>

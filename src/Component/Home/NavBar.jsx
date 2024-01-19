@@ -94,19 +94,21 @@ const NavBar = () => {
 
         <div className="flex items-center space-x-4">
           <ul className="flex space-x-4 text-lg">
-            <li>
+            <li className="hover:text-[#9A7B4F]">
               <Link to="/all artwork">ALL ARTWORKS</Link>
             </li>
-            <li>
+            <li className="hover:text-[#9A7B4F]">
               <Link to="/drawings">DRAWINGS</Link>
             </li>
-            <li>
+            <li className="hover:text-[#9A7B4F]">
               <Link to="/paintings">PAINTINGS</Link>
             </li>
-            <li>
+            <li className="hover:text-[#9A7B4F]">
               <Link to="/seller profile">ARTISTS</Link>
             </li>
-            <li>SELL PAINTINGS</li>
+            <li className="hover:text-[#9A7B4F]">
+              <Link>SELL PAINTINGS</Link>
+              </li>
           </ul>
 
           <div className="flex items-center space-x-4 text-xl">
