@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Collections, Materials, Quality, Surfaces,  } from "../Utils/ArtData" 
 import { makeAuthenticatedMulterPostRequest } from "../Utils/Helpers";
+import NavBar from "../Home/NavBar";
 
 
 const Product = () => {
@@ -73,8 +74,9 @@ const Product = () => {
 
 
     return (
-        <section className="flex flex-col max-w-5xl mx-auto">
-            <div className="flex flex-col justify-center w-full">
+        <section className="flex flex-col ">
+          <NavBar />
+            <div className="flex flex-col justify-center max-w-5xl mx-auto w-full">
               <h1 className="mt-4 text-xl font-bold">Upload an ArtWork for sale</h1>
               <div className="flex flex-col  w-full ">
                 <form onSubmit={handleSubmit} className="flex flex-col justify-center w-full ">

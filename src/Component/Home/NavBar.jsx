@@ -3,7 +3,7 @@ import logo from "../../Assets/logo/logo-no-background.png";
 import { AiOutlineClose, AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
 import { PiHeartStraightThin } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useWishList } from "../Context/WishListContext";
 import { useCartList } from "../Context/CartListContext";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
@@ -25,6 +25,11 @@ const NavBar = () => {
     
 
     const navigate = useNavigate();
+    const location = useLocation();
+
+    const isNavLinkActive = (path) => {
+      return location.pathname === path;
+    };
     
 
     useEffect(() => {
@@ -94,20 +99,20 @@ const NavBar = () => {
 
         <div className="flex items-center space-x-4">
           <ul className="flex space-x-4 text-lg">
-            <li className="hover:text-[#9A7B4F]">
-              <Link to="/all artwork">ALL ARTWORKS</Link>
+            <li className={`hover:text-[#9A7B4F] ${isNavLinkActive('/all_artwork') ? 'text-main' : ''}`}>
+              <NavLink to="/all_artwork"  >ALL ARTWORKS</NavLink>
             </li>
-            <li className="hover:text-[#9A7B4F]">
-              <Link to="/drawings">DRAWINGS</Link>
+            <li className={`hover:text-[#9A7B4F] ${isNavLinkActive('/drawings') ? 'text-main' : ''}`}>
+              <NavLink to="/drawings" >DRAWINGS</NavLink>
             </li>
-            <li className="hover:text-[#9A7B4F]">
+            <li className={`hover:text-[#9A7B4F] ${isNavLinkActive('/paintings') ? 'text-main' : ''}`}>
               <Link to="/paintings">PAINTINGS</Link>
             </li>
-            <li className="hover:text-[#9A7B4F]">
-              <Link to="/seller profile">ARTISTS</Link>
+            <li className={`hover:text-[#9A7B4F] ${isNavLinkActive('/seller_profile') ? 'text-main' : ''}`}>
+              <Link to="/seller_profile">ARTISTS</Link>
             </li>
-            <li className="hover:text-[#9A7B4F]">
-              <Link>SELL PAINTINGS</Link>
+            <li className={`hover:text-[#9A7B4F] ${isNavLinkActive('/sell_artwork') ? 'text-main' : ''}`}>
+              <Link to="/sell_artwork">SELL PAINTINGS</Link>
               </li>
           </ul>
 

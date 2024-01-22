@@ -5,6 +5,7 @@ import QuickViewCard from "../Shared/QuickViewCard";
 import ArtPage from "../Shared/ArtPage";
 import Search from "../Search/Search";
 import Product from "../Product/Product";
+import AllArtWork from "../AllArtWork/AllArtWork";
 
 
 const Home = () => {
@@ -13,7 +14,7 @@ const Home = () => {
             <NavBar />
             <div>
                 <h1>welcome to artVista Market</h1>
-                <Product />
+                <AllArtWork />
             </div>
             
         </section>

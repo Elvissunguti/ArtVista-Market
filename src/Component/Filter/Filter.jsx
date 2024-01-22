@@ -131,12 +131,12 @@ const Filter = ({ onSortChange, onFilterChange, children }) => {
     };
 
     return(
-        <section className="mx-auto max-w-7xl">
+        <section className="mx-auto max-w-7xl flex mt-4">
             <div className="flex flex-row ">
-                <div className="w-1/5">
-                    <h1 className="text-xl font-semibold">Filters</h1>
+                <div className="w-1/5 mr-8">
+                    <h1 className="text-xl font-semibold mb-2">Filters</h1>
                     <div>
-                        <h1 className="text-xl font-semibold">PRICE</h1>
+                        <h1 className="text-xl font-semibold mb-2">PRICE</h1>
                         <div>
                             <div className="flex w-3/5 space-x-4">
                             <input
@@ -238,7 +238,7 @@ const Filter = ({ onSortChange, onFilterChange, children }) => {
                     </div>
                 </div>
                 <div className="flex flex-col w-4/5">
-                <div className="flex justify-end w-full ">
+                <div className="flex justify-end w-full  ">
                     
                     <select onChange={onSortChange} className="px-2 py-3 border  rounded-full">
                         <option disabled >Sort by:</option>
@@ -252,7 +252,7 @@ const Filter = ({ onSortChange, onFilterChange, children }) => {
                     </select>
                     
                 </div>
-                <div className="mt-1">
+                <div>
                    {children}
                  </div>
                 </div>

@@ -282,7 +282,7 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
                         </Link>
                     </div>
                     <div>
-                    <Link className="relative flex flex-row flex-start items-center font-bold hover:text-[#9A7B4F] cursor-pointer group transform duration-300 ease-in-out">
+                    <Link to={`/artpage/${title}`} className="relative flex flex-row flex-start items-center font-bold hover:text-[#9A7B4F] cursor-pointer group transform duration-300 ease-in-out">
                        View full details
                         <BsArrowRight
                            className="transform translate-x-0 group-hover:translate-x-3 transition-transform duration-300 ease-in-out"

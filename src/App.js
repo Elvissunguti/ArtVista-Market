@@ -16,6 +16,7 @@ import Paintings from './Component/Paintings/Paintings';
 import ChatPage from './Component/Shared/ChatPage';
 import MyArtWork from './Component/MyArtWork/MyArtWork';
 import Messages from './Component/Messages/Messages';
+import Product from './Component/Product/Product';
 
 function App() {
 
@@ -36,7 +37,7 @@ function App() {
           {loggedIn ? (
             <>
             <Route path="/" element={<Home />} />
-            <Route path="/all artwork" element={<AllArtWork />} />
+            <Route path="/all_artwork" element={<AllArtWork />} />
             <Route path="/drawings" element={<Drawings />} />
             <Route path="/paintings" element={<Paintings />} />
             <Route path="/my artworks" element={<MyArtWork /> } />
@@ -44,7 +45,8 @@ function App() {
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/cartlist" element={<CartList />} />
             <Route path="/profileUpload" element={<ProfileUpload />} />
-            <Route path="/seller profile" element={<Artist />} />
+            <Route path="/sell_artwork" element={<Product />} />
+            <Route path="/seller_profile" element={<Artist />} />
             <Route path="/seller-profile/:userName" element={<ArtistPage />} />
             <Route path='/chats' element={<Messages />} />
             <Route path="/chatpage/:artistId" element={<ChatPage />} />

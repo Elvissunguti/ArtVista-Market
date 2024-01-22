@@ -53,7 +53,7 @@ const AllArtWork = () => {
             <NavBar />
             <div>
                 <Filter onSortChange={handleSortChange} onFilterChange={handleFilterChange}>
-                    <div className="grid grid-cols-4 gap-4 mt-14 mx-6">
+                    <div className="grid grid-cols-4 gap-4  mx-6">
                         {sortedArtworkToDisplay.map((artItem, index) => (
                             <div key={index} className="mt-14">
                                 <ArtCard
