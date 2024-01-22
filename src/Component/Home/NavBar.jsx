@@ -39,11 +39,11 @@ const NavBar = () => {
                     `/search/artwork?searchText=${searchText}`
                 );
                 const modifiedResults = response.data.map(item => {
-                const artPhotoFilename = item.artPhoto.split("/").pop(); 
+                const artPhotoFilename = item.artPhoto.split(/[\/\\]/).pop(); 
                 const artPhotoUrl = `/ArtImages/${artPhotoFilename}`;
                 return { ...item, artPhoto: artPhotoUrl };
                  });
-
+               console.log("search", modifiedResults)
             setSearchResults(modifiedResults);
             } catch (error){
                 console.log("Error searching for artwork", error);
@@ -146,7 +146,7 @@ const NavBar = () => {
                     <Link to="/dashboard">DASHBOARD</Link>
                   </li>
                   <li>
-                    <Link to="/my-artworks">MY ARTWORKS</Link>
+                    <Link to="/my_artworks">MY ARTWORKS</Link>
                   </li>
                   <li className="hover:text-white">
                     <Link to="/chats">MESSAGES</Link>
@@ -162,7 +162,7 @@ const NavBar = () => {
       </div>
 
             {isSearchOpen && (
-                        <div className="absolute z-10 text-black right-0 mt-16 top-0 px-2 py-2 bg-green-300 w-80 h-screen">
+                        <div className="absolute z-10 text-black right-0 mt-16 top-0 px-2 py-2 bg-green-300 w-80 max-h-[80vh] h-screen overflow-y-auto scrollbar-thin">
                           <div className="flex justify-between items-center mt-7">
                             <p className="text-xl font-semibold">SEARCH OUR SITE</p>
                             <AiOutlineClose onClick={() => setIsSearchOpen(false)} className="hover:text-red-500 cursor-pointer"/>
@@ -185,24 +185,24 @@ const NavBar = () => {
                           </div>
                           <div>
                             {searchResults && searchResults.length > 0 ? (
-                                <div className="absolute overflow-auto">
+                                <div className="grid grid-cols-2 gap-2">
                                     {searchResults.map((item, index) => (
-                                        <div key={index} className="flex ">
+                                        <div key={index} className="flex flex-col items-center mb-2">
                                             <Link to={`/artpage/${encodeURIComponent(item.title)}`}>
                                             <img 
                                                src={item.artPhoto}
                                                alt="art Photo"
-                                               className="h-12 w-12"
+                                               className="h-24 w-24 object-cover object-center rounded"
 
                                             />
-                                            <p>{item.title}</p>
+                                            <p className="text-sm mt-2">{item.title}</p>
                                             </Link>
 
                                         </div>
                                     ))}
                                     </div>
                             ) : (
-                                <div>
+                                <div className="text-center">
                                 <h1>No Results found!</h1>
                                 </div>
                             )}

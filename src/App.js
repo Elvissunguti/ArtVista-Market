@@ -40,7 +40,7 @@ function App() {
             <Route path="/all_artwork" element={<AllArtWork />} />
             <Route path="/drawings" element={<Drawings />} />
             <Route path="/paintings" element={<Paintings />} />
-            <Route path="/my artworks" element={<MyArtWork /> } />
+            <Route path="/my_artworks" element={<MyArtWork /> } />
             <Route path="/artpage/:title" element={<ArtPage />} />
             <Route path="/wishlist" element={<WishList />} />
             <Route path="/cartlist" element={<CartList />} />
