@@ -68,7 +68,7 @@ async(req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 isSold: artwork.isSold,
 
@@ -101,7 +101,7 @@ async (req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 size: artwork.size,
                 medium: artwork.medium,
@@ -143,7 +143,7 @@ async(req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 size: artwork.size,
                 medium: artwork.medium,
@@ -185,7 +185,7 @@ async(req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 size: artwork.size,
                 medium: artwork.medium,
@@ -237,7 +237,7 @@ async (req, res) => {
             quality: artwork.quality,
             delivery: artwork.delivery,
             description: artwork.description,
-            price: artwork.price,
+            price: artwork.price.toLocaleString(),
             artistId: artwork.userId,
             isSold: artwork.isSold,
         };
@@ -327,7 +327,7 @@ async (req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 size: artwork.size,
                 medium: artwork.medium,
@@ -381,7 +381,7 @@ async (req, res) => {
             return {
                 _id: artwork._id,
                 title: artwork.title,
-                price: artwork.price,
+                price: artwork.price.toLocaleString(),
                 artPhoto: firstPhoto.replace("../../../public", ""),
                 size: artwork.size,
                 medium: artwork.medium,

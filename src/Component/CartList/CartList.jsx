@@ -7,6 +7,7 @@ import CartListCard from "./CartListCard";
 const CartList = () => {
     const [cartItems, setCartItems] = useState([]);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -16,38 +17,50 @@ const CartList = () => {
                 setTotalPrice(response.totalPrice);
             } catch (error) {
                 console.error("Error fetching the artwork in the cartlist", error);
+            } finally {
+                setLoading(false);
             }
         };
         fetchData();
     }, []);
 
 
-
     return (
-        <section>
+        <section className="bg-gray-100 min-h-screen">
             <NavBar />
-            <div>
-                <div className="flex justify-center items-center my-8 ">
+            <div className="max-w-2xl mx-auto mt-8 p-4 bg-white rounded-lg shadow-md">
+                <div className="flex justify-center items-center my-4">
                     <p className="text-3xl font-bold">SHOPPING CART</p>
                 </div>
-                {cartItems.map((item, index) => (
-                    <CartListCard
-                      title={item.title}
-                      artPhoto={item.artPhoto}
-                      artType={item.artType} 
-                      price={item.price}
-                      artWorkId={item._id}
-                    
-                    />
-                ))}
-                <div>
-                    <p>Total Price: ${totalPrice}</p>
-                </div>
-            </div>
-            <div>
-                <button className="">
-                    CHECKOUT
-                </button>
+                {loading ? (
+                    <div className="min-h-screen flex  justify-center overflow-none">
+                        <div className="animate-spin w-20 h-20 border-t-4 border-[#9A7B4F] border-solid rounded-full"></div>
+                    </div> 
+                ) : cartItems.length === 0 ? (
+                    <p>Cart list is empty.</p>
+                ) : (
+                    <>
+                        {cartItems.map((item, index) => (
+                            <CartListCard
+                                key={index}
+                                title={item.title}
+                                artPhoto={item.artPhoto}
+                                artType={item.artType} 
+                                price={item.price}
+                                userName={item.userName}
+                                artWorkId={item._id}
+                            />
+                        ))}
+                        <div className="flex justify-end mt-4">
+                            <p className="text-xl font-semibold">Total Price: ${totalPrice}</p>
+                        </div>
+                        <div className="flex justify-end mt-4">
+                            <button className="bg-blue-500 text-white py-2 px-4 rounded-full">
+                                CHECKOUT
+                            </button>
+                        </div>
+                    </>
+                )}
             </div>
         </section>
     );

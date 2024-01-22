@@ -105,55 +105,63 @@ async (req, res) => {
     }
 });
 
+
 router.get("/cartlisted",
-passport.authenticate("jwt", {session: false}),
-async (req, res) => {
-    try{
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const userId = req.user._id;
 
-        const userId = req.user._id;
+      const user = await User.findById(userId);
 
-        const user = await User.findById(userId);
+      if (!user) {
+        return res.json({ message: "User not found" });
+      }
 
-        if (!user){
-            return res.json({ message: "User not found" });
-        }
+      const cartListIds = user.cartList;
 
-        const cartListIds = user.cartList;
+      if (cartListIds.length === 0) {
+        return res.json({ message: "There is no artwork in the cartList" });
+      }
 
-        if(cartListIds === 0){
-            return res.json({ message: "There is no artwork in the cartList"})
+      const artWorks = await ArtWork.find({ _id: { $in: cartListIds } });
+
+      // Fetch user names for userIds associated with artworks
+      const userIds = artWorks.map((artwork) => artwork.userId);
+      const users = await User.find({ _id: { $in: userIds } });
+
+      const simplifiedArtwork = artWorks.map((artwork) => {
+        const firstPhoto = artwork.artPhoto[0] || null;
+
+        // Find the user corresponding to the artwork's userId
+        const user = users.find((u) => u._id.toString() === artwork.userId.toString());
+
+        return {
+          _id: artwork._id,
+          title: artwork.title,
+          price: artwork.price.toLocaleString(),
+          artPhoto: firstPhoto.replace("../../../public", ""),
+          size: artwork.size,
+          medium: artwork.medium,
+          surface: artwork.surface,
+          artType: artwork.artType,
+          creationYear: artwork.creationYear,
+          quality: artwork.quality,
+          delivery: artwork.delivery,
+          description: artwork.description,
+          userName: user ? user.userName : "Unknown", 
         };
+      });
 
-        const artWorks = await ArtWork.find({ _id: { $in: cartListIds }});
+      const totalPrice = simplifiedArtwork.reduce((total, artwork) => total + parseInt(artwork.price.replace(/,/g, '')), 0).toLocaleString();
 
-        const simplifiedArtwork = artWorks.map(artwork => {
-            
-            const firstPhoto = artwork.artPhoto[0] || null;
-      
-            return {
-                _id: artwork._id,
-                title: artwork.title,
-                price: artwork.price,
-                artPhoto: firstPhoto.replace("../../../public", ""),
-                size: artwork.size,
-                medium: artwork.medium,
-                surface: artwork.surface,
-                artType: artwork.artType,
-                creationYear: artwork.creationYear,
-                quality: artwork.quality,
-                delivery: artwork.delivery,
-                description: artwork.description,
-            };
-        })
-      
-        const totalPrice = simplifiedArtwork.reduce((total, artwork) => total + artwork.price, 0);
+      res.json({ data: simplifiedArtwork, totalPrice });
 
-        res.json({ data: simplifiedArtwork, totalPrice }); 
-
-    } catch(error){
-        console.error("Error fetching all the artwork in the cartlist", error);
-        return res.json({ error: "Error fetching all the artwork in the cartlist"});
+    } catch (error) {
+      console.error("Error fetching all the artwork in the cartlist", error);
+      return res.json({ error: "Error fetching all the artwork in the cartlist" });
     }
-});
+  });
+
 
 module.exports = router;

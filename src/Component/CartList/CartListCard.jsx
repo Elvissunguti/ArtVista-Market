@@ -2,8 +2,9 @@ import React from "react";
 import { BsTrash3 } from "react-icons/bs";
 import { useCartList } from "../Context/CartListContext";
 import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { Tooltip } from "react-tippy";
 
-const CartListCard = ({ title, artist, artType, price, artPhoto, artWorkId }) => {
+const CartListCard = ({ title, userName, artType, price, artPhoto, artWorkId }) => {
 
     const { cartListNumber, updatedCartListNumber } = useCartList();
 
@@ -30,29 +31,31 @@ const CartListCard = ({ title, artist, artType, price, artPhoto, artWorkId }) =>
     const artPhotoUrl = `/ArtImages/${artPhotoFilename}`; 
 
     return(
-        <section>
-            <div>
-                <div className="flex ">
-                    <div>
-                        <img 
-                           src={artPhotoUrl}
-                           alt="image of artwork"
-                           className="h-48 w-48"
-                        />
-                        <button onClick={deleteCartList}>
-                        <BsTrash3 />
-                        </button>
-                    </div>
-                    <div>
-                        <p className="text-xl font-medium ">{title}</p>
-                        <p>artist</p>
-                        <p>{artType}</p>
-                        <p>Artwork Total ${price}</p>
-                    </div>
-                </div>
-
-            </div>
-        </section>
+      <section>
+      <div className="flex justify-between items-center p-4 border border-gray-300 rounded-lg">
+        <div>
+          <img 
+            src={artPhotoUrl}
+            alt={`${title} by ${userName}`}
+            className="w-full h-48 object-cover rounded-lg"
+          />
+        </div>
+        <div className="ml-4">
+          <p className="text-xl font-medium mb-2">{title}</p>
+          <p className="text-sm text-gray-600">{userName}</p>
+          <p className="text-sm text-gray-600">{artType}</p>
+          <p className="text-sm text-gray-600">Artwork Total ${price}</p>
+        </div>
+        <button 
+          onClick={() => deleteCartList(artWorkId)}
+          className="font-semibold text-2xl text-red-500 hover:text-red-700 focus:outline-none"
+        >
+          <Tooltip title="Remove from Cart" position="right">
+          <BsTrash3 />
+          </Tooltip>
+        </button>
+      </div>
+    </section>
     )
 }
 export default CartListCard;

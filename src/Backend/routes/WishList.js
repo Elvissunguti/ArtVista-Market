@@ -142,7 +142,7 @@ async (req, res) => {
       return {
           _id: artwork._id,
           title: artwork.title,
-          price: artwork.price,
+          price: artwork.price.toLocaleString(),
           artPhoto: firstPhoto.replace("../../../public", ""),
           size: artwork.size,
           medium: artwork.medium,
