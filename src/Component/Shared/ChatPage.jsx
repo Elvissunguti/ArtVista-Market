@@ -125,47 +125,55 @@ const ChatPage = () => {
   
 
   return (
-    <section>
-      <NavBar />
-      <div className="flex flex-col">
-        <div className="flex">
-          {profile && profile.profilePic !== null  ? (
-            <img src={profile.profilePic} alt="profile photo" className="rounded-full w-16 w-12" />
+    <section className="h-full bg-gray-100">
+    <NavBar />
+    <div className="flex flex-col items-center justify-center ">
+    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 mt-2">
+      <div className="flex flex-col h-full">
+        <div className="flex items-center  p-4">
+          {profile && profile.profilePic !== null ? (
+            <img src={profile.profilePic} alt="profile photo" className="rounded-full w-16 h-16" />
           ) : (
             <img src={thumbnail} alt="Profile pic" className="rounded-full w-12 h-12" />
           )}
-          <h1 className="text-2xl font-semibold pl-4">{profile?.userName}</h1>
+          <h1 className="text-2xl font-semibold ml-4">{profile?.userName}</h1>
         </div>
-        <div>
+        <div className="flex-grow overflow-y-auto px-4">
           {messages.map((msg, index) => (
             <div
               key={index}
               className={`mb-2 text-${msg.role === 'sender' ? "right" : "left"}`}
               style={{ textAlign: msg.role === 'sender' ? "right" : "left" }}
             >
-              {msg.role === 'sender' ? "You: " : ""}
-              {msg.content}
-              <div className="text-xs text-gray-500">
-              {formatMessageTime(msg.timeStamp)}
+              <div className={`p-4 rounded-lg ${msg.role === 'sender' ? "bg-[#9A7B4F] text-white" : "bg-gray-200"}`}>
+                {msg.role === 'sender' ? "" : ""}
+                {msg.content}
+              </div>
+              <div className="text-xs text-gray-500 mt-1">
+                {formatMessageTime(msg.timeStamp)}
+              </div>
             </div>
-            </div>
-
           ))}
         </div>
-        <div>
+        <div className="flex items-center p-4">
           <input
             type="text"
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Type your message..."
-            style={{ wordWrap: 'break-word' }}
-            className="my-5 pr-10 pl-4 py-2 w-96 border border-gray-300 focus:z-10 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F] resize-none whitespace-normal overflow-y-auto max-h-[100px] min-h-[32px]"
+            className="flex-grow border border-gray-300 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F] rounded-l-md p-2"
           />
-          <button className="bg-[#9A7B4F] px-2 py-3 ml-5 text-white font-semibold rounded-lg hover:bg-green-500 cursor-pointer" 
-              onClick={sendMessage}>Send</button>
+          <button
+            className="bg-[#9A7B4F] px-4 py-2 text-white font-semibold rounded-r-md hover:bg-green-500 cursor-pointer"
+            onClick={sendMessage}
+          >
+            Send
+          </button>
         </div>
       </div>
-    </section>
+    </div>
+    </div>
+  </section>
   );
 
     // Function to format the message timestamp
