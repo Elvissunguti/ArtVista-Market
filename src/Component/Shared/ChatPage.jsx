@@ -138,7 +138,7 @@ const ChatPage = () => {
           )}
           <h1 className="text-2xl font-semibold ml-4">{profile?.userName}</h1>
         </div>
-        <div className="flex-grow overflow-y-auto px-4">
+        <div className="flex-grow overflow-y-auto px-4 max-h-[300px] custom-scrollbar">
           {messages.map((msg, index) => (
             <div
               key={index}

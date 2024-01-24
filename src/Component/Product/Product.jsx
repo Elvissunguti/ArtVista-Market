@@ -74,21 +74,21 @@ const Product = () => {
 
 
     return (
-        <section className="flex flex-col ">
+        <section className="flex flex-col bg-gray-100 min-h-screen">
           <NavBar />
-            <div className="flex flex-col justify-center max-w-5xl mx-auto w-full">
-              <h1 className="mt-4 text-xl font-bold">Upload an ArtWork for sale</h1>
+            <div className="flex flex-col justify-center max-w-2xl mx-auto w-full p-6">
+              <h1 className="mt-4 text-3xl font-bold">Upload an ArtWork for sale</h1>
               <div className="flex flex-col  w-full ">
-                <form onSubmit={handleSubmit} className="flex flex-col justify-center w-full ">
-                    <label htmlFor="title" className="font-semibold text-xl mt-5">Title: </label>
+                <form onSubmit={handleSubmit} className="flex flex-col justify-center w-full space-y-4">
+                    <label htmlFor="title" className="font-semibold text-lg mt-5">Title: </label>
                     <input
                        type="text"
                        name="title"
                        id="title"
-                       placeholder="title of the art"
+                       placeholder="Title of the art"
                        value={formData.title}
                        onChange={handleChange}
-                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+                       className="px-2 py-3 w-full mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
                     />
 
                     <h1 className="font-semibold mt-4 text-xl ">Details</h1>
@@ -202,6 +202,21 @@ const Product = () => {
                        multiple
                        onChange={handleFileChange}
                     />
+                              {formData.artPhoto.length > 0 && (
+            <div className="mt-4">
+              <p className="font-medium text-lg">Selected Photos:</p>
+              <div className="flex flex-wrap gap-4">
+                {formData.artPhoto.map((file, index) => (
+                  <img
+                    key={index}
+                    src={URL.createObjectURL(file)}
+                    alt={`Artwork ${index + 1}`}
+                    className="w-48 h-48 rounded-lg object-cover "
+                  />
+                ))}
+              </div>
+            </div>
+          )}
 
                     <label htmlFor="price" className="font-medium mt-4 text-lg">Price of the ArtWork</label>
                     <input 
