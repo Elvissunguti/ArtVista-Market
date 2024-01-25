@@ -63,6 +63,16 @@ router.post("/make/:artworkIds",
         })
       );
 
+      // Update the status to "pending" for each artist's order
+      const updateStatusPromises = savedOrders.map(async (order) => {
+        await Order.updateOne(
+          { _id: order._id },
+          { $set: { status: "pending" } }
+        );
+      });
+
+      await Promise.all(updateStatusPromises);
+
       return res.json({ success: true, orders: savedOrders });
     } catch (error) {
       console.error("Error making artwork order", error);
@@ -70,7 +80,6 @@ router.post("/make/:artworkIds",
     }
   }
 );
-
 
 
 
@@ -82,12 +91,33 @@ async (req, res) => {
 
         const userId = req.user._id;
 
+        const artworkOrder = await Order.find({ userId });
 
+        return res.json({ data: artworkOrder})
 
     } catch(error){
         console.error("Error fetching artworks ordered", error);
         return res.json({ error: "Error fetching ordered artworks" });
     }
 });
+
+
+// router to fetch orders received
+router.get("/receivedorder",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+        const artistId = req.user._id;
+
+        const receivedOrders = await Order.find({ "artworks.artistId": artistId });
+
+        return res.json({ data: receivedOrders });
+
+    } catch(error){
+        console.error("error fetching received artwork order", error);
+        return res.json({ error: "Error fetching received artwork order" });
+    }
+});
+
 
 module.exports = router;
