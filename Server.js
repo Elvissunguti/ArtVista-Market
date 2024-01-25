@@ -20,6 +20,7 @@ const ProfileRoutes = require("./src/Backend/routes/Profile");
 const SearchRoutes = require("./src/Backend/routes/Search");
 const FilterRoutes = require("./src/Backend/routes/Filter");
 const MessageRoutes = require("./src/Backend/routes/Message");
+const OrderRoutes = require("./src/Backend/routes/Order");
 
 const app = express();
 const server = http.createServer(app);
@@ -110,6 +111,8 @@ app.use("/profile", ProfileRoutes);
 app.use("/search", SearchRoutes);
 app.use("/filter", FilterRoutes);
 app.use("/message", MessageRoutes);
+app.use("/order", OrderRoutes);
+
 
 server.listen(PORT, () => {
   console.log(`Server listening on ${PORT}`);

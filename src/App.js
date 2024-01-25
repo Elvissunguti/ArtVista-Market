@@ -17,6 +17,7 @@ import ChatPage from './Component/Shared/ChatPage';
 import MyArtWork from './Component/MyArtWork/MyArtWork';
 import Messages from './Component/Messages/Messages';
 import Product from './Component/Product/Product';
+import DashBoard from './Component/DashBoard/DashBoard';
 
 function App() {
 
@@ -50,6 +51,7 @@ function App() {
             <Route path="/seller-profile/:userName" element={<ArtistPage />} />
             <Route path='/chats' element={<Messages />} />
             <Route path="/chatpage/:artistId" element={<ChatPage />} />
+            <Route path="/dashboard" element={<DashBoard />} />
             
             </>
           ) : (
@@ -67,7 +69,7 @@ function App() {
 };
 
 function NotFound() {
-  return <h1>Page not found. <Link to="/all artwork">Go to Homepage</Link></h1>;
+  return <h1>Page not found. <Link to="/all_artwork" className="text-red-600">Go to Homepage</Link></h1>;
 }
 
 export default App;
