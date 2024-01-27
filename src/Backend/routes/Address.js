@@ -48,4 +48,24 @@ async (req, res) => {
     }
 });
 
+
+// router to fetch address of the user
+router.get("/fetch",
+passport.authenticate("jwt", {session: false}),
+async(req, res) => {
+    try{
+
+        const userId = req.user._id;
+
+        const address = await Address.findOne({ userId: userId});
+
+        return res.json({ data: address});
+         
+    } catch(error){
+        console.error("Error fetching address of the user", error);
+        return res.json({ error: "Error fetching address of the user" });
+    }
+});
+
+
 module.exports = router;
