@@ -21,6 +21,7 @@ const SearchRoutes = require("./src/Backend/routes/Search");
 const FilterRoutes = require("./src/Backend/routes/Filter");
 const MessageRoutes = require("./src/Backend/routes/Message");
 const OrderRoutes = require("./src/Backend/routes/Order");
+const AddressRoutes = require("./src/Backend/routes/Address");
 
 const app = express();
 const server = http.createServer(app);
@@ -112,6 +113,7 @@ app.use("/search", SearchRoutes);
 app.use("/filter", FilterRoutes);
 app.use("/message", MessageRoutes);
 app.use("/order", OrderRoutes);
+app.use("/address", AddressRoutes);
 
 
 server.listen(PORT, () => {
