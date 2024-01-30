@@ -72,10 +72,23 @@ async(req, res) => {
     try{
 
         const userId = req.user._id;
+        const email = req.user.email;
 
         const address = await Address.findOne({ userId: userId});
+        
+        const simplifiedAddress = {
+          id: address._id,
+          firstName: address.firstName,
+          lastName: address.lastName,
+          phoneNumber: address.phoneNumber,
+          address: address.address,
+          region: address.region,
+          city: address.city,
+          moreInfo: address.moreInfo,
+          email,
+        };
 
-        return res.json({ data: address});
+        return res.json({ data: simplifiedAddress});
          
     } catch(error){
         console.error("Error fetching address of the user", error);
