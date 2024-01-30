@@ -20,6 +20,7 @@ import Product from './Component/Product/Product';
 import DashBoard from './Component/DashBoard/DashBoard';
 import AddressEdit from './Component/Address/AddressEdit';
 import AddressInfo from './Component/Address/AddressInfo';
+import CheckOut from './Component/CheckOut/CheckOut';
 
 function App() {
 
@@ -56,6 +57,7 @@ function App() {
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/address/edit" element={<AddressEdit />} />
             <Route path="/address" element={<AddressInfo />} />
+            <Route path="/checkout" element={<CheckOut />} />
             
             </>
           ) : (
