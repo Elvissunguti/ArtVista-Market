@@ -1,7 +1,8 @@
 import React from "react";
 import NavBar from "../Home/NavBar";
+import { Link } from "react-router-dom";
 
-const DashBoard = () => {
+const DashBoard = ({ children}) => {
     return (
         <section className="bg-gray-100 h-screen">
             <NavBar/>
@@ -11,11 +12,12 @@ const DashBoard = () => {
                 <div className="flex flex-row w-2/5">
                     <ul className="">
                         <li>Dashboard</li>
-                        <li>Address</li>
+                        <li>
+                            <Link to="/address">Address</Link></li>
                         <li>Orders</li>
                     </ul>
-                    <div>
-
+                    <div className="w-3/5">
+                        {children}
                     </div>
                 </div>
                 

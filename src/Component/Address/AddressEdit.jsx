@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import DashBoard from "../DashBoard/DashBoard";
 
 
 const AddressEdit = () => {
@@ -33,7 +34,7 @@ const AddressEdit = () => {
     }
 
     return (
-        <section>
+        <DashBoard>
             <div>
                 <h1>Edit Address</h1>
                 <form onSubmit={handleSaveAddress} className>
@@ -120,7 +121,7 @@ const AddressEdit = () => {
 
                 </form>
             </div>
-        </section>
+        </DashBoard>
     )
 }
 export default AddressEdit;

@@ -19,6 +19,7 @@ import Messages from './Component/Messages/Messages';
 import Product from './Component/Product/Product';
 import DashBoard from './Component/DashBoard/DashBoard';
 import AddressEdit from './Component/Address/AddressEdit';
+import AddressInfo from './Component/Address/AddressInfo';
 
 function App() {
 
@@ -54,6 +55,7 @@ function App() {
             <Route path="/chatpage/:artistId" element={<ChatPage />} />
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/address/edit" element={<AddressEdit />} />
+            <Route path="/address" element={<AddressInfo />} />
             
             </>
           ) : (
