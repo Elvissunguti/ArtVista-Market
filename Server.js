@@ -22,6 +22,7 @@ const FilterRoutes = require("./src/Backend/routes/Filter");
 const MessageRoutes = require("./src/Backend/routes/Message");
 const OrderRoutes = require("./src/Backend/routes/Order");
 const AddressRoutes = require("./src/Backend/routes/Address");
+const PaymentRoutes = require("./src/Backend/routes/Payment");
 
 const app = express();
 const server = http.createServer(app);
@@ -114,6 +115,7 @@ app.use("/filter", FilterRoutes);
 app.use("/message", MessageRoutes);
 app.use("/order", OrderRoutes);
 app.use("/address", AddressRoutes);
+app.use("/api/payment", PaymentRoutes);
 
 
 server.listen(PORT, () => {
