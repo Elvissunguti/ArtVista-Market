@@ -1,6 +1,5 @@
-// routes/payment.js
-
 const express = require('express');
+const passport = require('passport');
 const router = express.Router();
 const paypal = require('paypal-rest-sdk');
 
@@ -12,7 +11,9 @@ paypal.configure({
 });
 
 // Route for initiating a PayPal payment
-router.post('/create-payment', async (req, res) => {
+router.post('/create-payment',
+passport.authenticate("jwt", {session: false}),
+ async (req, res) => {
   const { amount, currency, description } = req.body;
 
   const create_payment_json = {
@@ -54,7 +55,9 @@ router.post('/create-payment', async (req, res) => {
 });
 
 // Route for executing a PayPal payment
-router.post('/execute-payment', async (req, res) => {
+router.post('/execute-payment',
+passport.authenticate("jwt", {session: false}),
+async (req, res) => {
   const { paymentID, payerID } = req.body;
 
   const execute_payment_json = {
