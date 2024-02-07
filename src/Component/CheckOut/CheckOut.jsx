@@ -55,7 +55,7 @@ const CheckOut = () => {
 
 
     return (
-        <section>
+        <section className="bg-gray-100">
             <NavBar />
             <div>
                 <div>
@@ -127,7 +127,7 @@ const CheckOut = () => {
               />
               </div>
             )}
-                              <button onClick={handlePayment}>Proceed to Payment</button>
+                              <button className="px-2 py-3 bg-main" onClick={handlePayment}>Proceed to Payment</button>
                               <p>Shipping fees to be calculated separately</p>
              
                     </div>

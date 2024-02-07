@@ -3,6 +3,7 @@ const passport = require("passport");
 const ArtWork = require("../Model/ArtWork");
 const Order = require("../Model/Order");
 const paypal = require('paypal-rest-sdk');
+const User = require("../Model/User");
 const router = express.Router();
 
 // PayPal configuration
@@ -45,6 +46,18 @@ router.post("/make/:artworkIds",
           // Add other order details as needed
         });
         await order.save();
+
+        // Remove artworks from user's cart list
+                const user = await User.findById(userId);
+                for (const artworkId of artworkIds) {
+                  const index = user.cartList.indexOf(artworkId);
+                  if (index !== -1) {
+                    user.cartList.splice(index, 1);
+                  }
+                }
+                user.cartListNumber = user.cartList.length;
+                await user.save();
+
         return res.json({ success: true, message: 'Order placed successfully with cash payment' });
       } else if (paymentMethod === 'paypal') {
         // Create payment payload for PayPal
@@ -83,7 +96,18 @@ router.post("/make/:artworkIds",
               // Add other order details as needed
             });
             order.save()
-              .then(savedOrder => {
+              .then(async savedOrder => {
+
+              // Remove artworks from user's cart list
+                 const user = await User.findById(userId);
+                 for (const artworkId of artworkIds) {
+                  const index = user.cartList.indexOf(artworkId);
+                   if (index !== -1) {
+                      user.cartList.splice(index, 1);
+                       }
+                }
+                  user.cartListNumber = user.cartList.length;
+                  await user.save();
                 // Redirect user to PayPal approval URL
                 res.json({ approvalUrl: payment.links[1].href });
               })

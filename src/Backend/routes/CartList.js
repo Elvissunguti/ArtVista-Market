@@ -57,7 +57,7 @@ async (req, res) => {
         console.error("Error deleting artwork from cartList", error);
         return res.json({ error: "Error deleting artwork from cartList" });
     }
-})
+});
 
 router.get("/checkcartlist",
 passport.authenticate("jwt", {session: false}),
