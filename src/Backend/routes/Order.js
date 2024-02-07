@@ -2,7 +2,15 @@ const express = require("express");
 const passport = require("passport");
 const ArtWork = require("../Model/ArtWork");
 const Order = require("../Model/Order");
+const paypal = require('paypal-rest-sdk');
 const router = express.Router();
+
+// PayPal configuration
+paypal.configure({
+  mode: 'live', // 'sandbox' or 'live'
+  client_id: 'AU0xQdzRv2-FlVhWmF0dTgfTAvpJUvwoJ1aMMc9oRe1yXQVCvOO61mRZ7Zyv5JBxxQFxFfxOQr2lixqm',
+  client_secret: 'EKt-f_70Et2tQYr3x3hITA7WmZ_EvLhW3NRC3nYQ-CRGun86l04eScW1P8YmDHVmVouMlSZjcQRKhdkc',
+});
 
 // Router to make order
 router.post("/make/:artworkIds",
@@ -11,75 +19,88 @@ router.post("/make/:artworkIds",
     try {
       const userId = req.user._id;
       const artworkIds = req.params.artworkIds.split(',');
+      const paymentMethod = req.body.paymentMethod; // Payment method selected by the user
+
+      // Validate payment method
+      if (paymentMethod !== 'cash' && paymentMethod !== 'paypal') {
+        return res.status(400).json({ error: 'Invalid payment method' });
+      }
 
       // Retrieve artworks based on the provided artworkIds
       const artworks = await ArtWork.find({ _id: { $in: artworkIds } });
 
-      // Create an object to store orders based on artistId
-      const ordersByArtist = {};
+      // Calculate total price
+      const totalPrice = artworks.reduce((acc, artwork) => acc + artwork.price, 0);
 
-      // Iterate over the artworks and organize orders by artist
-      artworks.forEach((artwork) => {
-        const artistId = artwork.userId;
-
-        if (!ordersByArtist[artistId]) {
-          ordersByArtist[artistId] = {
-            userId,
-            artworks: [],
-            totalPrice: 0,
-          };
-        }
-
-        // Calculate quantity 
-        const quantity = Array.isArray(req.user.orders)
-          ? req.user.orders.reduce((total, order) => {
-              const matchingArtwork = order.artworks.find(
-                (aw) =>
-                  aw.artistId.toString() === artistId.toString() &&
-                  aw.artworkId.toString() === artwork._id.toString()
-              );
-              return total + (matchingArtwork ? matchingArtwork.quantity : 0);
-            }, 0) + 1
-          : 1;
-
-        // Include total price of all artworks combined within the artworks array
-        const totalPrice = ordersByArtist[artistId].totalPrice + artwork.price;
-        ordersByArtist[artistId].artworks.push({
-          artistId,
-          artworkId: artwork._id,
-          quantity,
+      // Handle payment based on the selected payment method
+      if (paymentMethod === 'cash') {
+        // Handle cash payment logic here
+        // For example, you can save the order directly without processing any payment
+        const order = new Order({
+          userId,
+          artworks,
           totalPrice,
+          paymentMethod: 'cash',
+          status: 'pending', // Set status to pending
+          // Add other order details as needed
         });
+        await order.save();
+        return res.json({ success: true, message: 'Order placed successfully with cash payment' });
+      } else if (paymentMethod === 'paypal') {
+        // Create payment payload for PayPal
+        const paymentPayload = {
+          intent: 'sale',
+          payer: {
+            payment_method: 'paypal',
+          },
+          transactions: [{
+            amount: {
+              currency: 'USD',
+              total: totalPrice.toFixed(2), // Ensure 2 decimal places
+            },
+            description: 'Payment for artwork order', // Add description if needed
+          }],
+          redirect_urls: {
+            return_url: 'http://localhost:3000/success', // Replace with your success URL
+            cancel_url: 'http://localhost:3000/cancel',  // Replace with your cancel URL
+          },
+        };
 
-        // Update the total price for the artist's order
-        ordersByArtist[artistId].totalPrice += artwork.price;
-      });
-
-      // Save orders for each artist separately
-      const savedOrders = await Promise.all(
-        Object.values(ordersByArtist).map(async (orderDetails) => {
-          const order = new Order(orderDetails);
-          return await order.save();
-        })
-      );
-
-      // Update the status to "pending" for each artist's order
-      const updateStatusPromises = savedOrders.map(async (order) => {
-        await Order.updateOne(
-          { _id: order._id },
-          { $set: { status: "pending" } }
-        );
-      });
-
-      await Promise.all(updateStatusPromises);
-
-      return res.json({ success: true, orders: savedOrders });
+        // Create PayPal payment
+        paypal.payment.create(paymentPayload, (error, payment) => {
+          if (error) {
+            console.error('Error creating PayPal payment:', error);
+            return res.status(500).json({ error: 'Error creating PayPal payment' });
+          } else {
+            // Create order with payment information
+            const order = new Order({
+              userId,
+              artworks,
+              totalPrice,
+              paymentMethod: 'paypal',
+              paypalPaymentId: payment.id,
+              status: 'pending', // Set status to pending
+              // Add other order details as needed
+            });
+            order.save()
+              .then(savedOrder => {
+                // Redirect user to PayPal approval URL
+                res.json({ approvalUrl: payment.links[1].href });
+              })
+              .catch(err => {
+                console.error('Error saving order:', err);
+                return res.status(500).json({ error: 'Error saving order' });
+              });
+          }
+        });
+      }
     } catch (error) {
       console.error("Error making artwork order", error);
-      return res.json({ error: "Error making artwork order" });
+      return res.status(500).json({ error: "Error making artwork order" });
     }
   }
 );
+
 
 
 

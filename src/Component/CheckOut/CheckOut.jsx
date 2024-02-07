@@ -32,33 +32,26 @@ const CheckOut = () => {
         fetchData();
     }, []);
 
-
-
-
+    
     const handlePayment = async () => {
-        try {
-          if (selectedPaymentMethod === 'cash') {
-            processCashPayment();
-          } else if (selectedPaymentMethod === 'paypal') {
-            const response = await makeAuthenticatedPOSTRequest('/paypal/payment', {
-              // Pass any additional data needed for PayPal payment
-              amount: parseFloat(paymentAmount),
-              currency: 'USD', // Adjust the currency based on your requirements
-            });
-      
-            // After making a request to initiate PayPal payment, you may need to redirect the user to the PayPal approval URL
-            window.location.href = response.data.approvalUrl;
-          }
-        } catch (error) {
+      try {
+          // Extract artwork IDs from orderSummary
+          const artworkIds = orderSummary.map(artwork => artwork._id).join(',');
+
+          // Make a request to create the order with selected payment method
+          const response = await makeAuthenticatedPOSTRequest(
+            `/order/make/${artworkIds}`,
+             {
+              paymentMethod: selectedPaymentMethod
+          });
+
+          // Handle success response or redirect if needed
+          console.log(response);
+      } catch (error) {
           console.error('Error processing payment:', error);
           // Handle error appropriately
-        }
-      };
-      
-      const processCashPayment = () => {
-        // Logic to handle cash payment
-        console.log("Processing cash payment");
-      };
+      }
+  };
 
 
     return (
@@ -124,6 +117,7 @@ const CheckOut = () => {
                                onChange={(e) => setPaymentAmount(e.target.value)}
                             />
               <PayPalButton
+                 amount={paymentAmount}
         
                 onSuccess={() => console.log("Payment successful")}
                 onError={(err) => console.error("Error during PayPal payment:", err)}

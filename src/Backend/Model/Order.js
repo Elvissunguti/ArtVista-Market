@@ -25,6 +25,13 @@ const Order = new mongoose.Schema({
         type: Number,
         default: 0,
     },
+    paymentMethod: {
+      type: String,
+      enum: ["cash", "paypal"], 
+    },
+    paypalPaymentId: {
+      type: String,
+    },
     status: {
         type: String,
         enum: ["pending", "processing", "completed", "cancelled"],
