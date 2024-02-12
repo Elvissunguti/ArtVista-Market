@@ -27,7 +27,7 @@ const createOrder = async (paymentAmount) => {
             transactions: [{
                 amount: {
                     currency: 'USD',
-                    total: paymentAmount.toFixed(2), // Use the amount from the data parameter
+                    total: totalPrice.toFixed(2), // Use the amount from the data parameter
                 },
                 description: 'Payment for artwork order', // Add description if needed
             }],
@@ -107,7 +107,7 @@ router.post("/make/:artworkIds",
         return res.json({ success: true, message: 'Order placed successfully with cash payment' });
       } else if (paymentMethod === 'paypal') {
         // Create PayPal payment
-        const paypalPaymentId = await createOrder(paymentAmount);
+        const paypalPaymentId = await createOrder(totalPrice);
 
         // Create order with payment information
         const order = new Order({

@@ -8,7 +8,8 @@ const CheckOut = () => {
     const [address, setAddress] = useState([]);
     const [orderSummary, setOrderSummary] = useState([]);
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState("cash");
-    const [paymentAmount, setPaymentAmount] = useState('');
+    const [totalPrice, setTotalPrice] = useState(0);
+
 
     useEffect(() => {
         const fetchData = async () => {
@@ -19,6 +20,11 @@ const CheckOut = () => {
                 const orderResponse = await makeAuthenticatedGETRequest("/cartlist/cartlisted");
                 setOrderSummary(orderResponse.data);
 
+                setTotalPrice(parseFloat(orderResponse.totalPrice));
+
+
+               
+
             } catch (error) {
                 console.error("Error fetching address Information:", error);
             }
@@ -26,17 +32,20 @@ const CheckOut = () => {
         fetchData();
     }, []);
 
+
+
     const handlePayment = async () => {
         try {
             // Extract artwork IDs from orderSummary
             const artworkIds = orderSummary.map(artwork => artwork._id).join(',');
+
 
             // Call createOrder with the updated paymentAmount
             const response = await makeAuthenticatedPOSTRequest(
                 `/order/make/${artworkIds}`,
                 {
                     paymentMethod: selectedPaymentMethod,
-                    paymentAmount: parseFloat(paymentAmount).toFixed(2), // Use updated paymentAmount
+                    paymentAmount: totalPrice.toFixed(2),
                 }
             );
 
@@ -74,7 +83,7 @@ const CheckOut = () => {
                                 artType={artwork.artType}
                             />
                         ))}
-                        <p>Total price</p>
+                         <p>Total price: {totalPrice}</p>
                     </div>
                 </div>
                 <div>
@@ -102,32 +111,22 @@ const CheckOut = () => {
 
                         {selectedPaymentMethod === 'paypal' && (
                             <div>
-                                <p>Enter the amount to be paid:</p>
-                                <input
-                                    type="number"
-                                    value={paymentAmount}
-                                    onChange={(e) => setPaymentAmount(e.target.value)}
-                                />
+                                
                                 <PayPalButton
                                     createOrder={(data, actions) => {
-                                        console.log("Payment Amount (updated):", paymentAmount);
-                                        if (paymentAmount !== '') {
-                                            return actions.order.create({
-                                                purchase_units: [{
-                                                    amount: {
-                                                        value: parseFloat(paymentAmount).toFixed(2),
-                                                        currency_code: 'USD'
-                                                    }
-                                                }]
-                                            });
-                                        } else {
-                                            console.error("Payment amount is empty.");
-                                            return null; // or handle the case appropriately
-                                        }
+                                        return actions.order.create({
+                                        purchase_units: [{
+                                         amount: {
+                                            value: totalPrice.toFixed(2),
+                                            currency_code: 'USD'
+                                                }
+                                            }]
+                                        });
                                     }}
-                                    
-                                    amount={paymentAmount}
-                                    onSuccess={() => console.log("Payment successful")}
+                                    onSuccess={() => {
+                                        console.log("Payment successful");
+                                        handlePayment(); // Pass the updated payment amount to handlePayment
+                                    }}
                                     onError={(err) => console.error("Error during PayPal payment:", err)}
                                     options={{
                                         clientId: "AU0xQdzRv2-FlVhWmF0dTgfTAvpJUvwoJ1aMMc9oRe1yXQVCvOO61mRZ7Zyv5JBxxQFxFfxOQr2lixqm",
