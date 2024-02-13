@@ -32,6 +32,21 @@ router.post("/make/:artworkIds",
       // Retrieve artworks based on the provided artworkIds
       const artworks = await ArtWork.find({ _id: { $in: artworkIds } });
 
+      
+      // Group artworks by artist ID
+      const artworksByArtist = {};
+      artworks.forEach(artwork => {
+        if (!artworksByArtist[artwork.userId]) {
+          artworksByArtist[artwork.userId] = [];
+        }
+        artworksByArtist[artwork.userId].push(artwork);
+      });
+
+
+            // Iterate over artworks grouped by artist and create orders
+            const orderPromises = Object.keys(artworksByArtist).map(async artistId => {
+              const artistArtworks = artworksByArtist[artistId];
+
       // Calculate total price
       const totalPrice = artworks.reduce((acc, artwork) => acc + artwork.price, 0);
 
@@ -41,7 +56,11 @@ router.post("/make/:artworkIds",
         // For example, you can save the order directly without processing any payment
         const order = new Order({
           userId,
-          artworks,
+          artworks: artistArtworks.map(artwork => ({
+            artistId: artwork.userId,
+            artworkId: artwork._id,
+            quantity: 1, // Default quantity for now
+          })),
           totalPrice,
           paymentMethod: 'cash',
           status: 'pending', // Set status to pending
@@ -114,7 +133,11 @@ router.post("/make/:artworkIds",
                 // Create order with payment information
                 const order = new Order({
                     userId,
-                    artworks,
+                              artworks: artistArtworks.map(artwork => ({
+            artistId: artwork.userId,
+            artworkId: artwork._id,
+            quantity: 1, // Default quantity for now
+          })),
                     totalPrice,
                     paymentMethod: 'paypal',
                     paypalPaymentId: payment.id,
@@ -142,6 +165,7 @@ router.post("/make/:artworkIds",
             }
         });
     }
+  });
     
     } catch (error) {
       console.error("Error making artwork order", error);
@@ -167,6 +191,7 @@ async (req, res) => {
       const artworkOrders = await Promise.all(orders.map(async (order) => {
         const artworks = await Promise.all(order.artworks.map(async (artwork) => {
           const artworkDetails = await ArtWork.findById(artwork.artworkId, 'title price artPhoto');
+          
           if (!artworkDetails) {
             // Handle the case where artwork is not found
             return null;
