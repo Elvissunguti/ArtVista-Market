@@ -20,7 +20,8 @@ const CheckOut = () => {
                 const orderResponse = await makeAuthenticatedGETRequest("/cartlist/cartlisted");
                 setOrderSummary(orderResponse.data);
 
-                setTotalPrice(parseFloat(orderResponse.totalPrice));
+                setTotalPrice(parseFloat(orderResponse.totalPrice.replace(/,/g, '')));
+                console.log("total price from order summary", orderResponse.totalPrice);
 
 
                
@@ -45,7 +46,7 @@ const CheckOut = () => {
                 `/order/make/${artworkIds}`,
                 {
                     paymentMethod: selectedPaymentMethod,
-                    paymentAmount: totalPrice.toFixed(2),
+                    paymentAmount: totalPrice,
                 }
             );
 
@@ -113,25 +114,50 @@ const CheckOut = () => {
                             <div>
                                 
                                 <PayPalButton
-                                    createOrder={(data, actions) => {
-                                        return actions.order.create({
-                                        purchase_units: [{
-                                         amount: {
-                                            value: totalPrice.toFixed(2),
-                                            currency_code: 'USD'
-                                                }
-                                            }]
-                                        });
-                                    }}
-                                    onSuccess={() => {
-                                        console.log("Payment successful");
-                                        handlePayment(); // Pass the updated payment amount to handlePayment
-                                    }}
-                                    onError={(err) => console.error("Error during PayPal payment:", err)}
-                                    options={{
-                                        clientId: "AU0xQdzRv2-FlVhWmF0dTgfTAvpJUvwoJ1aMMc9oRe1yXQVCvOO61mRZ7Zyv5JBxxQFxFfxOQr2lixqm",
-                                    }}
-                                />
+    amount={totalPrice}
+    onSuccess={(details, data) => {
+        console.log("Payment successful", details);
+        handlePayment();
+    }}
+    onError={(err) => console.error("Error during PayPal payment:", err)}
+    onCancel={() => console.log("Payment cancelled")}
+    options={{
+        clientId: "AU0xQdzRv2-FlVhWmF0dTgfTAvpJUvwoJ1aMMc9oRe1yXQVCvOO61mRZ7Zyv5JBxxQFxFfxOQr2lixqm",
+        currency: "USD",
+        style: {
+            color: "gold",
+            shape: "rect",
+            label: "checkout",
+            height: 40,
+        },
+        createOrder: (data, actions) => {
+            const formattedTotalPrice = totalPrice.replace(',', ''); // Remove commas from totalPrice
+            return actions.order.create({
+                purchase_units: [{
+                    amount: {
+                        value: formattedTotalPrice,
+                        currency_code: "USD",
+                    },
+                }],
+            });
+        },
+        
+        onApprove: async (data, actions) => {
+            const order = await actions.order.capture();
+            console.log("Order approved:", order);
+            // You can handle the order approval here
+        },
+        onCancel: (data) => {
+            console.log("Payment cancelled:", data);
+            // You can handle the payment cancellation here
+        },
+        onError: (err) => {
+            console.error("Error during PayPal payment:", err);
+            // You can handle payment errors here
+        },
+    }}
+/>
+
                             </div>
                         )}
                         <button className="px-2 py-3 bg-main" onClick={handlePayment}>Proceed to Payment</button>

@@ -13,48 +13,7 @@ paypal.configure({
   client_secret: 'EKt-f_70Et2tQYr3x3hITA7WmZ_EvLhW3NRC3nYQ-CRGun86l04eScW1P8YmDHVmVouMlSZjcQRKhdkc',
 });
 
-// Function to create order/payment
-const createOrder = async (paymentAmount) => {
-    try {
 
-      
-        // Create payment payload for PayPal
-        const paymentPayload = {
-            intent: 'sale',
-            payer: {
-                payment_method: 'paypal',
-            },
-            transactions: [{
-                amount: {
-                    currency: 'USD',
-                    total: totalPrice.toFixed(2), // Use the amount from the data parameter
-                },
-                description: 'Payment for artwork order', // Add description if needed
-            }],
-            redirect_urls: {
-                return_url: 'http://localhost:3000/success', // Replace with your success URL
-                cancel_url: 'http://localhost:3000/cancel',  // Replace with your cancel URL
-            },
-        };
-
-        // Create PayPal payment
-        const payment = await new Promise((resolve, reject) => {
-            paypal.payment.create(paymentPayload, (error, payment) => {
-                if (error) {
-                    reject(error);
-                } else {
-                    resolve(payment);
-                }
-            });
-        });
-
-        // Return the payment ID
-        return payment.id;
-    } catch (error) {
-        console.error('Error creating PayPal payment:', error);
-        throw error;
-    }
-};
 
 router.post("/make/:artworkIds",
   passport.authenticate("jwt", { session: false }),
@@ -107,37 +66,83 @@ router.post("/make/:artworkIds",
         return res.json({ success: true, message: 'Order placed successfully with cash payment' });
       } else if (paymentMethod === 'paypal') {
         // Create PayPal payment
-        const paypalPaymentId = await createOrder(totalPrice);
-
-        // Create order with payment information
-        const order = new Order({
-          userId,
-          artworks,
-          totalPrice,
-          paymentMethod: 'paypal',
-          paypalPaymentId,
-          status: 'pending', // Set status to pending
-          // Add other order details as needed
+        const create_payment_json = {
+            intent: 'sale',
+            payer: {
+                payment_method: 'paypal'
+            },
+            redirect_urls: {
+                return_url: 'http://localhost:3000/success',
+                cancel_url: 'http://localhost:3000/cancel'
+            },
+            transactions: [{
+                amount: {
+                    total: paymentAmount,
+                    currency: 'USD'
+                },
+                description: 'Payment for artwork order'
+            }]
+        };
+    
+        paypal.payment.create(create_payment_json, function (error, payment) {
+            if (error) {
+                throw error;
+            } else {
+                console.log("Create Payment Response");
+                console.log(payment);
+                for (let i = 0; i < payment.links.length; i++) {
+                    if (payment.links[i].rel === 'approval_url') {
+                        res.send(payment.links[i].href);
+                        break;
+                    }
+                }
+            }
         });
-
-        await order.save();
-
-        // Mark artworks as sold
-        await ArtWork.updateMany({ _id: { $in: artworkIds } }, { $set: { isSold: true } });
-
-        // Remove artworks from user's cart list
-        const user = await User.findById(userId);
-        for (const artworkId of artworkIds) {
-          const index = user.cartList.indexOf(artworkId);
-          if (index !== -1) {
-            user.cartList.splice(index, 1);
-          }
-        }
-        user.cartListNumber = user.cartList.length;
-        await user.save();
-
-        return res.json({ success: true, message: 'Order placed successfully with PayPal payment' });
-      }
+    
+        // After PayPal payment approval, the order is captured and saved
+        const capture_payment_json = {
+            intent: 'sale',
+            payer_id: req.query.PayerID
+        };
+    
+        paypal.payment.execute(req.query.paymentId, capture_payment_json, async function (error, payment) {
+            if (error) {
+                console.error("Error capturing PayPal payment:", error);
+                return res.status(500).json({ error: "Error capturing PayPal payment" });
+            } else {
+                console.log("Payment captured:", payment);
+                // Create order with payment information
+                const order = new Order({
+                    userId,
+                    artworks,
+                    totalPrice,
+                    paymentMethod: 'paypal',
+                    paypalPaymentId: payment.id,
+                    status: 'pending', // Set status to pending
+                    // Add other order details as needed
+                });
+    
+                await order.save();
+    
+                // Mark artworks as sold
+                await ArtWork.updateMany({ _id: { $in: artworkIds } }, { $set: { isSold: true } });
+    
+                // Remove artworks from user's cart list
+                const user = await User.findById(userId);
+                for (const artworkId of artworkIds) {
+                    const index = user.cartList.indexOf(artworkId);
+                    if (index !== -1) {
+                        user.cartList.splice(index, 1);
+                    }
+                }
+                user.cartListNumber = user.cartList.length;
+                await user.save();
+    
+                return res.json({ success: true, message: 'Order placed successfully with PayPal payment' });
+            }
+        });
+    }
+    
     } catch (error) {
       console.error("Error making artwork order", error);
       return res.status(500).json({ error: "Error making artwork order" });
