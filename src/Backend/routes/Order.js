@@ -161,12 +161,26 @@ async (req, res) => {
 
         const userId = req.user._id;
 
-        const artworkOrder = await Order.find({ userId });
+        const orders = await Order.find({ userId, status: { $ne: "completed" } });
 
-        return res.json({ data: artworkOrder})
+              // Fetch artwork details for each order
+      const artworkOrders = await Promise.all(orders.map(async (order) => {
+        const artworks = await Promise.all(order.artworks.map(async (artwork) => {
+          const artworkDetails = await ArtWork.findById(artwork.artworkId, 'title price artPhoto');
+          if (!artworkDetails) {
+            // Handle the case where artwork is not found
+            return null;
+          }
+          const { title, price, artPhoto } = artworkDetails;
+          return { title, price, artPhoto };
+        }));
+        return { ...order.toObject(), artworks: artworks.filter(Boolean) }; // Filter out null artworks
+      }));
+
+        return res.json({ data: artworkOrders});
 
     } catch(error){
-        console.error("Error fetching artworks ordered", error);
+        console.error("Error fetching artworks ordered:", error);
         return res.json({ error: "Error fetching ordered artworks" });
     }
 });
