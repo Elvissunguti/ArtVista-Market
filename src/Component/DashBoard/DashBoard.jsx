@@ -14,7 +14,8 @@ const DashBoard = ({ children}) => {
                         <li>Dashboard</li>
                         <li>
                             <Link to="/address">Address</Link></li>
-                        <li>Orders</li>
+                        <li>
+                            <Link to="/orders">Orders</Link></li>
                     </ul>
                     <div className="w-3/5">
                         {children}

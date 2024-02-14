@@ -21,6 +21,9 @@ import DashBoard from './Component/DashBoard/DashBoard';
 import AddressEdit from './Component/Address/AddressEdit';
 import AddressInfo from './Component/Address/AddressInfo';
 import CheckOut from './Component/CheckOut/CheckOut';
+import SentOrders from './Component/Order/SentOrders';
+import ReceivedOrders from './Component/Order/ReceivedOrders';
+import Order from './Component/Order/Order';
 
 function App() {
 
@@ -57,6 +60,9 @@ function App() {
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/address/edit" element={<AddressEdit />} />
             <Route path="/address" element={<AddressInfo />} />
+            <Route path="orders" element={<Order />} />
+            <Route path="/sent_orders" element={<SentOrders />} />
+            <Route path="/received_order" element={<ReceivedOrders />} />
             <Route path="/checkout" element={<CheckOut />} />
             
             </>
