@@ -211,22 +211,40 @@ async (req, res) => {
 });
 
 
-// router to fetch orders received
+// router to fetch received orders
 router.get("/receivedorder",
-passport.authenticate("jwt", {session: false}),
-async(req, res) => {
-    try{
-        const artistId = req.user._id;
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const artistId = req.user._id;
 
-        const receivedOrders = await Order.find({ "artworks.artistId": artistId });
+      // Fetch orders where the artistId matches
+      const receivedOrders = await Order.find({ "artworks.artistId": artistId });
 
-        return res.json({ data: receivedOrders });
+      // Populate artwork details for each order
+      const populatedOrders = await Promise.all(receivedOrders.map(async (order) => {
+        const populatedArtworks = await Promise.all(order.artworks.map(async (artwork) => {
+          const artworkDetails = await ArtWork.findById(artwork.artworkId, 'title price artPhoto');
+          if (!artworkDetails) {
+            // Handle the case where artwork is not found
+            return null;
+          }
+          const { title, price, artPhoto } = artworkDetails;
+          return { title, price, artPhoto };
+        }));
+        return { ...order.toObject(), artworks: populatedArtworks.filter(Boolean) }; // Filter out null artworks
+      }));
 
-    } catch(error){
-        console.error("error fetching received artwork order", error);
-        return res.json({ error: "Error fetching received artwork order" });
+      return res.json({ data: populatedOrders });
+
+    } catch (error) {
+      console.error("Error fetching received artwork orders:", error);
+      return res.json({ error: "Error fetching received artwork orders" });
     }
-});
+  }
+);
+
+
 
 
 module.exports = router;
