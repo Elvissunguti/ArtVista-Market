@@ -245,6 +245,35 @@ router.get("/receivedorder",
 );
 
 
+// router to update the status of the received orders
+router.post("/update",
+passport.authenticate("jwt", { session: false }),
+async (req, res) => {
+  try{
+    const { orderId, newStatus } = req.body;
+
+    // Validate request data
+    if (!orderId || !newStatus) {
+      return res.status(400).json({ error: "Order ID and new status are required" });
+    }
+
+    // Find the order by ID and update its status
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, { status: newStatus }, { new: true });
+
+    if (!updatedOrder) {
+      return res.status(404).json({ error: "Order not found" });
+    }
+
+    return res.json({ success: true, message: "Order status updated successfully", updatedOrder });
+
+  } catch(error){
+    console.error("Error updating received orders:", error);
+    return res.json({ error: "Error updating  received orders"});
+  
+  }
+});
+
+
 
 
 module.exports = router;
