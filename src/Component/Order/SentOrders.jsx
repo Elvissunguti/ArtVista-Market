@@ -53,7 +53,7 @@ const SentOrder = () => {
                                                 className=""
                                             />
                                             <p>{artwork.title}</p>
-                                            <p>{artwork.price}</p>
+                                            <p>$ {artwork.price}</p>
                                         </li>
                                     ))}
                                 </ul>
