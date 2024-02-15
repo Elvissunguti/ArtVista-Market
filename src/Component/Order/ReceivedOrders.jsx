@@ -12,7 +12,9 @@ const ReceivedOrder = () => {
 
     const fetchData = async () => {
         try {
-            const response = await makeAuthenticatedGETRequest("/order/receivedorder");
+            const response = await makeAuthenticatedGETRequest(
+                "/order/receivedorder"
+                );
             setOrders(response.data);
             // Initialize order status state
             const initialOrderStatus = {};
@@ -48,45 +50,51 @@ const ReceivedOrder = () => {
     };
 
     return (
-        <section>
-            <h2>Received orders</h2>
+        <section className="p-4">
+            <h2 className="text-3xl font-semibold mb-4">Received Orders</h2>
             {orders.map(order => (
-                <div key={order._id}>
-                    <h3>Order {order._id}</h3>
+                <div key={order._id} className="border border-gray-300 p-4 mb-4">
+                    <h3 className="text-lg font-semibold mb-2">Order {order._id}</h3>
                     <p>Status: {orderStatus[order._id]}</p>
-                    {/* Only show update controls when not currently updating */}
                     {updatingOrderId !== order._id ? (
-                        <div>
-                            <div>
-                                <label htmlFor={`status_${order._id}`}>Update Status:</label>
-                                <select
-                                    id={`status_${order._id}`}
-                                    value={orderStatus[order._id]}
-                                    onChange={(e) => setOrderStatus(prevStatus => ({
-                                        ...prevStatus,
-                                        [order._id]: e.target.value
-                                    }))}
-                                >
-                                    <option value="Processing">Processing</option>
-                                    <option value="Shipped">Shipped</option>
-                                    <option value="Delivered">Delivered</option>
-                                </select>
-                                <button onClick={() => handleStatusUpdate(order._id, orderStatus[order._id])}>Update</button>
-                            </div>
+                        <div className="mt-2">
+                            <label htmlFor={`status_${order._id}`}>Update Status:</label>
+                            <select
+                                id={`status_${order._id}`}
+                                value={orderStatus[order._id]}
+                                onChange={(e) => setOrderStatus(prevStatus => ({
+                                    ...prevStatus,
+                                    [order._id]: e.target.value
+                                }))}
+                                className="mr-2"
+                            >
+                                <option value="Processing">Processing</option>
+                                <option value="Shipped">Shipped</option>
+                                <option value="Delivered">Delivered</option>
+                            </select>
+                            <button
+                                onClick={() => {
+                                    setUpdatingOrderId(order._id);
+                                    handleStatusUpdate(order._id, orderStatus[order._id]);
+                                }}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            >
+                                Update
+                            </button>
                         </div>
                     ) : (
                         <p>Updating status...</p>
                     )}
-                    <div>
-                        <h4>Artworks</h4>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
                         {order.artworks.map((artwork, index) => (
-                            <div key={index}>
+                            <div key={index} className="border border-gray-300 p-2">
                                 <img
                                     src={constructArtPhotoUrl(artwork.artPhoto[0])}
                                     alt={artwork.title}
+                                    className="w-full h-auto"
                                 />
-                                <p>Title: {artwork.title}</p>
-                                <p>Price: ${artwork.price}</p>
+                                <p className="font-semibold">{artwork.title}</p>
+                                <p>${artwork.price}</p>
                             </div>
                         ))}
                     </div>
