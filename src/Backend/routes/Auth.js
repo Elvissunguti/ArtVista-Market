@@ -1,9 +1,47 @@
 const express = require("express");
 const router = express.Router();
+const passport = require("passport");
 const User = require("../Model/User");
 const bcrypt = require("bcrypt");
 const { getToken, invalidateToken } = require("../Utils/Helpers");
 const jwtUtils = require('../Utils/Helpers');
+
+
+// Google OAuth login route
+router.get(
+  "/google",
+  passport.authenticate("google", {scope: ["profile", "email"]}),
+);
+
+// Google OAuth callback route
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {failureRedirect: "/login"}),
+  async (req, res) => {
+    try {
+      // Extract user information from Google authentication
+      const {email, userName} = req.user;
+
+      // Check if the user already exists in your database
+      let user = await User.findOne({email});
+
+      // If the user doesn't exist, create a new user without requiring a password
+      if (!user) {
+        user = new User({email, userName});
+        await user.save();
+      }
+
+      const token = await getToken(email, user);
+
+      
+
+      res.redirect(`https://codecrafter-s-corner.web.app/Blog?token=${token}`); // Redirect to home page or send token in response
+    } catch (error) {
+      console.error("Error handling Google authentication:", error);
+      res.status(500).json({error: "Error handling Google authentication"});
+    }
+  },
+);
 
 
 router.post("/signup", async (req, res) => {
@@ -104,5 +142,31 @@ router.post("/logout", async (request, response) => {
       });
     }
   });
+
+
+  router.get(
+    '/userId',
+    passport.authenticate('jwt', { session: false }),
+    async (req, res) => {
+      try {
+        const userId = req.user._id;  
+  
+        const user = await User.findById(userId);
+  
+        if (!user) {
+          return res.status(404).json({ error: 'User not found' });
+        }
+  
+        const { _id, userName } = user;
+  
+        console.log('logged in user', user);
+  
+        return res.json({ data: { _id, userName } });
+      } catch (error) {
+        console.error('Error fetching userId', error);
+        return res.status(500).json({ error: 'Error fetching userId' });
+      }
+    },
+  );
 
 module.exports = router;

@@ -7,17 +7,11 @@ const { artUploads } = require("../Middleware/Art");
 
 router.post("/create", 
 passport.authenticate("jwt", {session: false}),
-(req, res) => {
-    artUploads(req, res, async (err) => {
-        if (err) {
-            return res.json({ err: "Failed to upload files"});
-        }
-
+    artUploads,
+    async (req, res) => {
         try {
-
             const { title, category, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
-            const artPhoto = req.files.artPhoto.map((photo) => photo.path);
             const userId = req.user._id;
 
             const newArtwork = new ArtWork({
@@ -32,7 +26,7 @@ passport.authenticate("jwt", {session: false}),
                 delivery,
                 description,
                 price,
-                artPhoto: artPhoto,
+                artPhoto: req.body.artPhoto,
                 userId,
             });
 
@@ -44,7 +38,7 @@ passport.authenticate("jwt", {session: false}),
             console.error("Error creating artwork", error);
             return res.json({ error: "Error creating artwork"});
         }
-    })
+   
 });
 
 //router to fetch all the artwork posted by the current user

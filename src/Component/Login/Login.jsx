@@ -3,7 +3,9 @@ import logo from "../../Assets/logo/logo-no-background.png";
 import { Images } from "../Utils/ArtData";
 import { Link, useNavigate } from "react-router-dom";
 import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
-import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
+
+import { useAuth } from "../Context/AuthContext";
 
 
 function getRandomIndex(max) {
@@ -13,12 +15,12 @@ function getRandomIndex(max) {
 const Login = () => {
 
     const [ email, setEmail ] = useState("");
-    const [ password, setPassword ] = useState("");
-    const [ cookies, setCookies ] = useCookies(["token"]);
+    const [ password, setPassword ] = useState("")
     const [ error, setError ] = useState("");
     const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length));
     const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length));
 
+    const { handleLogin } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -34,7 +36,7 @@ const Login = () => {
       }, []);
 
 
-      const handleLogin = async(e) => {
+      const handleLogins = async(e) => { 
         e.preventDefault();
 
         const userData = {
@@ -48,10 +50,9 @@ const Login = () => {
             );
             if (response.message === "Login successfull" && response.token) {
                 const token = response.token;
-                const date = new Date();
-                date.setDate(date.getDate() + 80);
-                setCookies("token", token, { path: "/", expires: date });
-                localStorage.setItem("token", token);
+            Cookies.set("token", token, { expires: 7 });
+
+            handleLogin();
                 // user logged in successfull
 
                 navigate("/");
@@ -66,13 +67,18 @@ const Login = () => {
         }
       };
 
+      const handleGoogleLogin = () => {
+        // Redirect to the Google login route
+        window.location.href = "http://localhost:8080/auth/google";
+      };
+
 
     return (
         <section className="">
             <div className="flex justify-center my-16">
                <img 
                   src={logo}
-                  alt="Logo image"
+                  alt="Logo"
                   className="h-32 w-96"
                     />
             </div>
@@ -94,7 +100,7 @@ const Login = () => {
                 </div>
 
                 <div className="flex w-1/2">
-                    <form className="flex flex-col ml-4 w-1/2 space-y-8" onSubmit={handleLogin}>
+                    <form className="flex flex-col ml-4 w-1/2 space-y-8" onSubmit={handleLogins}>
                         <h1 className="text-2xl font-semibold tracking-tight text-green-600">Login</h1>
                         <div>
                             <label htmlFor="email" className="flex flex-start block font-bold text-lg">
@@ -140,6 +146,12 @@ const Login = () => {
                         </p>
                         </div>
                     </form>
+                    <button
+          onClick={handleGoogleLogin}
+          className="bg-red-600 text-white px-4 py-2 rounded-md mt-4 w-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
+        >
+          Login with Google
+        </button>
                 </div>
 
             </div>

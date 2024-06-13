@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './App.css';
 import { BrowserRouter as Router, Route, Routes, Link } from 'react-router-dom';
+import { useAuth } from './Component/Context/AuthContext';
 import Login from './Component/Login/Login';
 import SignUp from './Component/SignUp/SignUp';
 import Home from './Component/Home/Home';
@@ -27,13 +28,7 @@ import Order from './Component/Order/Order';
 
 function App() {
 
-  const [loggedIn, setLoggedIn] = useState(false); 
-
-  useEffect(() => {
-    // Check if the token exists in cookies to determine if the user is logged in
-    const token = localStorage.getItem('token'); 
-    setLoggedIn(!!token);
-  }, []);
+  const { loggedIn } = useAuth();
 
 
   return (
@@ -60,7 +55,7 @@ function App() {
             <Route path="/dashboard" element={<DashBoard />} />
             <Route path="/address/edit" element={<AddressEdit />} />
             <Route path="/address" element={<AddressInfo />} />
-            <Route path="orders" element={<Order />} />
+            <Route path="/orders" element={<Order />} />
             <Route path="/sent_orders" element={<SentOrders />} />
             <Route path="/received_order" element={<ReceivedOrders />} />
             <Route path="/checkout" element={<CheckOut />} />
@@ -68,7 +63,7 @@ function App() {
             </>
           ) : (
             <>
-            <Route exact path="/login" element={<Login />} />
+            <Route path="/login" element={<Login />} />
             <Route path="/sign up" element={<SignUp />} />
             <Route path="/*" element={<NotFound />} />
             </>

@@ -3,7 +3,8 @@ import logo from "../../Assets/logo/logo-no-background.png";
 import { Images } from "../Utils/ArtData";
 import { Link, useNavigate } from "react-router-dom";
 import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
-import { useCookies } from "react-cookie";
+import Cookies from "js-cookie";
+import { useAuth } from "../Context/AuthContext";
 
 
 function getRandomIndex(max) {
@@ -17,10 +18,10 @@ const SignUp = () => {
     const [ password, setPassword ] = useState("");
     const [ confirmPassword, setConfirmPassword ] = useState("");
     const [ error, setError ] = useState("");
-    const [ cookies, setCookies ] = useCookies(["token"]);
     const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length));
     const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length));
-
+     
+    const { handleLogin } = useAuth();
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -53,11 +54,10 @@ const SignUp = () => {
                 "/auth/signup", userData
             );
             if(response.message === "User created Successfully"){
+                
                 const token = response.token;
-                const date = new Date();
-                date.setDate(date.getDate() + 80);
-                setCookies("token", token, { path: "/", expires: date });
-                localStorage.setItem("token", token);
+                Cookies.set("token", token, { expires: 7 });
+                handleLogin();
                 // user logged in successfull
 
                 navigate("/");
@@ -71,13 +71,18 @@ const SignUp = () => {
         }
       }
 
+      const handleGoogleLogin = () => {
+        // Redirect to the Google login route
+        window.location.href = "http://localhost:8080/auth/google";
+      };
+
 
     return (
         <section className="">
             <div className="flex justify-center my-16">
                <img 
                   src={logo}
-                  alt="Logo image"
+                  alt="Logo"
                   className="h-32 w-96"
                     />
             </div>
@@ -158,6 +163,13 @@ const SignUp = () => {
                         <p>Already have an account? <Link to="/login"><span className="text-red-500">Login</span></Link></p>
                         </div>
                     </form>
+                    <button
+          onClick={handleGoogleLogin}
+          className="bg-red-600 text-white px-4 py-2 rounded-md mt-4 w-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
+        >
+          Login with Google
+        </button>
+
                 </div>
                 <div className="w-1/2 ml-4">
                     <img

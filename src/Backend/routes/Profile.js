@@ -15,7 +15,7 @@ async (req, res) => {
 
         try {
             const { description, location } = req.body;
-            const profilePic = req.files["profilePic"][0].path;
+            const profilePic = req.body.profilePic
             const userId = req.user._id;
 
             // Check if a profile already exists for the user

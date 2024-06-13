@@ -4,12 +4,14 @@ const cors = require("cors");
 const passport = require("passport");
 const JwtStrategy = require("passport-jwt").Strategy;
 const ExtractJwt = require("passport-jwt").ExtractJwt;
+const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const path = require("path");
 const http = require("http");
 const socketIo = require("socket.io");
 const createWebSocketServer = require("./src/Backend/routes/WebSocketServer");
+const config = require('./src/Backend/Config/Config');
 const User = require("./src/Backend/Model/User");
 const AuthRoutes = require("./src/Backend/routes/Auth");
 const ArtWorkRoutes = require("./src/Backend/routes/ArtWork");
@@ -27,6 +29,8 @@ const PaymentRoutes = require("./src/Backend/routes/Payment");
 const app = express();
 const server = http.createServer(app);
 const PORT = process.env.PORT || 8080;
+
+
 
 // Configure MongoDB connection
 mongoose.connect(
@@ -77,6 +81,35 @@ passport.use(
     }
   })
 );
+
+// Configure Passport with Google OAuth 2.0
+passport.use(new GoogleStrategy({
+  clientID: config.google.clientID,
+  clientSecret: config.google.clientSecret,
+  callbackURL: 'http://localhost:3000/auth/google/callback'
+},
+async (accessToken, refreshToken, profile, done) => {
+  try {
+    let user = await User.findOne({ googleId: profile.id });
+
+    if (user) {
+      // User already exists, return user
+      return done(null, user);
+    } else {
+      // Create new user
+      const newUser = new User({
+        googleId: profile.id,
+        displayName: profile.displayName,
+        chatHistory: []
+      });
+      await newUser.save();
+      return done(null, newUser);
+    }
+  } catch (err) {
+    return done(err);
+  }
+}
+));
 
 // Serialize and deserialize user for sessions
 passport.serializeUser((user, done) => {
