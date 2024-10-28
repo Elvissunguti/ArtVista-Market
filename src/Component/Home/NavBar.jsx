@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import logo from "../../Assets/logo/logo-no-background.png";
 import { AiOutlineClose, AiOutlineSearch, AiOutlineShoppingCart } from "react-icons/ai";
+import { FaTachometerAlt, FaArtstation, FaEnvelope, FaSignOutAlt } from 'react-icons/fa';
 import { PiHeartStraightThin } from "react-icons/pi";
 import { CgProfile } from "react-icons/cg";
 import { IoIosMenu } from "react-icons/io";
@@ -121,29 +122,45 @@ const NavBar = () => {
                 {cartListNumber}
               </span>
             </Link>
-
             <div className="relative">
-              <CgProfile onClick={() => setIsOpen(!isOpen)} />
-            </div>
+  <button className="focus:outline-none" onClick={() => setIsOpen(!isOpen)}>
+    <CgProfile className="text-2xl text-[#9A7B4F] hover:text-green-500 transition duration-200" />
+  </button>
 
-            {isOpen && (
-              <div className="absolute top-14 right-0">
-                <ul className="flex flex-col items-center bg-[#9A7B4F] px-2 py-2 shadow-xl rounded">
-                  <li className="hover:text-white">
-                    <Link to="/dashboard">DASHBOARD</Link>
-                  </li>
-                  <li>
-                    <Link to="/my_artworks">MY ARTWORKS</Link>
-                  </li>
-                  <li className="hover:text-white">
-                    <Link to="/chats">MESSAGES</Link>
-                  </li>
-                  <li className="hover:text-white cursor-pointer" onClick={handleLogout}>
-                    LOGOUT
-                  </li>
-                </ul>
-              </div>
-            )}
+  {isOpen && (
+    <div className="absolute top-14 right-0 z-50">
+      <ul className="flex flex-col items-start bg-base-200 px-4 py-4 shadow-lg rounded-lg">
+        <li className="w-full">
+          <Link to="/dashboard" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+            <FaTachometerAlt className="mr-2" />
+            DASHBOARD
+          </Link>
+        </li>
+        <li className="w-full">
+          <Link to="/my_artworks" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+            <FaArtstation className="mr-2" />
+            MY ARTWORKS
+          </Link>
+        </li>
+        <li className="w-full">
+          <Link to="/chats" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+            <FaEnvelope className="mr-2" />
+            MESSAGES
+          </Link>
+        </li>
+        <li className="w-full">
+          <button
+            className="flex items-center block w-full text-left px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200"
+            onClick={handleLogout}
+          >
+            <FaSignOutAlt className="mr-2" />
+            LOGOUT
+          </button>
+        </li>
+      </ul>
+    </div>
+  )}
+</div>
           </div>
         </div>
 

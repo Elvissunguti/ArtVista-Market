@@ -298,10 +298,10 @@ const ArtPage = () => {
                             <p className="flex my-4 items-start">Shipping is calculated at checkout</p>
                             {!artWorkData?.isSold && (
                             <div className="flex flex-row space-x-4">
-                                <button onClick={handleCartList} className="w-4/5 bg-[#9A7B4F] text-white font-semibold px-2 py-3 rounded-3xl hover:bg-black">
+                                <button onClick={handleCartList} className="flex items-center justify-center w-4/5 bg-[#9A7B4F] text-white text-center font-semibold px-2 py-3 rounded-3xl hover:bg-black">
                                   {isCartList ? (
                                      <Tooltip title="Remove from Cart" position="top">
-                                        <BsTrash3 />
+                                        <BsTrash3 className="flex items-center justify-center" />
                                      </Tooltip>
                                    ) : (
                                    <p>ADD TO CART</p>

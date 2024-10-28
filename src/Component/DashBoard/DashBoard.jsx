@@ -4,33 +4,35 @@ import { Link } from "react-router-dom";
 
 const DashBoard = ({ children }) => {
     return (
-        <section className="bg-gray-100 min-h-screen">
+        <section className="bg-gray-50 min-h-screen">
             <NavBar />
-            <div className="container mx-auto py-6">
-                <h2 className="text-center text-3xl my-6 font-bold">My Account</h2>
-                <div className="flex flex-col md:flex-row md:space-x-6">
-                    <div className="md:w-1/4">
+            <div className="container mx-auto py-10">
+                <h2 className="text-center text-4xl font-bold text-neutral mb-8">My Account</h2>
+                <div className="flex flex-col md:flex-row gap-8">
+                    {/* Sidebar */}
+                    <aside className="md:w-1/4  bg-base-100 rounded-lg p-6 shadow-md">
                         <ul className="space-y-4">
-                            <li className="text-lg font-semibold">
-                                <Link to="/dashboard" className="text-gray-800 hover:text-indigo-600">
-                                    Dashboard
-                                </Link>
-                            </li>
-                            <li className="text-lg font-semibold">
-                                <Link to="/address" className="text-gray-800 hover:text-indigo-600">
-                                    Address
-                                </Link>
-                            </li>
-                            <li className="text-lg font-semibold">
-                                <Link to="/orders" className="text-gray-800 hover:text-indigo-600">
-                                    Orders
-                                </Link>
-                            </li>
+                            {[
+                                { path: "/dashboard", label: "Dashboard" },
+                                { path: "/address", label: "Address" },
+                                { path: "/orders", label: "Orders" }
+                            ].map(({ path, label }) => (
+                                <li key={path}>
+                                    <Link
+                                        to={path}
+                                        className="block text-lg font-medium text-gray-700 hover:text-[#9A7B4F] hover:bg-gray-200 rounded-lg px-4 py-2 transition duration-200"
+                                    >
+                                        {label}
+                                    </Link>
+                                </li>
+                            ))}
                         </ul>
-                    </div>
-                    <div className="md:w-3/4">
+                    </aside>
+
+                    {/* Main Content */}
+                    <main className="md:w-3/4 bg-base-100 rounded-lg p-8 shadow-lg">
                         {children}
-                    </div>
+                    </main>
                 </div>
             </div>
         </section>

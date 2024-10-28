@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import DashBoard from "../DashBoard/DashBoard";
+import { MdCheckCircle, MdError } from "react-icons/md";
 
 const AddressEdit = () => {
     const [formData, setFormData] = useState({
@@ -12,123 +13,87 @@ const AddressEdit = () => {
         region: "",
         city: "",
     });
+    const [isSaving, setIsSaving] = useState(false);
+    const [statusMessage, setStatusMessage] = useState({ show: false, success: true, message: "" });
 
     const handleSaveAddress = async (e) => {
         e.preventDefault();
+        setIsSaving(true);
+        setStatusMessage({ show: false, success: true, message: "" });
+
         try {
-            const response = await makeAuthenticatedPOSTRequest(
-              "/address/createOrUpdate", formData
-              );
-            console.log("Address saved successfully");
-            window.alert("Address saved successfully");
+            await makeAuthenticatedPOSTRequest("/address/createOrUpdate", formData);
+            setStatusMessage({ show: true, success: true, message: "Address saved successfully!" });
         } catch (error) {
             console.error("Error saving address information", error);
+            setStatusMessage({ show: true, success: false, message: "Failed to save address. Please try again." });
+        } finally {
+            setIsSaving(false);
         }
     };
 
     return (
         <DashBoard>
-            <div className="p-4">
-                <h1 className="text-3xl font-semibold mb-6">Edit Address</h1>
-                <form onSubmit={handleSaveAddress} className="space-y-4">
-                    <div>
-                        <label htmlFor="firstName" className="block">First Name</label>
-                        <input 
-                            type="text"
-                            id="firstName"
-                            name="firstName"
-                            placeholder="Enter First Name"
-                            value={formData.firstName}
-                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
+            <div className="bg-base-100 rounded-lg shadow-md p-8">
+                <h1 className="text-3xl font-bold text-neutral mb-6 text-center">Edit Address</h1>
 
-                    <div>
-                        <label htmlFor="lastName" className="block">Last Name</label>
-                        <input 
-                            type="text"
-                            id="lastName"
-                            name="lastName"
-                            placeholder="Enter Last Name"
-                            value={formData.lastName}
-                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
+                <form onSubmit={handleSaveAddress} className="space-y-6">
+                    {[
+                        { id: "firstName", label: "First Name" },
+                        { id: "lastName", label: "Last Name" },
+                        { id: "phoneNumber", label: "Phone Number" },
+                        { id: "address", label: "Address" },
+                        { id: "moreInfo", label: "Additional Information" },
+                        { id: "region", label: "Region" },
+                        { id: "city", label: "City" },
+                    ].map(({ id, label }) => (
+                        <div key={id} className="form-control">
+                            <label htmlFor={id} className="label text-lg font-medium text-gray-600">
+                                {label}
+                            </label>
+                            <input
+                                type="text"
+                                id={id}
+                                name={id}
+                                placeholder={`Enter ${label}`}
+                                value={formData[id]}
+                                onChange={(e) => setFormData({ ...formData, [id]: e.target.value })}
+                                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-[#9A7B4F] text-gray-700"
+                            />
+                        </div>
+                    ))}
 
-                    <div>
-                        <label htmlFor="phoneNumber" className="block">Phone Number</label>
-                        <input 
-                            type="text"
-                            id="phoneNumber"
-                            name="phoneNumber"
-                            placeholder="Enter Phone Number"
-                            value={formData.phoneNumber}
-                            onChange={(e) => setFormData({ ...formData, phoneNumber: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="address" className="block">Address</label>
-                        <input 
-                            type="text"
-                            id="address"
-                            name="address"
-                            placeholder="Enter Address"
-                            value={formData.address}
-                            onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="moreInfo" className="block">Additional Information</label>
-                        <input 
-                            type="text"
-                            id="moreInfo"
-                            name="moreInfo"
-                            placeholder="Enter Additional Information"
-                            value={formData.moreInfo}
-                            onChange={(e) => setFormData({ ...formData, moreInfo: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="region" className="block">Region</label>
-                        <input 
-                            type="text"
-                            id="region"
-                            name="region"
-                            placeholder="Enter Region"
-                            value={formData.region}
-                            onChange={(e) => setFormData({ ...formData, region: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
-                    <div>
-                        <label htmlFor="city" className="block">City</label>
-                        <input 
-                            type="text"
-                            id="city"
-                            name="city"
-                            placeholder="Enter City"
-                            value={formData.city}
-                            onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:border-indigo-500"
-                        />
-                    </div>
-
-                    <button 
-                        type="submit" 
-                        className="w-full px-4 py-3 text-white bg-[#9A7B4F] rounded-md hover:bg-[#7F5F3D] focus:outline-none focus:bg-[#7F5F3D]"
+                    <button
+                        type="submit"
+                        className={`btn w-full bg-[#9A7B4F] hover:bg-[#7F5F3D] text-white font-semibold py-3 rounded-md transition duration-300 ${isSaving ? "loading" : ""}`}
+                        disabled={isSaving}
                     >
-                        SAVE
+                        {isSaving ? "SAVING..." : "SAVE"}
                     </button>
                 </form>
+
+                {statusMessage.show && (
+                    <div className={`fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50`}>
+                        <div className="bg-white p-6 rounded-md shadow-lg w-96 text-center">
+                            <div className="flex items-center justify-center space-x-2 mb-4">
+                                {statusMessage.success ? (
+                                    <MdCheckCircle className="text-green-600 text-3xl" />
+                                ) : (
+                                    <MdError className="text-red-600 text-3xl" />
+                                )}
+                                <h3 className={`text-lg font-semibold ${statusMessage.success ? "text-green-600" : "text-red-600"}`}>
+                                    {statusMessage.message}
+                                </h3>
+                            </div>
+                            <button
+                                onClick={() => setStatusMessage({ ...statusMessage, show: false })}
+                                className="mt-4 btn btn-sm bg-blue-500 hover:bg-blue-600 text-white"
+                            >
+                                Close
+                            </button>
+                        </div>
+                    </div>
+                )}
             </div>
         </DashBoard>
     );

@@ -125,46 +125,86 @@ const ChatPage = () => {
   
 
   return (
-    <section className="h-full bg-gray-100">
-    <NavBar />
-    <div className="flex flex-col items-center justify-center ">
-    <div className="w-full max-w-md bg-white rounded-lg shadow-md p-8 mt-2">
+    <section className="h-full bg-gray-900">
+  <NavBar />
+  <div className="flex flex-col items-center justify-center min-h-screen">
+    <div className="w-full max-w-md bg-base-200 shadow-xl rounded-lg p-8 mt-4">
       <div className="flex flex-col h-full">
-        <div className="flex items-center  p-4">
+        {/* Profile Section */}
+        <div className="flex items-center p-4 space-x-4">
           {profile && profile.profilePic !== null ? (
-            <img src={profile.profilePic} alt="profile photo" className="rounded-full w-16 h-16" />
+            <img
+              src={profile.profilePic}
+              alt="profile photo"
+              className="rounded-full w-16 h-16 border-2 border-[#9A7B4F] shadow-md"
+            />
           ) : (
-            <img src={thumbnail} alt="Profile pic" className="rounded-full w-12 h-12" />
+            <img
+              src={thumbnail}
+              alt="Profile pic"
+              className="rounded-full w-16 h-16 border-2 border-[#9A7B4F] shadow-md"
+            />
           )}
-          <h1 className="text-2xl font-semibold ml-4">{profile?.userName}</h1>
+          <h1 className="text-2xl font-bold text-[#9A7B4F]">{profile?.userName}</h1>
         </div>
+
+        {/* Messages Display */}
         <div className="flex-grow overflow-y-auto px-4 max-h-[300px] custom-scrollbar">
-          {messages.map((msg, index) => (
-            <div
-              key={index}
-              className={`mb-2 text-${msg.role === 'sender' ? "right" : "left"}`}
-              style={{ textAlign: msg.role === 'sender' ? "right" : "left" }}
-            >
-              <div className={`p-4 rounded-lg ${msg.role === 'sender' ? "bg-[#9A7B4F] text-white" : "bg-gray-200"}`}>
-                {msg.role === 'sender' ? "" : ""}
-                {msg.content}
+          {messages.length > 0 ? (
+            messages.map((msg, index) => (
+              <div
+                key={index}
+                className={`mb-3 ${msg.role === 'sender' ? 'text-right' : 'text-left'}`}
+                style={{ textAlign: msg.role === 'sender' ? 'right' : 'left' }}
+              >
+                <div
+                  className={`p-4 rounded-lg ${
+                    msg.role === 'sender'
+                      ? 'bg-[#9A7B4F] text-white shadow-lg'
+                      : 'bg-base-100 text-black'
+                  }`}
+                >
+                  {msg.content}
+                </div>
+                <div className="text-xs text-gray-400 mt-1">
+                  {formatMessageTime(msg.timeStamp)}
+                </div>
               </div>
-              <div className="text-xs text-gray-500 mt-1">
-                {formatMessageTime(msg.timeStamp)}
-              </div>
+            ))
+          ) : (
+            <div className="flex flex-col items-center justify-center h-full">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-20 w-20 text-gray-300 mb-4"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M8 10h.01M12 10h.01M16 10h.01M9 16h6M4 6h16M4 12h16m-7 6h7"
+                />
+              </svg>
+              <p className="text-gray-400 text-center text-lg font-medium">
+                No messages yet. Start the conversation!
+              </p>
             </div>
-          ))}
+          )}
         </div>
-        <div className="flex items-center p-4">
+
+        {/* Input Section */}
+        <div className="flex items-center p-4 space-x-2">
           <input
             type="text"
             value={messageInput}
             onChange={(e) => setMessageInput(e.target.value)}
             placeholder="Type your message..."
-            className="flex-grow border border-gray-300 focus:border-[#9A7B4F] focus:outline-none focus:ring-[#9A7B4F] rounded-l-md p-2"
+            className="input input-bordered input-secondary w-full rounded-md focus:ring-2 focus:ring-[#9A7B4F]"
           />
           <button
-            className="bg-[#9A7B4F] px-4 py-2 text-white font-semibold rounded-r-md hover:bg-green-500 cursor-pointer"
+            className="btn btn-primary bg-[#9A7B4F] text-white hover:bg-green-500 rounded-md"
             onClick={sendMessage}
           >
             Send
@@ -172,8 +212,9 @@ const ChatPage = () => {
         </div>
       </div>
     </div>
-    </div>
-  </section>
+  </div>
+</section>
+
   );
 
     // Function to format the message timestamp

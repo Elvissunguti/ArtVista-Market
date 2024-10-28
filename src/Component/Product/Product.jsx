@@ -74,171 +74,273 @@ const Product = () => {
 
 
     return (
-        <section className="flex flex-col bg-gray-100 min-h-screen">
-          <NavBar />
-            <div className="flex flex-col justify-center max-w-2xl mx-auto w-full p-6">
-              <h1 className="mt-4 text-3xl font-bold">Upload an ArtWork for sale</h1>
-              <div className="flex flex-col  w-full ">
-                <form onSubmit={handleSubmit} className="flex flex-col justify-center w-full space-y-4">
-                    <label htmlFor="title" className="font-semibold text-lg mt-5">Title: </label>
-                    <input
-                       type="text"
-                       name="title"
-                       id="title"
-                       placeholder="Title of the art"
-                       value={formData.title}
-                       onChange={handleChange}
-                       className="px-2 py-3 w-full mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-
-                    <h1 className="font-semibold mt-4 text-xl ">Details</h1>
-                    <label className="font-medium mt-4 text-lg">Category</label>
-                    <select name="category" id="category" value={formData.category} onChange={handleChange}
-                      className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                      <option disabled value="">Select Category</option>
-                      {Collections.map((item, index) => (
-                        <option key={index} value={item} className="overflow-auto">
-                          {item}
-                        </option>
-                      ))}
-                    </select>
-                    
-                    <label htmlFor="size" className="text-lg">Artwork Size</label>
-                    <input
-                       type="text"
-                       title="size"
-                       id="size"
-                       name="size"
-                       placeholder="e.g 16in x 20in"
-                       value={formData.size}
-                       onChange={handleChange}
-                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-
-                    <label className="font-medium mt-4 text-lg">Medium used</label>
-                    <select name="medium" id="medium" value={formData.medium} onChange={handleChange}
-                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                        <option disabled value="">Select Medium</option>
-                        {Materials.map((material, index) => (
-                            <option key={index} value={material}>
-                                {material}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label className="font-medium mt-4 text-lg">Surfaces used</label>
-                    <select name="surface" id="surface" value={formData.surface} onChange={handleChange}
-                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                        <option disabled value="">Select surface</option>
-                        {Surfaces.map((surface, index) => (
-                            <option key={index} value={surface}>
-                                {surface}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="artType" className="font-medium mt-4 text-lg">ArtWork type</label>
-                    <select name="artType" id="artType" value={formData.artType} onChange={handleChange}
-                         className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                        <option disabled value="" >Select ArtWork type</option>
-                        <option value="Original">Original</option>
-                        <option value="Copy">Copy</option>
-                    </select>
-
-                    <label htmlFor="creationYear" className="font-medium mt-4 text-lg">Year of Creation</label>
-                    <input
-                       type="number"
-                       name="creationYear"
-                       id="creationYear"
-                       max="2023"
-                       min="0"
-                       placeholder="year created..."
-                       value={formData.creationYear}
-                       onChange={handleChange}
-                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-
-                    <label htmlFor="quality" className="font-medium mt-4 text-lg">Quality</label>
-                    <select name="quality" id="quality" value={formData.quality} onChange={handleChange}
-                       className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                        <option disabled value="">Select Quality</option>
-                        {Quality.map((quality, index) => (
-                            <option key={index} value={quality}>
-                                {quality}
-                            </option>
-                        ))}
-                    </select>
-
-                    <label htmlFor="delivery" className="font-medium mt-4 text-lg">To be delivered as</label>
-                    <select name="delivery" id="delivery" value={formData.delivery} onChange={handleChange}
-                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    >
-                        <option disabled value="">Select delivery form</option>
-                        <option value="Rolled">Rolled</option>
-                        <option value="Stretched">Stretched</option>
-                    </select>
-
-                    <label htmlFor="description" className="font-medium mt-4 text-lg">Description of the ArtWork</label>
-                    <textarea
-                      id="description"
-                      name="description"
-                      placeholder="Description of the art..."
-                      value={formData.description}
-                      onChange={handleChange}
-                      className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                    />
-
-                    <label htmlFor="artPhoto" className="font-medium mt-4 text-lg">Photos of the ArtWork</label>
-                    <input
-                       type="file"
-                       id="artPhoto"
-                       name="artPhoto"
-                       accept="image/*"
-                       multiple
-                       onChange={handleFileChange}
-                    />
-                              {formData.artPhoto.length > 0 && (
-            <div className="mt-4">
-              <p className="font-medium text-lg">Selected Photos:</p>
-              <div className="flex flex-wrap gap-4">
-                {formData.artPhoto.map((file, index) => (
-                  <img
-                    key={index}
-                    src={URL.createObjectURL(file)}
-                    alt={`Artwork ${index + 1}`}
-                    className="w-48 h-48 rounded-lg object-cover "
-                  />
+      <section className="flex flex-col bg-gray-50 min-h-screen">
+      <NavBar />
+      <div className="flex flex-col justify-center max-w-2xl mx-auto w-full p-6">
+        <h1 className="mt-4 text-4xl font-extrabold text-center text-gray-800">
+          Upload an ArtWork for Sale
+        </h1>
+        <div className="flex flex-col w-full mt-6">
+          <form onSubmit={handleSubmit} className="flex flex-col w-full space-y-6 bg-white p-6 rounded-lg shadow-lg">
+            {/* Title */}
+            <div className="form-control w-full">
+              <label htmlFor="title" className="label">
+                <span className="label-text text-lg font-semibold">Title:</span>
+              </label>
+              <input
+                type="text"
+                name="title"
+                id="title"
+                placeholder="Title of the art"
+                value={formData.title}
+                onChange={handleChange}
+                className="input input-bordered input-primary w-full"
+              />
+            </div>
+    
+            {/* Category */}
+            <div className="form-control w-full">
+              <label htmlFor="category" className="label">
+                <span className="label-text text-lg font-semibold">Category</span>
+              </label>
+              <select
+                name="category"
+                id="category"
+                value={formData.category}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select Category
+                </option>
+                {Collections.map((item, index) => (
+                  <option key={index} value={item}>
+                    {item}
+                  </option>
                 ))}
-              </div>
+              </select>
             </div>
-          )}
-
-                    <label htmlFor="price" className="font-medium mt-4 text-lg">Price of the ArtWork</label>
-                    <input 
-                        type="number"
-                        id="price"
-                        name="price"
-                        min="0"
-                        value={formData.price}
-                        onChange={handleChange}
-                        placeholder="In Dollars..."
-                        className="px-2 py-3 mt-3 rounded-lg placeholder-gray-500  border border-gray-300 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-                
-                    />
-                    <div className="flex justify-center items-center">
-                        <button type="submit" className="font-medium text-white mt-7 px-2 py-3 rounded-lg bg-green-500 hover:bg-green-800 border-transparent focus:outline-none focus:ring-2 focus:ring-[#40AA54]-500 focus:ring-offset-2 cursor-pointer">
-                             SUBMIT
-                        </button>
-                    </div>
-                </form>
-              </div>
+    
+            {/* Artwork Size */}
+            <div className="form-control w-full">
+              <label htmlFor="size" className="label">
+                <span className="label-text text-lg font-semibold">Artwork Size</span>
+              </label>
+              <input
+                type="text"
+                name="size"
+                id="size"
+                placeholder="e.g 16in x 20in"
+                value={formData.size}
+                onChange={handleChange}
+                className="input input-bordered input-primary w-full"
+              />
             </div>
-        </section>
+    
+            {/* Medium */}
+            <div className="form-control w-full">
+              <label htmlFor="medium" className="label">
+                <span className="label-text text-lg font-semibold">Medium used</span>
+              </label>
+              <select
+                name="medium"
+                id="medium"
+                value={formData.medium}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select Medium
+                </option>
+                {Materials.map((material, index) => (
+                  <option key={index} value={material}>
+                    {material}
+                  </option>
+                ))}
+              </select>
+            </div>
+    
+            {/* Surface */}
+            <div className="form-control w-full">
+              <label htmlFor="surface" className="label">
+                <span className="label-text text-lg font-semibold">Surface used</span>
+              </label>
+              <select
+                name="surface"
+                id="surface"
+                value={formData.surface}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select Surface
+                </option>
+                {Surfaces.map((surface, index) => (
+                  <option key={index} value={surface}>
+                    {surface}
+                  </option>
+                ))}
+              </select>
+            </div>
+    
+            {/* Art Type */}
+            <div className="form-control w-full">
+              <label htmlFor="artType" className="label">
+                <span className="label-text text-lg font-semibold">ArtWork Type</span>
+              </label>
+              <select
+                name="artType"
+                id="artType"
+                value={formData.artType}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select ArtWork Type
+                </option>
+                <option value="Original">Original</option>
+                <option value="Copy">Copy</option>
+              </select>
+            </div>
+    
+            {/* Year of Creation */}
+            <div className="form-control w-full">
+              <label htmlFor="creationYear" className="label">
+                <span className="label-text text-lg font-semibold">Year of Creation</span>
+              </label>
+              <input
+                type="number"
+                name="creationYear"
+                id="creationYear"
+                max="2023"
+                min="0"
+                placeholder="Year created..."
+                value={formData.creationYear}
+                onChange={handleChange}
+                className="input input-bordered input-primary w-full"
+              />
+            </div>
+    
+            {/* Quality */}
+            <div className="form-control w-full">
+              <label htmlFor="quality" className="label">
+                <span className="label-text text-lg font-semibold">Quality</span>
+              </label>
+              <select
+                name="quality"
+                id="quality"
+                value={formData.quality}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select Quality
+                </option>
+                {Quality.map((quality, index) => (
+                  <option key={index} value={quality}>
+                    {quality}
+                  </option>
+                ))}
+              </select>
+            </div>
+    
+            {/* Delivery */}
+            <div className="form-control w-full">
+              <label htmlFor="delivery" className="label">
+                <span className="label-text text-lg font-semibold">To be delivered as</span>
+              </label>
+              <select
+                name="delivery"
+                id="delivery"
+                value={formData.delivery}
+                onChange={handleChange}
+                className="select select-bordered w-full"
+              >
+                <option disabled value="">
+                  Select Delivery Form
+                </option>
+                <option value="Rolled">Rolled</option>
+                <option value="Stretched">Stretched</option>
+              </select>
+            </div>
+    
+            {/* Description */}
+            <div className="form-control w-full">
+              <label htmlFor="description" className="label">
+                <span className="label-text text-lg font-semibold">Description of the ArtWork</span>
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                placeholder="Description of the art..."
+                value={formData.description}
+                onChange={handleChange}
+                className="textarea textarea-bordered textarea-primary w-full"
+              />
+            </div>
+    
+            {/* Art Photo */}
+            <div className="form-control w-full">
+              <label htmlFor="artPhoto" className="label">
+                <span className="label-text text-lg font-semibold">Photos of the ArtWork</span>
+              </label>
+              <input
+                type="file"
+                id="artPhoto"
+                name="artPhoto"
+                accept="image/*"
+                multiple
+                onChange={handleFileChange}
+                className="file-input file-input-bordered w-full"
+              />
+              {formData.artPhoto.length > 0 && (
+                <div className="mt-4">
+                  <p className="text-lg font-medium">Selected Photos:</p>
+                  <div className="flex flex-wrap gap-4">
+                    {formData.artPhoto.map((file, index) => (
+                      <img
+                        key={index}
+                        src={URL.createObjectURL(file)}
+                        alt={`Artwork ${index + 1}`}
+                        className="w-32 h-32 rounded-lg object-cover"
+                      />
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+    
+            {/* Price */}
+            <div className="form-control w-full">
+              <label htmlFor="price" className="label">
+                <span className="label-text text-lg font-semibold">Price of the ArtWork</span>
+              </label>
+              <input
+                type="number"
+                id="price"
+                name="price"
+                min="0"
+                value={formData.price}
+                onChange={handleChange}
+                placeholder="In Dollars..."
+                className="input input-bordered input-primary w-full"
+              />
+            </div>
+    
+            {/* Submit Button */}
+            <div className="flex justify-center items-center">
+              <button
+                type="submit"
+                className="btn btn-primary w-full font-semibold text-lg"
+              >
+                Submit
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+    
     )
 }
 export default Product;

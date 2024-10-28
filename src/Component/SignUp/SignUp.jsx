@@ -6,186 +6,186 @@ import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import Cookies from "js-cookie";
 import { useAuth } from "../Context/AuthContext";
 
-
-function getRandomIndex(max) {
-    return Math.floor(Math.random() * max);
-  }
+// Helper function to get a random index
+function getRandomIndex(max, exclude) {
+  let index;
+  do {
+    index = Math.floor(Math.random() * max);
+  } while (index === exclude); // Ensure the new index is not the same as the excluded one
+  return index;
+}
 
 const SignUp = () => {
+  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [error, setError] = useState("");
+  const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length, -1));
+  const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length, firstImageIndex));
+  
+  const { handleLogin } = useAuth();
+  const navigate = useNavigate();
 
-    const [ userName, setUserName ] = useState("")
-    const [ email, setEmail ] = useState("");
-    const [ password, setPassword ] = useState("");
-    const [ confirmPassword, setConfirmPassword ] = useState("");
-    const [ error, setError ] = useState("");
-    const [firstImageIndex, setFirstImageIndex] = useState(getRandomIndex(Images.length));
-    const [secondImageIndex, setSecondImageIndex] = useState(getRandomIndex(Images.length));
-     
-    const { handleLogin } = useAuth();
-    const navigate = useNavigate();
+  // Change images at intervals, ensuring they're different
+  useEffect(() => {
+    const changeFirstImage = setInterval(() => {
+      setFirstImageIndex((prevIndex) => getRandomIndex(Images.length, prevIndex));
+    }, 5000); // Change every 5 seconds
 
-    useEffect(() => {
-        // Change the images randomly every 5 seconds (5000 milliseconds)
-        const interval = setInterval(() => {
-          setFirstImageIndex(getRandomIndex(Images.length));
-          setSecondImageIndex(getRandomIndex(Images.length));
-        }, 5000);
-    
-        return () => {
-          clearInterval(interval); // Cleanup the interval on unmount
-        };
-      }, []);
-
-      const handleSignUp = async(e) => {
-        e.preventDefault();
-
-        if(password !== confirmPassword){
-            setError("Password and confirm password do not match")
+    const changeSecondImage = setInterval(() => {
+      setSecondImageIndex((prevIndex) => {
+        let newIndex = getRandomIndex(Images.length, prevIndex);
+        while (newIndex === firstImageIndex) {
+          newIndex = getRandomIndex(Images.length, prevIndex);
         }
+        return newIndex;
+      });
+    }, 10000); // Change every 10 seconds
 
-        const userData = {
-            userName: userName,
-            email: email,
-            password: password
-        }
+    return () => {
+      clearInterval(changeFirstImage);
+      clearInterval(changeSecondImage);
+    };
+  }, [firstImageIndex]);
 
-        try{
-            const response = await makeAuthenticatedPOSTRequest(
-                "/auth/signup", userData
-            );
-            if(response.message === "User created Successfully"){
-                
-                const token = response.token;
-                Cookies.set("token", token, { expires: 7 });
-                handleLogin();
-                // user logged in successfull
+  // Handle form submission
+  const handleSignUp = async (e) => {
+    e.preventDefault();
 
-                navigate("/");
-                console.log("User Signed up successfully");
-            } else {
-                console.log("Error creating a new user");
-            }
+    if (password !== confirmPassword) {
+      setError("Password and confirm password do not match");
+      return;
+    }
 
-        } catch (error){
-            console.error("Error signing up new User:", error);
-        }
+    const userData = {
+      userName: userName,
+      email: email,
+      password: password,
+    };
+
+    try {
+      const response = await makeAuthenticatedPOSTRequest("/auth/signup", userData);
+      if (response.message === "User created Successfully") {
+        const token = response.token;
+        Cookies.set("token", token, { expires: 7 });
+        handleLogin();
+        navigate("/");
+      } else {
+        setError("Error creating a new user");
       }
+    } catch (error) {
+      console.error("Error signing up new User:", error);
+    }
+  };
 
-      const handleGoogleLogin = () => {
-        // Redirect to the Google login route
-        window.location.href = "http://localhost:8080/auth/google";
-      };
+  const handleGoogleLogin = () => {
+    window.location.href = "http://localhost:8080/auth/google";
+  };
 
+  return (
+    <section className="min-h-screen flex justify-center items-center bg-gradient-to-br from-gray-100 to-gray-300">
+      <div className="w-full max-w-4xl p-6 lg:p-12 ">
+        <div className="flex justify-center mb-8">
+          <img src={logo} alt="Logo" className="h-24 w-auto" />
+        </div>
+        <div className="flex flex-col lg:flex-row justify-between items-center gap-8">
 
-    return (
-        <section className="">
-            <div className="flex justify-center my-16">
-               <img 
-                  src={logo}
-                  alt="Logo"
-                  className="h-32 w-96"
-                    />
+          {/* Form Section */}
+          <div className="w-full lg:w-1/2 bg-white rounded-xl shadow-2xl p-8">
+            <h2 className="text-3xl font-bold text-center text-green-600 mb-6">Sign Up</h2>
+            <form className="space-y-6" onSubmit={handleSignUp}>
+              <div>
+                <label htmlFor="userName" className="block font-medium text-gray-700">Username</label>
+                <input
+                  type="text"
+                  id="userName"
+                  value={userName}
+                  onChange={(e) => setUserName(e.target.value)}
+                  placeholder="Enter username"
+                  required
+                  className="input input-bordered w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="email" className="block font-medium text-gray-700">Email</label>
+                <input
+                  type="email"
+                  id="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="Enter your email"
+                  required
+                  className="input input-bordered w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="password" className="block font-medium text-gray-700">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="Enter your password"
+                  required
+                  className="input input-bordered w-full"
+                />
+              </div>
+              <div>
+                <label htmlFor="confirmPassword" className="block font-medium text-gray-700">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirmPassword"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  placeholder="Confirm your password"
+                  required
+                  className="input input-bordered w-full"
+                />
+              </div>
+              {error && (
+                <p className="text-red-500 text-center font-semibold">{error}</p>
+              )}
+              <button type="submit" className="btn btn-primary w-full">Sign up</button>
+              <div className="divider">OR</div>
+              <button
+                type="button"
+                onClick={handleGoogleLogin}
+                className="btn bg-red-600 hover:bg-red-700 w-full text-white"
+              >
+                Sign up with Google
+              </button>
+            </form>
+            <p className="text-center mt-4">
+              Already have an account?{" "}
+              <Link to="/login" className="text-blue-600 hover:underline">
+                Login
+              </Link>
+            </p>
+          </div>
+
+          {/* Image Section */}
+          <div className="hidden lg:flex flex-col space-y-6 w-full lg:w-1/2">
+            <div className="flex justify-center">
+              <img
+                src={Images[firstImageIndex]}
+                alt="Art"
+                className="w-3/4 h-72 rounded-xl shadow-lg object-cover"
+              />
             </div>
-            <div className="flex flex-row">
-
-                <div className="flex justify-end w-1/2">
-                    <form className="flex flex-col justify-end mr-4 w-1/2 space-y-8" onSubmit={handleSignUp}>
-                        <h1 className="text-2xl font-semibold tracking-tight text-green-600">Sign Up</h1>
-                        <div>
-                          <label htmlFor="userName" className="flex flex-start block font-bold text-lg">
-                            Username
-                          </label>  
-                        <input 
-                           type="name"
-                           name="name"
-                           id="userName"
-                           value={userName}
-                           placeholder="Enter username"
-                           required
-                           onChange={(e) => setUserName(e.target.value)}
-                           className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                        />
-                        </div>
-                        <div>
-                            <label htmlFor="email" className="flex flex-start block font-bold text-lg">
-                                Enter
-                            </label>
-                        <input
-                           type="email"
-                           name="email"
-                           id="email"
-                           value={email}
-                           placeholder="Enter Email address"
-                           required
-                           onChange={(e) => setEmail(e.target.value)}
-                           className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                        />
-                        </div>
-                        <div>
-                            <label htmlFor="password" className="flex flex-start block font-bold text-lg">
-                                Password
-                            </label>
-                        <input
-                           type="password"
-                           name="password"
-                           id="password"
-                           value={password}
-                           placeholder="Enter password"
-                           required
-                           onChange={(e) => setPassword(e.target.value)}
-                           className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                        />
-                        </div>
-                        <div>
-                            <label htmlFor="confirmPassword" className="flex flex-start block font-bold text-lg">
-                                Confirm password
-                            </label>
-                        <input 
-                           type="password"
-                           name="password"
-                           id="confirmPassword"
-                           value={confirmPassword}
-                           required
-                           placeholder="Confirm password"
-                           onChange={(e) => setConfirmPassword(e.target.value)}
-                           className="block relative w-full px-3 py-2 rounded-none rounded-t-md border border-gray-300 text-gray-900 placeholder-gray-500 focus:z-10 focus:border-indigo-500 focus:outline-none focus:ring-indigo-500"
-                        />
-                        </div>
-                        <div>
-                        <div className="text-center  font-medium text-red-600 md:text-lg my-2">
-                           <p>{error}</p>
-                        </div>
-                        <button type="submit" className="px-2 py-3 bg-green-500 hover:bg-green-700 text-white shadow-xl rounded">
-                            Sign up
-                        </button>
-                        </div>
-                        <div className="mb-8">
-                        <p>Already have an account? <Link to="/login"><span className="text-red-500">Login</span></Link></p>
-                        </div>
-                    </form>
-                    <button
-          onClick={handleGoogleLogin}
-          className="bg-red-600 text-white px-4 py-2 rounded-md mt-4 w-full hover:bg-red-700 focus:outline-none focus:bg-red-700"
-        >
-          Login with Google
-        </button>
-
-                </div>
-                <div className="w-1/2 ml-4">
-                    <img
-                       src={Images[firstImageIndex]}
-                       alt="Images of art"
-                       className="w-1/2 h-64 rounded-md shadow-xl"
-
-                    />
-                    <img 
-                       src={Images[secondImageIndex]} 
-                       alt="Images of art"
-                       className="w-1/2 h-64 rounded-md shadow-xl"
-                    />
-                </div>
+            <div className="flex justify-center">
+              <img
+                src={Images[secondImageIndex]}
+                alt="Art"
+                className="w-3/4 h-72 rounded-xl shadow-lg object-cover"
+              />
             </div>
-        </section>
-    )
-}
+          </div>
+
+        </div>
+      </div>
+    </section>
+  );
+};
+
 export default SignUp;
