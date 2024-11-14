@@ -1,0 +1,13 @@
+{
+  "type": "service_account",
+  "project_id": "artvista-market",
+  "private_key_id": "566d17e4df39c9b3b72bbba7eb0fc53446a9d143",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQC4rHNrzadcY0uO\n0nR9Zt6kIg8FTWDdGQPqH7r3W37A78bJ529ragNctCYb1gMG6XFyWDfY845AhnfO\nB203bo4EkevD9kqOxT2QRYVsq7rppGqKwsk9zx9L331XdPiF/7tAPd8cNxOp1coU\nlP9bJvwPxc2QM3fdrIOUgfjh4laZiehhqDwByGt8OHeBRZRPaPfstQHIQCTdtsU0\nnwnOoQarHM32KmXf/wHPSdhwzaLGUS/2MDcdN4HRzhFlISnk6w84RR2HfiDSt58U\ndigVnSA1j+NQqqR1NX3hmCHu+Yj78vFqkGKdAwlVl/Tf8DzSUMZFKPbZbzZd9Hhy\naIpNWY49AgMBAAECggEAUq26exA2lpFJ+aZVSvNsSDWLXgdXj4UskHwmO6o15HE1\nIZ3A72kmGjH5QcsdzdFj3hqK3lGkZVUOfCotBn0zje46jKBOnv7FYjsN0ipMY2Ad\n5wPwDwEU9OYY+re+sFde4RMSOVKbNhUmBPL0JD4e6XzYXG/+gTtEKY/K+m5X8SLd\nbLj+2M8vV8QBoFhYWuQExxNYdNIxQ1FSC3Vc22jYMuJuTAg0idYOQvYpwUFK3GKe\nNj8V1xKeW7lkNVbRUgx8DCoUKf1fpc9lrIeAaYmxcvdyyxiHbDJaSuYIDQQzZDnb\n/NFmMcMfA7SIsUMgYAI8HwRZ4BY5mySd9OaWvxXUDQKBgQC9w40PB7H9ed2pKHAp\nYVyUNdFVXkYUSsNtLLCVZXzV/HCEWlGolsUX/ndCtm4mAmAb22dQDZY6d5VWTyUS\nQFfaTlGm5IrsY5zrufmha3ZEfJwEjUeVVmJ9Uy4nKgAXM4DlE4vSkCls1YXnhSQO\nnRaioVgLDFw1JF6p97Xo1ZnS/wKBgQD5Ig8sgejHfANRLxW2+8u0jzLCysielhYi\nz3oqT7OvT3yPbBBvTTwKmGlszd09Wt8FdOBfPxcHB18K9y0zF8XWRKnmcB9LnV0j\nHwqhaAqmh3chjF1FFj2ku3eOXGlxkeLMpnkTfaTcqlacFHMVg9e6mPeBAxb8boSM\nMyFw83AqwwKBgA0kjRF8a/RtS0/a8CG9j4boT05FUD85il12WeiO9d1wNW7FPqCZ\niJ8HzcS+E9ToFzX2tSoTNtNn0tz+cEfaUvtYr0kKzSBgKc8du09VvQQzSS77hfiu\n2fVqHGkz/Hue4o97EhUMTQIvq62ESCIG+TlcSVfCjGRV14SYFm5A1P2LAoGBAMRc\nowcakaYByf+IFB540jNLlt/Pw1azx1jCnXCSB3dLOEs3CrEfeA6F2LqIfDOq1xPO\n7jZEXNsOZUwYTIjz2NwsnJljkFch/lH7Wn6jqZleNni70JvujsGzfOU5U2bPbKqP\nH+lL49CFdeRpfdfcZgHOJW6LR+fJGDIE7vu+9I7PAoGAKnijjEBJSeEGqi+2/RD7\n4VcwJ+QVGTQRWC7llTIJDp5z2lPiDPctR2L7JQHJBwdsyzP5N1RAu5oUfWA2wEGq\nUuEbgqKbEwr53TEKd8GLAESE37WRPb8LKdwDi9sT7WQHxojrpPV37AWeI7AnVB8D\nd2WYomoZ2N3WprprbBbrqpM=\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-fo500@artvista-market.iam.gserviceaccount.com",
+  "client_id": "108576057325064756741",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fo500%40artvista-market.iam.gserviceaccount.com",
+  "universe_domain": "googleapis.com"
+}

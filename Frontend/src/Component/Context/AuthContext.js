@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { makeAuthenticatedGETRequest } from "../Utils/Helpers";
 import Cookies from "js-cookie";
+import { useNavigate } from "react-router-dom";
 
 
 const AuthContext = createContext();
@@ -15,6 +16,7 @@ export const AuthProvider = ({ children }) => {
     const [loggedIn, setLoggedIn] = useState(false);
     const [currentUserId, setCurrentUserId] = useState(null);
     const [ userName , setUserName ] = useState(null);
+    const navigate = useNavigate();
 
 
     useEffect(() => {
@@ -44,6 +46,7 @@ export const AuthProvider = ({ children }) => {
         setLoggedIn(false);
         setCurrentUserId(null);
         setUserName(null);
+        navigate("/")
     };
 
 

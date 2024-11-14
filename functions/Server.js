@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
 const cors = require("cors");
@@ -8,10 +9,7 @@ const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 const path = require("path");
-const http = require("http"); 
-const socketIo = require("socket.io");
 const functions = require("firebase-functions");
-const createWebSocketServer = require("./routes/WebSocketServer");
 const config = require("./Config/Config");
 const User = require("./Model/User");
 const AuthRoutes = require("./routes/Auth");
@@ -26,11 +24,19 @@ const MessageRoutes = require("./routes/Message");
 const OrderRoutes = require("./routes/Order");
 const AddressRoutes = require("./routes/Address");
 const PaymentRoutes = require("./routes/Payment");
+const admin = require("firebase-admin");
+
 
 const app = express();
-const server = http.createServer(app);
 
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),
+    databaseURL: "https://artvista-market.firebaseio.com",
+  });
+}
 
+const db = admin.firestore();
 
 
 // Configure MongoDB connection
@@ -48,6 +54,7 @@ const sessionStore = MongoStore.create({
   mongoUrl: "mongodb://ArtVista:ArtVista@ac-u6swv3i-shard-00-00.vftu7sn.mongodb.net:27017,ac-u6swv3i-shard-00-01.vftu7sn.mongodb.net:27017,ac-u6swv3i-shard-00-02.vftu7sn.mongodb.net:27017/ArtVista?ssl=true&replicaSet=atlas-skhhdo-shard-0&authSource=admin&retryWrites=true&w=majority",
   collection: "sessions",
 });
+
 
 app.use(cors({
   origin: [
@@ -131,23 +138,21 @@ passport.deserializeUser((id, done) => {
   });
 });
 
-// WebSocket connection handling with Passport authentication
-const io = socketIo(server, {
-  cors: {
-    origin: [
-      "https://artvista-market.web.app",
-      "https://artvista-market.firebaseapp.com",
-      "http://127.0.0.1:7000",
-    ],
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
+app.use("/message",  MessageRoutes);
 
-// Creating WebSocket server and passing io and sessionStore
-createWebSocketServer(io, sessionStore);
 
-// Connection event moved inside the createWebSocketServer function
+db.collection("messages")
+  .orderBy("timestamp")
+  .onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added") {
+        const newMessage = change.doc.data();
+        // Here, you can broadcast this message to all connected clients
+        // (Use Firebase functions to send notifications or Firestore listeners on the client side)
+      }
+    });
+  });
+
 
 // Your existing routes
 app.use("/auth", AuthRoutes);
@@ -158,7 +163,6 @@ app.use("/artist", ArtistRoutes);
 app.use("/profile", ProfileRoutes);
 app.use("/search", SearchRoutes);
 app.use("/filter", FilterRoutes);
-app.use("/message", MessageRoutes);
 app.use("/order", OrderRoutes);
 app.use("/address", AddressRoutes);
 app.use("/api/payment", PaymentRoutes);

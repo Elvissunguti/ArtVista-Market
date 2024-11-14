@@ -1,131 +1,156 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const jwtUtils = require("../Utils/Helpers"); // Token helpers
-const Message = require("../Model/Message");
-const { wss, clients } = require("../routes/WebSocketServer"); // WebSocket server logic
+const admin = require("firebase-admin");
+const User = require("../Model/User");
+const Profile = require("../Model/Profile");
 
-// Middleware for verifying JWT token
-const verifyJwtToken = (req, res, next) => {
-  const token = req.headers.authorization?.split(" ")[1]; // Token in "Bearer <token>" format
 
-  if (!token) {
-    return res.status(401).json({ error: "Token is required" });
-  }
+if (!admin.apps.length) {
+  admin.initializeApp({
+    credential: admin.credential.applicationDefault(),  // Or use admin.credential.cert(serviceAccount) with a service account
+    databaseURL: "https://artvista-market.firebaseio.com",  // Replace with your Firebase project URL
+  });
+}
 
-  const decodedToken = jwtUtils.verifyToken(token);
+const db = admin.firestore();
 
-  if (!decodedToken) {
-    return res.status(401).json({ error: "Invalid token" });
-  }
-
-  req.user = decodedToken; // Attach decoded user to request
-  next();
-};
-
-// Router to post a new message
+// Route to post a new message
 router.post(
   "/create/:artistId",
-  verifyJwtToken, // Verify token middleware
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
       const { content } = req.body;
-      const userId = req.user.identifier; // User ID from decoded token
+      const userId = req.user._id;
       const artistId = req.params.artistId;
 
-      // Save the message to Firestore
+      // Create and save the new message to Firestore
+      const newMessageRef = db.collection("messages").doc();
       const newMessage = {
         content,
         userId,
         artistId,
-        timeStamp: Timestamp.now(),
+        timeStamp: admin.firestore.FieldValue.serverTimestamp(),
       };
+      await newMessageRef.set(newMessage);
 
-      await Message.add(newMessage);
-
-      // Find connected sockets for the artist and user
-      const artistSocket = clients.get(artistId);
-      const userSocket = clients.get(userId);
-
-      // Emit the message to the relevant sockets (WebSocket communication)
-      if (artistSocket) {
-        wss.to(artistSocket.id).emit("newMessage", newMessage);
-      }
-
-      if (userSocket) {
-        wss.to(userSocket.id).emit("newMessage", newMessage);
-      }
-
-      res.json({ newMessage });
+      // Send response back to the client
+      res.json({ newMessage: { ...newMessage, id: newMessageRef.id } });
     } catch (error) {
       console.error("Error creating a new message", error);
-      return res.json({ error: "Error creating a new message" });
+      res.json({ error: "Error creating a new message" });
     }
   }
 );
 
-// Router to fetch all sent messages
+// Real-time Firestore listener: Fetch messages and listen for updates
 router.get(
   "/sent/:artistId",
-  verifyJwtToken, // Verify token middleware
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
       const artistId = req.params.artistId;
-      const userId = req.user.identifier;
+      const userId = req.user._id;
 
-      // Fetch messages from Firestore
-      const messagesSnapshot = await Message
+      // Listen for changes to the 'messages' collection in Firestore
+      const messagesQuery = db
+        .collection("messages")
         .where("userId", "in", [userId, artistId])
         .where("artistId", "in", [userId, artistId])
-        .orderBy("timeStamp", "asc")
-        .get();
+        .orderBy("timeStamp", "asc");
 
-      const messages = messagesSnapshot.docs.map(doc => {
-        const message = doc.data();
-        return {
-          content: message.content,
-          timeStamp: message.timeStamp.toDate(),
-          role: message.userId === userId ? "sender" : "receiver",
-        };
+      // Listen for real-time updates in Firestore
+      messagesQuery.onSnapshot(async (snapshot) => {
+        const messages = snapshot.docs.map(doc => ({
+          id: doc.id,
+          content: doc.data().content,
+          timeStamp: doc.data().timeStamp.toDate(),
+          senderId: doc.data().userId,
+        }));
+
+        // Fetch profile data of both the user and artist from MongoDB
+        const users = await User.find({ _id: { $in: [userId, artistId] } }, { userName: 1 });
+        const profiles = await Profile.find(
+          { userId: { $in: [userId, artistId] }, profilePic: { $exists: true } },
+          { userId: 1, profilePic: 1 }
+        );
+
+        // Map profiles to user IDs for easy lookup
+        const profilesMap = users.reduce((map, user) => {
+          const profile = profiles.find(p => p.userId.toString() === user._id.toString());
+          map[user._id] = {
+            userName: user.userName,
+            profilePic: profile ? profile.profilePic : null,
+          };
+          return map;
+        }, {});
+
+        // Format the messages with user profile data
+        const formattedMessages = messages.map(msg => ({
+          id: msg.id,
+          content: msg.content,
+          timeStamp: msg.timeStamp,
+          sender: {
+            id: msg.senderId,
+            userName: (profilesMap[msg.senderId] && profilesMap[msg.senderId].userName) || "Unknown",
+            profilePic: (profilesMap[msg.senderId] && profilesMap[msg.senderId].profilePic) || null,
+
+          },
+        }));
+
+        res.json({ data: formattedMessages });
       });
-
-      res.json({ data: messages });
     } catch (error) {
-      console.error("Error fetching messages", error);
+      console.error("Error fetching messages with profile data", error);
       res.json({ error: "Error fetching messages" });
     }
   }
 );
 
-// Router to fetch all the users and messages the user has sent or received
+// Route to fetch all users the current user has communicated with, along with their profiles
 router.get(
   "/get/chat",
-  verifyJwtToken, // Verify token middleware
+  passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const userId = req.user.identifier;
+      const userId = req.user._id;
 
-      // Get all users in the chat with the current user
-      const userMessagesSnapshot = await Message
-        .where("userId", "==", userId)
-        .get();
+      // Listen for all messages where the user is either the sender or receiver
+      const userMessagesQuery = db
+        .collection("messages")
+        .where("userId", "in", [userId]);
 
-      const userChats = userMessagesSnapshot.docs.map(doc => {
-        const message = doc.data();
-        return message.artistId;
+      // Listen for real-time updates in Firestore
+      userMessagesQuery.onSnapshot(async (snapshot) => {
+        const artistIds = [...new Set(snapshot.docs.map(doc => doc.data().artistId))];
+
+        if (artistIds.length === 0) {
+          return res.json({ data: [] });
+        }
+
+        // Fetch user details and profile pictures from MongoDB
+        const usersDetails = await User.find({ _id: { $in: artistIds } }, { userName: 1 });
+        const profilesDetails = await Profile.find(
+          { userId: { $in: artistIds }, profilePic: { $exists: true } },
+          { userId: 1, profilePic: 1 }
+        );
+
+        // Combine user and profile data for response
+        const userProfiles = usersDetails.map(user => {
+          const profile = profilesDetails.find(p => p.userId.toString() === user._id.toString());
+          return {
+            artistId: user._id,
+            userName: user.userName,
+            profilePic: profile ? profile.profilePic : null,
+          };
+        });
+
+        res.json({ data: userProfiles });
       });
-
-      // Remove duplicates and fetch user details for each artistId
-      const uniqueArtistIds = [...new Set(userChats)];
-
-      const usersDetails = await User.find({
-        _id: { $in: uniqueArtistIds },
-      });
-
-      res.json({ data: usersDetails });
     } catch (error) {
       console.error("Error fetching chats", error);
-      res.json({ error: "Error fetching chats" });
+      res.json({ error: "Error fetching chat" });
     }
   }
 );
