@@ -1,5 +1,5 @@
 // firebase.js
-import { initializeApp, getApps, getApp } from "firebase/app";
+import { initializeApp, getApps, getApp, setLogLevel } from "firebase/app";
 import { getStorage } from "firebase/storage";
 import { getFirestore } from "firebase/firestore";
 
@@ -14,6 +14,8 @@ const firebaseConfig = {
 
 // Initialize Firebase app only if no apps have been initialized
 const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
+
+setLogLevel("debug");
 
 // Initialize Firestore and Storage
 const db = getFirestore(app);

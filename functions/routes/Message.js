@@ -1,19 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
-const admin = require("firebase-admin");
 const User = require("../Model/User");
 const Profile = require("../Model/Profile");
+const { admin, db } = require("../Utils/Firebase");
 
-
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),  // Or use admin.credential.cert(serviceAccount) with a service account
-    databaseURL: "https://artvista-market.firebaseio.com",  // Replace with your Firebase project URL
-  });
-}
-
-const db = admin.firestore();
 
 // Route to post a new message
 router.post(

@@ -24,19 +24,11 @@ const MessageRoutes = require("./routes/Message");
 const OrderRoutes = require("./routes/Order");
 const AddressRoutes = require("./routes/Address");
 const PaymentRoutes = require("./routes/Payment");
-const admin = require("firebase-admin");
+const {  db } = require("./Utils/Firebase");
 
 
 const app = express();
 
-if (!admin.apps.length) {
-  admin.initializeApp({
-    credential: admin.credential.applicationDefault(),
-    databaseURL: "https://artvista-market.firebaseio.com",
-  });
-}
-
-const db = admin.firestore();
 
 
 // Configure MongoDB connection

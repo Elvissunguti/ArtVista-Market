@@ -7,7 +7,9 @@ import { useAuth } from "../Context/AuthContext";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
 import { formatTime, formatDate, formatDay } from "../Utils/Time";
 import { db } from "../Utils/Firebase"; 
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp } from "firebase/firestore";
+import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, setLogLevel } from "firebase/firestore";
+
+setLogLevel("debug");
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
@@ -49,8 +51,8 @@ const ChatPage = () => {
     const messagesRef = collection(db, "messages");
     const messagesQuery = query(
       messagesRef,
-      where("userId", "in", [artistId, currentUserId]),
-      where("artistId", "in", [artistId, currentUserId]),
+      where("userId", "in", [currentUserId, artistId]),
+      where("artistId", "in", [currentUserId, artistId]),
       orderBy("timeStamp", "asc")
     );
 
@@ -115,15 +117,15 @@ const ChatPage = () => {
               <h1 className="text-2xl font-bold text-[#9A7B4F]">{profile?.userName}</h1>
             </div>
             <div className="flex-grow overflow-y-auto px-4 max-h-[300px] custom-scrollbar">
-              {messages.length > 0 ? (
+              {messages && messages.length > 0 ? (
                 messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`mb-3 ${msg.sentByUser ? 'text-right' : 'text-left'}`}
+                    className={`mb-3 ${msg.sender.id === currentUserId ?  'text-right' : 'text-left'}`}
                   >
                     <div
                       className={`p-4 rounded-lg ${
-                        msg.sentByUser
+                        msg.sender.id === currentUserId 
                           ? 'bg-[#9A7B4F] text-white shadow-lg'
                           : 'bg-base-100 text-black'
                       }`}
