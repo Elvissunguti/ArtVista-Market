@@ -1,0 +1,48 @@
+name: Run Backend Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    services:
+      mongo:
+        image: mongo
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd "echo 'db.runCommand({ping:1})' | mongosh localhost:27017/test --quiet"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 18
+
+      - name: Install Backend Dependencies
+        run: |
+          cd functions
+          npm install
+
+      - name: Set up Environment Variables
+        run: |
+          echo "MONGO_URI=mongodb://localhost:27017/testdb" >> functions/.env
+          echo "JWT_SECRET=secret" >> functions/.env
+
+      - name: Run Backend Tests
+        run: |
+          cd functions
+          npm test
+
+      - name: Upload Test Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: backend-test-coverage
+          path: functions/coverage/
