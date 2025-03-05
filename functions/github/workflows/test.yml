@@ -1,0 +1,41 @@
+name: Backend Tests
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18' # Match your local Node version
+
+      - name: Install Dependencies
+        run: npm install
+
+      - name: Run All Tests
+        run: npm run test
+        env:
+          NODE_ENV: test
+
+      - name: Generate Coverage Report
+        run: npm run coverage
+
+      - name: Upload Coverage Report
+        uses: actions/upload-artifact@v3
+        with:
+          name: coverage-report
+          path: coverage/
+          retention-days: 7
+
+      - name: Check Coverage Threshold
+        run: npx jest --coverage --coverageThreshold '{"global": {"lines": 7}}'
+        continue-on-error: true # Optional: Prevents immediate failure while you build coverage
