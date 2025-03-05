@@ -10,10 +10,8 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
-    "ci": "jest --ci",
-    "coverage": "jest --coverage"
+    "test": "jest --coverage",
+  "test:ci": "jest --runInBand"
   },
   "author": "",
   "license": "ISC",
