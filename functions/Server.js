@@ -53,6 +53,7 @@ app.use(cors({
     "https://artvista-market.web.app",
     "https://artvista-market.firebaseapp.com",
     "http://127.0.0.1:7000",
+    "http://localhost:5000"
   ],
   credentials: true,
 }));

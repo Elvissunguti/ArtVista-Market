@@ -1,8 +1,8 @@
-const mongoose = require('mongoose');
-const { MongoMemoryServer } = require('mongodb-memory-server');
+const mongoose = require("mongoose");
+const { MongoMemoryServer } = require("mongodb-memory-server");
 
 // Mock Firebase Functions
-jest.mock('firebase-functions', () => ({
+jest.mock("firebase-functions", () => ({
   https: { onRequest: jest.fn((handler) => handler) }
 }));
 
@@ -10,16 +10,16 @@ jest.mock('firebase-functions', () => ({
 const mockUserId = new mongoose.Types.ObjectId().toString();
 
 // Mock Passport
-jest.mock('passport', () => {
+jest.mock("passport", () => {
   const mockAuthenticate = jest.fn((strategy, options) => (req, res, next) => {
-    if (strategy === 'google') {
-      req.user = { email: 'test@example.com', userName: 'Test User' };
+    if (strategy === "google") {
+      req.user = { email: "test@example.com", userName: "Test User" };
       next();
-    } else if (strategy === 'jwt') {
+    } else if (strategy === "jwt") {
       req.user = { _id: mockUserId };
       next();
     } else {
-      next(new Error('Authentication failed'));
+      next(new Error("Authentication failed"));
     }
   });
 
@@ -34,7 +34,7 @@ jest.mock('passport', () => {
 });
 
 // Mock connect-mongo
-jest.mock('connect-mongo', () => ({
+jest.mock("connect-mongo", () => ({
   create: jest.fn(() => ({
     get: jest.fn(),
     set: jest.fn(),
@@ -43,22 +43,22 @@ jest.mock('connect-mongo', () => ({
 }));
 
 // Mock JWT Helpers
-jest.mock('../Utils/Helpers', () => ({
+jest.mock("../Utils/Helpers", () => ({
   getToken: jest.fn(async (email, user) => `mock-jwt-token-${email}`),
   invalidateToken: jest.fn((token) => true),
-  verifyToken: jest.fn((token) => ({ email: 'test@example.com', identifier: mockUserId })),
-  isTokenInvalid: jest.fn((token) => token === 'invalid-token')
+  verifyToken: jest.fn((token) => ({ email: "test@example.com", identifier: mockUserId })),
+  isTokenInvalid: jest.fn((token) => token === "invalid-token")
 }));
 
 // Mock bcrypt
-jest.mock('bcrypt', () => ({
+jest.mock("bcrypt", () => ({
   hash: jest.fn(async (password, saltRounds) => `hashed-${password}`),
-  compare: jest.fn(async (password, hash) => password === hash.replace('hashed-', ''))
+  compare: jest.fn(async (password, hash) => password === hash.replace("hashed-", ""))
 }));
 
 // Mock console.error and console.log to suppress logs during tests
-jest.spyOn(console, 'error').mockImplementation(() => {});
-jest.spyOn(console, 'log').mockImplementation(() => {});
+jest.spyOn(console, "error").mockImplementation(() => {});
+jest.spyOn(console, "log").mockImplementation(() => {});
 
 // Set up in-memory MongoDB with increased timeout
 let mongoServer;
@@ -74,7 +74,7 @@ beforeAll(async () => {
     const uri = mongoServer.getUri();
     await mongoose.connect(uri);
   } catch (error) {
-    console.error('Failed to start MongoMemoryServer:', error);
+    console.error("Failed to start MongoMemoryServer:", error);
     throw error;
   }
 }, 30000);

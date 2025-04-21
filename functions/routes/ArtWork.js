@@ -6,8 +6,10 @@ const ArtWork = require("../Model/ArtWork");
 
 router.post("/create", 
 passport.authenticate("jwt", {session: false}),
+
     async (req, res) => {
         try {
+            console.log("REQ.BODY:", req.body);
             const { title, category, size, medium, surface, artType, creationYear, quality, delivery, description, price} = req.body;
 
             const userId = req.user._id;
