@@ -171,7 +171,7 @@ const QuickViewCard = ({ artPhoto, artWorkId, title, price, size, medium, surfac
 
   
     return(
-        <section className="h-96 w-2/3">
+        <section className="h-96  bg-white text-black w-2/3">
             <div className="flex bg-white h-full w-full">
                 <div className="w-1/2">
                     <img 

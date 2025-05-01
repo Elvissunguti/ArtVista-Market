@@ -8,11 +8,11 @@ const DashBoard = ({ children }) => {
             <NavBar />
             <div className="container mx-auto py-10">
                 <h2 className="text-center text-4xl font-bold text-neutral mb-8">My Account</h2>
-                <div className="flex flex-col md:flex-row gap-8">
+                <div className="flex flex-col text-white md:flex-row gap-8">
                     {/* Sidebar */}
                     <aside className="md:w-1/4 bg-base-100 rounded-lg p-6 shadow-md">
                         {/* Dashboard Heading */}
-                        <h3 className="text-lg font-bold text-main mb-4">Dashboard</h3>
+                        <h3 className="text-2xl font-bold text-main mb-4">Dashboard</h3>
                         
                         {/* Other Links */}
                         <ul className="space-y-4">
@@ -23,7 +23,7 @@ const DashBoard = ({ children }) => {
                                 <li key={path}>
                                     <Link
                                         to={path}
-                                        className="block text-lg font-medium text-gray-700 hover:text-[#9A7B4F] hover:bg-gray-200 rounded-lg px-4 py-2 transition duration-200"
+                                        className="block text-lg font-medium text-white hover:text-[#9A7B4F] hover:bg-gray-200 rounded-lg px-4 py-2 transition duration-200"
                                     >
                                         {label}
                                     </Link>

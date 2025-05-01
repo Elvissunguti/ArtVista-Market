@@ -118,28 +118,28 @@ const NavBar = () => {
                 <CgProfile className="text-2xl text-[#9A7B4F] hover:text-green-500 transition duration-200" />
               </button>
               {isProfileDropdownOpen && (
-                <div className="absolute top-14 right-0 z-50 bg-base-200 px-4 py-4 shadow-lg rounded-lg">
+                <div className="absolute top-14 right-0 z-50 text-white bg-base-200 px-4 py-4 shadow-lg rounded-lg">
                   <ul className="flex flex-col items-start">
                     <li className="w-full">
-                      <Link to="/address" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+                      <Link to="/address" className="flex items-center px-3 py-2  hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
                         <FaTachometerAlt className="mr-2" />
                         DASHBOARD
                       </Link>
                     </li>
                     <li className="w-full">
-                      <Link to="/my_artworks" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+                      <Link to="/my_artworks" className="flex items-center px-3 py-2 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
                         <FaArtstation className="mr-2" />
                         MY ARTWORKS
                       </Link>
                     </li>
                     <li className="w-full">
-                      <Link to="/chats" className="flex items-center px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+                      <Link to="/chats" className="flex items-center px-3 py-2  hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
                         <FaEnvelope className="mr-2" />
                         MESSAGES
                       </Link>
                     </li>
                     <li className="w-full">
-                      <button onClick={handleLogoutClick} className="flex items-center w-full text-left px-3 py-2 text-gray-800 hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
+                      <button onClick={handleLogoutClick} className="flex items-center w-full text-left px-3 py-2  hover:bg-[#9A7B4F] hover:text-white rounded transition duration-200">
                         <FaSignOutAlt className="mr-2" />
                         LOGOUT
                       </button>

@@ -70,7 +70,7 @@ function App() {
             <>
             <Route path="/" element={<Overview />} />
             <Route path="/login" element={<Login />} />
-            <Route path="/sign up" element={<SignUp />} />
+            <Route path="/sign_up" element={<SignUp />} />
             <Route path="/*" element={<NotFound />} />
             </>
           )}

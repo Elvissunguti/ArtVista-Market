@@ -34,8 +34,8 @@ const AddressEdit = () => {
 
     return (
         <DashBoard>
-            <div className="bg-base-100 rounded-lg shadow-md p-8">
-                <h1 className="text-3xl font-bold text-neutral text-main mb-6 text-center">Edit Address</h1>
+            <div className="bg-base-100  rounded-lg shadow-md p-8">
+                <h1 className="text-3xl font-bold  mb-6 text-center">Edit Address</h1>
 
                 <form onSubmit={handleSaveAddress} className="space-y-6">
                     {[
@@ -48,7 +48,7 @@ const AddressEdit = () => {
                         { id: "city", label: "City" },
                     ].map(({ id, label }) => (
                         <div key={id} className="form-control">
-                            <label htmlFor={id} className="label text-lg font-medium text-gray-600">
+                            <label htmlFor={id} className="label text-lg font-medium text-white">
                                 {label}
                             </label>
                             <input
@@ -58,7 +58,7 @@ const AddressEdit = () => {
                                 placeholder={`Enter ${label}`}
                                 value={formData[id]}
                                 onChange={(e) => setFormData({ ...formData, [id]: e.target.value })}
-                                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-[#9A7B4F] text-gray-700"
+                                className="input input-bordered w-full focus:outline-none focus:ring-2 focus:ring-[#9A7B4F] text-white"
                             />
                         </div>
                     ))}

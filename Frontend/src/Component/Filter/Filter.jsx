@@ -262,7 +262,7 @@ const Filter = ({ sortBy, onSortChange, onFilterChange, children }) => {
                 <div className="flex flex-col sm:w-2/3 lg:w-4/5">
                     <div className="flex justify-between mb-4">
                         <select onChange={onSortChange} className="select select-bordered ml-auto" value={sortBy || ""}>
-                        <option value="" disabled selected hidden>Sort by:</option>
+                        <option value="" disabled  hidden>Sort by:</option>
                             <option value="alphabeticalAsc">Alphabetically, A-Z</option>
                             <option value="alphabeticalDesc">Alphabetically, Z-A</option>
                             <option value="priceAsc">Price, low to high</option>

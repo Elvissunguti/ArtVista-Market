@@ -26,10 +26,12 @@ const Paintings = () => {
                       sortedArtWork.sort((a, b) => b.title.localeCompare(a.title));
                       break;
                   case "priceAsc":
-                      sortedArtWork.sort((a, b) => a.price - b.price);
+                      sortedArtWork.sort((a, b) => 
+                        parseFloat(a.price.replace(/,/g, "")) - parseFloat(b.price.replace(/,/g, "")));
                       break;
                   case "priceDesc":
-                      sortedArtWork.sort((a, b) => b.price - a.price);
+                      sortedArtWork.sort((a, b) => 
+                        parseFloat(b.price.replace(/,/g, "")) - parseFloat(a.price.replace(/,/g, "")));
                       break;
                   case "dateAsc":
                       sortedArtWork.sort((a, b) => new Date(a.creationYear) - new Date(b.creationYear));

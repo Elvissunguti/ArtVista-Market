@@ -44,10 +44,7 @@ const ArtPage = () => {
             const artWorkDataWithUrls = {
               ...response.data,
               artWorkId: response.data._id,
-              artPhoto: response.data.artPhoto.map((artPhoto) => {
-              const artPhotoFilename = artPhoto.split("\\").pop();
-              return `/ArtImages/${artPhotoFilename}`;
-              }),
+              artPhoto: response.data.artPhoto, 
             };
           setArtWorkData(artWorkDataWithUrls);
         
@@ -247,7 +244,7 @@ const ArtPage = () => {
     return (
         <section className="">
           <NavBar />
-            <div className="flex flex-col md:flex-row justify-center mt-8 max-w-7xl mx-auto px-4 md:px-0">
+            <div className="flex flex-col md:flex-row justify-center text-white mt-8 max-w-7xl mx-auto px-4 md:px-0">
                 <div className="relative md:w-2/3 w-full" >
                     <div                       
                       onMouseEnter={() => setIsImageHovered(true)}
@@ -291,7 +288,7 @@ const ArtPage = () => {
                 <div className="flex flex-col p-6 md:w-1/3 w-full">
                     <div className="flex flex-col items-start border-b-2  border-gray-300 ">
                         <p className="text-2xl font-semibold my-4">{artWorkData?.title}</p>
-                        <p className="text-xl text-gray-700 mb-4">{artWorkData?.price}</p>
+                        <p className="text-xl text-white mb-4">{artWorkData?.price}</p>
                     </div>
                       
                         <div className="flex flex-col">

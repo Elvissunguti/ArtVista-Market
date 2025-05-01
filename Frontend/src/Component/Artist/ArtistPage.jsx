@@ -94,7 +94,7 @@ const ArtistPage = () => {
                         />
                     </div>
                     <div className="text-center md:text-left">
-                        <h2 className="text-2xl font-semibold">{artWorkData.userName || "Artist Name"}</h2>
+                        <h2 className="text-2xl text-white font-semibold">{artWorkData.userName || "Artist Name"}</h2>
                         <p className="text-gray-600">{artWorkData.location || "Location Unknown"}</p>
                         <p className="text-gray-600">Total Artworks: {artWorkData.artworkCount || 0}</p>
                     </div>

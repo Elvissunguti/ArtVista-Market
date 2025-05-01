@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { Collections, Materials, Quality, Surfaces,  } from "../Utils/ArtData" 
-import { makeAuthenticatedMulterPostRequest } from "../Utils/Helpers";
 import NavBar from "../Home/NavBar";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import { storage } from "../Utils/Firebase"
+import { makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
+import { useNavigate } from "react-router-dom";
 
 const Product = () => {
 
@@ -23,11 +24,17 @@ const Product = () => {
       });
 
       const [uploadStatus, setUploadStatus] = useState("");
+      const [isUploaded, setIsUploaded] = useState(false);
+      const [isUploading, setIsUploading] = useState(false);
+      
+      const navigate = useNavigate();
+
 
       const handleSubmit = async (e) => {
         e.preventDefault();
 
         setUploadStatus("Uploading...");
+        setIsUploading(true);
     
         const imageUrls = [];
         for (const file of formData.artPhoto) {
@@ -37,22 +44,23 @@ const Product = () => {
           imageUrls.push(downloadURL);
         }
     
-        const formDataToSend = new FormData();
-        formDataToSend.append("title", formData.title);
-        formDataToSend.append("category", formData.category);
-        formDataToSend.append("size", formData.size);
-        formDataToSend.append("medium", formData.medium);
-        formDataToSend.append("surface", formData.surface);
-        formDataToSend.append("artType", formData.artType);
-        formDataToSend.append("creationYear", formData.creationYear);
-        formDataToSend.append("quality", formData.quality);
-        formDataToSend.append("delivery", formData.delivery);
-        formDataToSend.append("description", formData.description);
-        formDataToSend.append("price", formData.price);
-        imageUrls.forEach((url) => formDataToSend.append("artPhotoUrls", url));
+        const formDataToSend = {
+          title: formData.title,
+          category: formData.category,
+          size: formData.size,
+          medium: formData.medium,
+          surface: formData.surface,
+          artType: formData.artType,
+          creationYear: formData.creationYear,
+          quality: formData.quality,
+          delivery: formData.delivery,
+          description: formData.description,
+          price: formData.price,
+          artPhoto: imageUrls, 
+        };
     
         try {
-          const response = await makeAuthenticatedMulterPostRequest(
+          const response = await makeAuthenticatedPOSTRequest(
             "/artwork/create",
             formDataToSend
           );
@@ -60,13 +68,17 @@ const Product = () => {
           if (response.error) {
             console.error("Error creating artwork", response.error);
             setUploadStatus("Upload Failed");
+            setIsUploading(false);
           } else {
             console.log("Artwork created successfully", response);
             setUploadStatus("Upload Complete");
+            setIsUploaded(true);
           }
         } catch (error) {
           console.error("Error creating artwork", error);
           setUploadStatus("Upload Failed");
+        }finally {
+          setIsUploading(false);
         }
       };
 
@@ -101,7 +113,7 @@ const Product = () => {
             {/* Title */}
             <div className="form-control w-full">
               <label htmlFor="title" className="label">
-                <span className="label-text text-lg font-semibold">Title:</span>
+                <span className="text-black text-lg font-semibold">Title:</span>
               </label>
               <input
                 type="text"
@@ -110,27 +122,27 @@ const Product = () => {
                 placeholder="Title of the art"
                 value={formData.title}
                 onChange={handleChange}
-                className="input input-bordered input-primary w-full"
+                className="input input-bordered input-primary text-white w-full"
               />
             </div>
     
             {/* Category */}
             <div className="form-control w-full">
               <label htmlFor="category" className="label">
-                <span className="label-text text-lg font-semibold">Category</span>
+                <span className="text-black text-lg font-semibold">Category</span>
               </label>
               <select
                 name="category"
                 id="category"
                 value={formData.category}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered w-full text-white"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select Category
                 </option>
                 {Collections.map((item, index) => (
-                  <option key={index} value={item}>
+                  <option key={index} value={item} className="text-white">
                     {item}
                   </option>
                 ))}
@@ -140,7 +152,7 @@ const Product = () => {
             {/* Artwork Size */}
             <div className="form-control w-full">
               <label htmlFor="size" className="label">
-                <span className="label-text text-lg font-semibold">Artwork Size</span>
+                <span className="text-black text-lg font-semibold">Artwork Size</span>
               </label>
               <input
                 type="text"
@@ -149,27 +161,27 @@ const Product = () => {
                 placeholder="e.g 16in x 20in"
                 value={formData.size}
                 onChange={handleChange}
-                className="input input-bordered input-primary w-full"
+                className="input input-bordered text-white input-primary w-full"
               />
             </div>
     
             {/* Medium */}
             <div className="form-control w-full">
               <label htmlFor="medium" className="label">
-                <span className="label-text text-lg font-semibold">Medium used</span>
+                <span className="text-black text-lg font-semibold">Medium used</span>
               </label>
               <select
                 name="medium"
                 id="medium"
                 value={formData.medium}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered text-white w-full"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select Medium
                 </option>
                 {Materials.map((material, index) => (
-                  <option key={index} value={material}>
+                  <option key={index} value={material} className="text-white">
                     {material}
                   </option>
                 ))}
@@ -179,20 +191,20 @@ const Product = () => {
             {/* Surface */}
             <div className="form-control w-full">
               <label htmlFor="surface" className="label">
-                <span className="label-text text-lg font-semibold">Surface used</span>
+                <span className="text-black text-lg font-semibold">Surface used</span>
               </label>
               <select
                 name="surface"
                 id="surface"
                 value={formData.surface}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered text-white w-full"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select Surface
                 </option>
                 {Surfaces.map((surface, index) => (
-                  <option key={index} value={surface}>
+                  <option key={index} value={surface} className="text-white">
                     {surface}
                   </option>
                 ))}
@@ -202,27 +214,27 @@ const Product = () => {
             {/* Art Type */}
             <div className="form-control w-full">
               <label htmlFor="artType" className="label">
-                <span className="label-text text-lg font-semibold">ArtWork Type</span>
+                <span className="text-black text-lg font-semibold">ArtWork Type</span>
               </label>
               <select
                 name="artType"
                 id="artType"
                 value={formData.artType}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered text-white w-full"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select ArtWork Type
                 </option>
-                <option value="Original">Original</option>
-                <option value="Copy">Copy</option>
+                <option className="text-white" value="Original">Original</option>
+                <option className="text-white" value="Copy">Copy</option>
               </select>
             </div>
     
             {/* Year of Creation */}
             <div className="form-control w-full">
               <label htmlFor="creationYear" className="label">
-                <span className="label-text text-lg font-semibold">Year of Creation</span>
+                <span className="text-black text-lg font-semibold">Year of Creation</span>
               </label>
               <input
                 type="number"
@@ -233,27 +245,27 @@ const Product = () => {
                 placeholder="Year created..."
                 value={formData.creationYear}
                 onChange={handleChange}
-                className="input input-bordered input-primary w-full"
+                className="input input-bordered text-input input-primary w-full"
               />
             </div>
     
             {/* Quality */}
             <div className="form-control w-full">
               <label htmlFor="quality" className="label">
-                <span className="label-text text-lg font-semibold">Quality</span>
+                <span className="text-black text-lg font-semibold">Quality</span>
               </label>
               <select
                 name="quality"
                 id="quality"
                 value={formData.quality}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered text-input text-white w-full"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select Quality
                 </option>
                 {Quality.map((quality, index) => (
-                  <option key={index} value={quality}>
+                  <option key={index} value={quality} className="text-white">
                     {quality}
                   </option>
                 ))}
@@ -263,27 +275,27 @@ const Product = () => {
             {/* Delivery */}
             <div className="form-control w-full">
               <label htmlFor="delivery" className="label">
-                <span className="label-text text-lg font-semibold">To be delivered as</span>
+                <span className="text-black text-lg font-semibold">To be delivered as</span>
               </label>
               <select
                 name="delivery"
                 id="delivery"
                 value={formData.delivery}
                 onChange={handleChange}
-                className="select select-bordered w-full"
+                className="select select-bordered text-white w-full"
               >
-                <option disabled value="">
+                <option disabled value="" className="text-gray-700">
                   Select Delivery Form
                 </option>
-                <option value="Rolled">Rolled</option>
-                <option value="Stretched">Stretched</option>
+                <option className="text-white" value="Rolled">Rolled</option>
+                <option className="text-white" value="Stretched">Stretched</option>
               </select>
             </div>
     
             {/* Description */}
             <div className="form-control w-full">
               <label htmlFor="description" className="label">
-                <span className="label-text text-lg font-semibold">Description of the ArtWork</span>
+                <span className="text-black text-lg font-semibold">Description of the ArtWork</span>
               </label>
               <textarea
                 id="description"
@@ -291,14 +303,14 @@ const Product = () => {
                 placeholder="Description of the art..."
                 value={formData.description}
                 onChange={handleChange}
-                className="textarea textarea-bordered textarea-primary w-full"
+                className="textarea textarea-bordered text-white textarea-primary w-full"
               />
             </div>
     
             {/* Art Photo */}
             <div className="form-control w-full">
               <label htmlFor="artPhoto" className="label">
-                <span className="label-text text-lg font-semibold">Photos of the ArtWork</span>
+                <span className="text-black text-lg font-semibold">Photos of the ArtWork</span>
               </label>
               <input
                 type="file"
@@ -329,7 +341,7 @@ const Product = () => {
             {/* Price */}
             <div className="form-control w-full">
               <label htmlFor="price" className="label">
-                <span className="label-text text-lg font-semibold">Price of the ArtWork</span>
+                <span className="text-black text-lg font-semibold">Price of the ArtWork</span>
               </label>
               <input
                 type="number"
@@ -339,26 +351,46 @@ const Product = () => {
                 value={formData.price}
                 onChange={handleChange}
                 placeholder="In Dollars..."
-                className="input input-bordered input-primary w-full"
+                className="input input-bordered text-white input-primary w-full"
               />
             </div>
-            <div  className="flex justify-cenyter items-center">
-            {uploadStatus && (
-              <div className="text-center text-red-500 mb-4 font-semibold text-lg">
-                {uploadStatus}
-              </div>
-            )}
-            </div>
-    
-            {/* Submit Button */}
-            <div className="flex justify-center items-center">
+          
+               {/* Submit Button */}
+               <div className="flex justify-center items-center">
               <button
                 type="submit"
-                className="btn btn-primary w-full font-semibold text-lg"
+                className={`px-4 py-2 rounded font-semibold 
+                  ${
+                    isUploaded
+                      ? "bg-green-500 text-white cursor-not-allowed"
+                      : isUploading
+                      ? "bg-yellow-400 text-white cursor-wait"
+                      : "bg-blue-600 hover:bg-blue-700 text-white"
+                  }
+                `}
+          
+                disabled={isUploading || isUploaded}
               >
-                Submit
+                {isUploading
+                  ? "Uploading Artwork..."
+                  : isUploaded
+                  ? "Uploaded Successfully"
+                  : "Submit"}
               </button>
             </div>
+
+            {/* View Artwork Button */}
+            {isUploaded && (
+              <div className="flex justify-center">
+                <button
+                  type="button"
+                  className="btn btn-outline btn-success mt-4"
+                  onClick={() => navigate("/my_artworks")}
+                >
+                  View Uploaded Artwork
+                </button>
+              </div>
+            )}
           </form>
         </div>
       </div>

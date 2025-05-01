@@ -1,15 +1,22 @@
 // ChatPage.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { useParams } from "react-router-dom";
 import NavBar from "../Home/NavBar";
 import thumbnail from "../../Assets/thumbnail.webp";
 import { useAuth } from "../Context/AuthContext";
 import { makeAuthenticatedGETRequest, makeAuthenticatedPOSTRequest } from "../Utils/Helpers";
-import { formatTime, formatDate, formatDay } from "../Utils/Time";
-import { db } from "../Utils/Firebase"; 
-import { collection, query, where, orderBy, onSnapshot, addDoc, serverTimestamp, setLogLevel } from "firebase/firestore";
-
-setLogLevel("debug");
+import { formatDate } from "../Utils/Time";
+import { db } from "../Utils/Firebase";
+import {
+  collection,
+  query,
+  where,
+  orderBy,
+  onSnapshot,
+  addDoc,
+  getDocs,
+  serverTimestamp
+} from "firebase/firestore";
 
 const ChatPage = () => {
   const [messages, setMessages] = useState([]);
@@ -18,13 +25,16 @@ const ChatPage = () => {
   const { artistId } = useParams();
   const { currentUserId } = useAuth();
 
+  const bottomRef = useRef(null);
+
+  // Fetch artist profile
   useEffect(() => {
     const fetchData = async () => {
       try {
         const response = await makeAuthenticatedGETRequest(`/profile/${artistId}`);
         const modifiedProfile = {
           ...response.data,
-          profilePic: response.data.profilePic ? response.data.profilePic : null,
+          profilePic: response.data.profilePic || null,
         };
         setProfile(modifiedProfile);
       } catch (error) {
@@ -34,65 +44,125 @@ const ChatPage = () => {
     fetchData();
   }, [artistId]);
 
-  useEffect(() => {
-    const fetchMessages = async () => {
-      try {
-        const response = await makeAuthenticatedGETRequest(`/message/sent/${artistId}`);
-        setMessages(response.data);
-      } catch (error) {
-        console.error("Error fetching messages", error);
-      }
-    };
-    fetchMessages();
-  }, [artistId]);
-
-  // Listen to new messages in Firestore in real-time
-  useEffect(() => {
-    const messagesRef = collection(db, "messages");
-    const messagesQuery = query(
-      messagesRef,
-      where("userId", "in", [currentUserId, artistId]),
-      where("artistId", "in", [currentUserId, artistId]),
-      orderBy("timeStamp", "asc")
-    );
-
-    const unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
-      const messagesList = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        content: doc.data().content,
-        timeStamp: doc.data().timeStamp.toDate(),
-        senderId: doc.data().userId,
-      }));
-      setMessages(messagesList);
+  const getOrCreateChatId = async (userId1, userId2) => {
+    const chatsRef = collection(db, "chats");
+    const participants = [userId1, userId2].sort();
+    const chatIdKey = participants.join("_");
+  
+    const q = query(chatsRef, where("chatIdKey", "==", chatIdKey));
+    const querySnapshot = await getDocs(q);
+  
+    if (!querySnapshot.empty) {
+      return querySnapshot.docs[0].id;
+    }
+  
+    const chatDoc = await addDoc(chatsRef, {
+      chatParticipants: participants,
+      chatIdKey,
+      createdAt: serverTimestamp(),
     });
+  
+    return chatDoc.id;
+  };
+  
 
-    return () => unsubscribe();
-  }, [artistId, currentUserId]);
+  // Real-time listener
+  useEffect(() => {
+    let unsubscribe;
 
+    const initChat = async () => {
+      const chatId = await getOrCreateChatId(currentUserId, artistId);
+
+      const messagesQuery = query(
+        collection(db, "messages"),
+        where("chatId", "==", chatId),
+        orderBy("timeStamp", "asc")
+      );
+
+      unsubscribe = onSnapshot(messagesQuery, (snapshot) => {
+        const messagesList = snapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+        setMessages(messagesList);
+      });
+      
+    };
+
+    initChat();
+
+    return () => {
+      if (unsubscribe) unsubscribe();
+    };
+  }, [currentUserId, artistId]);
+
+  // Send a new message
   const sendMessage = async () => {
     try {
+      const chatId = await getOrCreateChatId(currentUserId, artistId);
+
+      const participants = [currentUserId, artistId].sort(); 
+
       const newMessage = {
+        chatId,
         content: messageInput,
-        sentByUser: true,
-        userId: currentUserId,
-        artistId,
-        timeStamp: serverTimestamp(),
+        senderId: currentUserId,
+        chatParticipants: participants, 
+        timeStamp: Date.now(),
       };
 
-      // Send message to Firestore
       await addDoc(collection(db, "messages"), newMessage);
 
-      setMessages((prevMessages) => [...prevMessages, newMessage]);
-      setMessageInput("");
-
-      // Also save in MongoDB via API if necessary
       await makeAuthenticatedPOSTRequest(`/message/create/${artistId}`, {
         content: messageInput,
       });
+
+      setMessageInput("");
     } catch (error) {
       console.error("Error sending message", error);
     }
   };
+
+
+  useEffect(() => {
+    if (bottomRef.current) {
+      bottomRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
+
+  const formatMessageTime = (timeStamp) => {
+    if (!timeStamp) return "";
+  
+    let time;
+  
+    if (typeof timeStamp === "number") {
+      time = new Date(timeStamp);
+    } else if (timeStamp.toDate) {
+      time = timeStamp.toDate();
+    } else {
+      return "";
+    }
+  
+    const now = new Date();
+    const diff = now - time;
+    const min = Math.floor(diff / 60000);
+    const hr = Math.floor(diff / 3600000);
+    const day = Math.floor(diff / 86400000);
+  
+    if (min < 1) return "Just now";
+    if (min < 60) return `${min} min ago`;
+    if (hr < 24) return `${hr} hours ago`;
+    if (day < 7) return `${day} days ago`;
+  
+    return new Intl.DateTimeFormat("en-US", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+    }).format(time);
+  };
+  
+
+  
 
   return (
     <section className="h-full bg-gray-900">
@@ -101,33 +171,26 @@ const ChatPage = () => {
         <div className="w-full max-w-md bg-base-200 shadow-xl rounded-lg p-8 mt-4">
           <div className="flex flex-col h-full">
             <div className="flex items-center p-4 space-x-4">
-              {profile && profile.profilePic ? (
-                <img
-                  src={profile.profilePic}
-                  alt="profile photo"
-                  className="rounded-full w-16 h-16 border-2 border-[#9A7B4F] shadow-md"
-                />
-              ) : (
-                <img
-                  src={thumbnail}
-                  alt="Profile pic"
-                  className="rounded-full w-16 h-16 border-2 border-[#9A7B4F] shadow-md"
-                />
-              )}
+              <img
+                src={profile?.profilePic || thumbnail}
+                alt="profile photo"
+                className="rounded-full w-16 h-16 border-2 border-[#9A7B4F] shadow-md"
+              />
               <h1 className="text-2xl font-bold text-[#9A7B4F]">{profile?.userName}</h1>
             </div>
+
             <div className="flex-grow overflow-y-auto px-4 max-h-[300px] custom-scrollbar">
-              {messages && messages.length > 0 ? (
+              {messages.length > 0 ? (
                 messages.map((msg) => (
                   <div
                     key={msg.id}
-                    className={`mb-3 ${msg.sender.id === currentUserId ?  'text-right' : 'text-left'}`}
+                    className={`mb-3 ${msg.senderId === currentUserId ? "text-right" : "text-left"}`}
                   >
                     <div
-                      className={`p-4 rounded-lg ${
-                        msg.sender.id === currentUserId 
-                          ? 'bg-[#9A7B4F] text-white shadow-lg'
-                          : 'bg-base-100 text-black'
+                      className={`p-4 rounded-lg shadow-lg ${
+                        msg.senderId === currentUserId
+                          ? "bg-[#9A7B4F] text-white"
+                          : "bg-base-100 text-white"
                       }`}
                     >
                       {msg.content}
@@ -159,6 +222,7 @@ const ChatPage = () => {
                 </div>
               )}
             </div>
+
             <div className="flex items-center p-4 space-x-2">
               <input
                 type="text"
@@ -166,11 +230,13 @@ const ChatPage = () => {
                 placeholder="Write a message"
                 value={messageInput}
                 onChange={(e) => setMessageInput(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter" && messageInput.trim()) {
+                    sendMessage();
+                  }
+                }}
               />
-              <button
-                onClick={sendMessage}
-                className="btn btn-accent"
-              >
+              <button onClick={sendMessage} className="btn btn-accent" disabled={!messageInput.trim()}>
                 Send
               </button>
             </div>
@@ -179,25 +245,6 @@ const ChatPage = () => {
       </div>
     </section>
   );
-};
-
-const formatMessageTime = (timeStamp) => {
-  const now = new Date();
-  const messageTime = new Date(timeStamp);
-  const diff = now - messageTime;
-  const diffInMinutes = Math.floor(diff / 60000);
-  const diffInHours = Math.floor(diff / 3600000);
-  const diffInDays = Math.floor(diff / 86400000);
-
-  if (diffInMinutes < 60) {
-    return `${diffInMinutes} min ago`;
-  } else if (diffInHours < 24) {
-    return `${diffInHours} hours ago`;
-  } else if (diffInDays < 7) {
-    return `${diffInDays} days ago`;
-  } else {
-    return formatDate(messageTime);
-  }
 };
 
 export default ChatPage;
