@@ -57,7 +57,7 @@ const CartList = () => {
                                 <div className="flex justify-end mt-4">
                                     <p className="text-xl font-semibold">Total Price: ${totalPrice}</p>
                                 </div>
-                                <div className="flex justify-end mt-4">
+                                <div className="flex justify-end my-4">
                                     <button className="bg-blue-500 text-white py-2 px-4 rounded-full">
                                         <Link to="/checkout">
                                         CHECKOUT

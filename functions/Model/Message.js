@@ -1,20 +1,28 @@
+// models/Message.js
 const mongoose = require("mongoose");
 
-// Define the Message Schema for MongoDB validation and structure
 const messageSchema = new mongoose.Schema(
   {
     content: {
       type: String,
       required: true,
     },
-    userId: {
+    senderId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
     artistId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User",  // Assuming artist is also a User
+      ref: "User",
+      required: true,
+    },
+    chatId: {
+      type: String,
+      required: true,
+    },
+    chatParticipants: {
+      type: [String], // Store user IDs as strings
       required: true,
     },
     timeStamp: {
@@ -25,7 +33,6 @@ const messageSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Export the model for MongoDB, but Firestore is used for actual data storage
 const Message = mongoose.model("Message", messageSchema);
 
 module.exports = Message;

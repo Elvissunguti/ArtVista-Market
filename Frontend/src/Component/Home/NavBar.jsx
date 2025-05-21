@@ -63,7 +63,7 @@ const NavBar = () => {
     const confirmed = window.confirm("Are you sure you want to log out?");
     if (confirmed) {
         handleLogout();
-        navigation("/Blog");
+        navigation("/");
     }
 };
 

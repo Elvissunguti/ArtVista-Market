@@ -3,7 +3,7 @@ module.exports = [
   {
     files: ["**/*.js"],
     languageOptions: {
-      ecmaVersion: 2018,
+      ecmaVersion: 2020,
       sourceType: "module",
       globals: {
         // Define global variables if needed

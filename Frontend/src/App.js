@@ -26,61 +26,58 @@ import SentOrders from './Component/Order/SentOrders';
 import ReceivedOrders from './Component/Order/ReceivedOrders';
 import Order from './Component/Order/Order';
 import Overview from './Component/Overview/Overview';
+import OrderedDetails from './Component/Order/OrderedDetails';
 import Footer from "./Component/Footer/Footer";
 
 function App() {
-
   const { loggedIn } = useAuth();
   const location = useLocation();
-
   const hideFooter = !loggedIn || location.pathname === '/chats' || location.pathname.startsWith('/chatpage/');
-
 
   return (
     <div className="App flex flex-col min-h-screen">
-  
+      <div className="flex-grow">
         <Routes>
-          {/* logged in routes */}
           {loggedIn ? (
             <>
-            <Route path="/" element={<Home />} />
-            <Route path="/all_artwork" element={<AllArtWork />} />
-            <Route path="/drawings" element={<Drawings />} />
-            <Route path="/paintings" element={<Paintings />} />
-            <Route path="/my_artworks" element={<MyArtWork /> } />
-            <Route path="/artpage/:title" element={<ArtPage />} />
-            <Route path="/wishlist" element={<WishList />} />
-            <Route path="/cartlist" element={<CartList />} />
-            <Route path="/profileUpload" element={<ProfileUpload />} />
-            <Route path="/sell_artwork" element={<Product />} />
-            <Route path="/seller_profile" element={<Artist />} />
-            <Route path="/seller-profile/:userName" element={<ArtistPage />} />
-            <Route path='/chats' element={<Messages />} />
-            <Route path="/chatpage/:artistId" element={<ChatPage />} />
-            <Route path="/dashboard" element={<DashBoard />} />
-            <Route path="/address/edit" element={<AddressEdit />} />
-            <Route path="/address" element={<AddressInfo />} />
-            <Route path="/orders" element={<Order />} />
-            <Route path="/sent_orders" element={<SentOrders />} />
-            <Route path="/received_order" element={<ReceivedOrders />} />
-            <Route path="/checkout" element={<CheckOut />} />
-            
+              <Route path="/" element={<Home />} />
+              <Route path="/all_artwork" element={<AllArtWork />} />
+              <Route path="/drawings" element={<Drawings />} />
+              <Route path="/paintings" element={<Paintings />} />
+              <Route path="/my_artworks" element={<MyArtWork />} />
+              <Route path="/artpage/:title" element={<ArtPage />} />
+              <Route path="/wishlist" element={<WishList />} />
+              <Route path="/cartlist" element={<CartList />} />
+              <Route path="/profileUpload" element={<ProfileUpload />} />
+              <Route path="/sell_artwork" element={<Product />} />
+              <Route path="/seller_profile" element={<Artist />} />
+              <Route path="/seller-profile/:userName" element={<ArtistPage />} />
+              <Route path="/chats" element={<Messages />} />
+              <Route path="/chatpage/:artistId" element={<ChatPage />} />
+              <Route path="/dashboard" element={<DashBoard />} />
+              <Route path="/address/edit" element={<AddressEdit />} />
+              <Route path="/address" element={<AddressInfo />} />
+              <Route path="/orders" element={<Order />} />
+              <Route path="/sent_orders" element={<SentOrders />} />
+              <Route path="/received_order" element={<ReceivedOrders />} />
+              <Route path="/checkout" element={<CheckOut />} />
+              <Route path="/order/:orderId" element={<OrderedDetails />} />
             </>
           ) : (
             <>
-            <Route path="/" element={<Overview />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/sign_up" element={<SignUp />} />
-            <Route path="/*" element={<NotFound />} />
+              <Route path="/" element={<Overview />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/sign_up" element={<SignUp />} />
+              <Route path="/*" element={<NotFound />} />
             </>
           )}
         </Routes>
-      
-        {!hideFooter && <Footer />}
-      
+      </div>
+
+      {!hideFooter && <Footer />}
     </div>
   );
-};
+}
 
 function NotFound() {
   return <h1>Page not found. <Link to="/" className="text-red-600">Go to Homepage</Link></h1>;

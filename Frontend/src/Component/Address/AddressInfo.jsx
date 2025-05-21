@@ -32,7 +32,7 @@ const AddressInfo = () => {
                         <p className="text-lg font-medium mb-1">
                             {addressInfo?.firstName} {addressInfo?.lastName || "Not Set"}
                         </p>
-                        <p className="text-gray-600">{addressInfo?.email || "Address not available"}</p>
+                        <p className="text-white">{addressInfo?.email || "Address not available"}</p>
                     </div>
                 </div>
 
@@ -40,7 +40,7 @@ const AddressInfo = () => {
                 <div>
                     <h2 className="text-xl font-semibold text-main mb-3">Shipping Address</h2>
                     <div className="flex items-center mb-4">
-                        <p className="mr-2 text-gray-700">Your default shipping address:</p>
+                        <p className="mr-2 text-green-700">Your default shipping address:</p>
                         <Link to="/address/edit" className="text-blue-500 hover:text-blue-600">
                             <MdEdit className="inline-block" />
                         </Link>
@@ -53,12 +53,12 @@ const AddressInfo = () => {
                                 <p className="text-lg font-medium mb-1">
                                     {addressInfo.firstName} {addressInfo.lastName}
                                 </p>
-                                <p className="text-gray-700 mb-1">{addressInfo.address}</p>
-                                <p className="text-gray-700 mb-1">{addressInfo.city}</p>
-                                <p className="text-gray-700">{addressInfo.phoneNumber}</p>
+                                <p className="text-white mb-1">{addressInfo.address}</p>
+                                <p className="text-white mb-1">{addressInfo.city}</p>
+                                <p className="text-white">{addressInfo.phoneNumber}</p>
                             </>
                         ) : (
-                            <div className="text-gray-600">
+                            <div className="text-white">
                                 <p className="mb-2">Address not yet set.</p>
                                 <button
                                     onClick={() => navigate("/address/edit")}

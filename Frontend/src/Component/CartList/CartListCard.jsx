@@ -27,22 +27,21 @@ const CartListCard = ({ title, userName, artType, price, artPhoto, artWorkId }) 
     
 
 
-    const artPhotoFilename = artPhoto.split("\\").pop();
-    const artPhotoUrl = `/ArtImages/${artPhotoFilename}`; 
+ 
 
     return(
       <section>
       <div className="flex justify-between items-center p-4 border border-gray-300 rounded-lg">
         <div>
           <img 
-            src={artPhotoUrl}
+            src={artPhoto}
             alt={`${title} by ${userName}`}
             className="w-full h-48 object-cover rounded-lg"
           />
         </div>
         <div className="ml-4">
           <p className="text-xl font-medium mb-2">{title}</p>
-          <p className="text-sm text-gray-600">{userName}</p>
+          <p className="text-sm text-gray-600">By {userName}</p>
           <p className="text-sm text-gray-600">{artType}</p>
           <p className="text-sm text-gray-600">Artwork Total ${price}</p>
         </div>

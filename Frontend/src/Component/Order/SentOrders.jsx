@@ -21,11 +21,6 @@ const SentOrder = () => {
         fetchData();
     }, []);
 
-    const constructArtPhotoUrl = (artPhotoPath) => {
-        const artPhotoFilename = artPhotoPath.split("\\").pop();
-        return `/ArtImages/${artPhotoFilename}`;
-    };
-
     return (
         <section className="py-12 px-4 bg-gray-50 min-h-screen">
             <h2 className="text-4xl font-bold text-center text-[#9A7B4F] mb-10">My Orders</h2>
@@ -52,7 +47,7 @@ const SentOrder = () => {
                                     <li key={idx} className="card bg-gray-100 shadow-md hover:shadow-lg transition-shadow duration-300 p-4 flex flex-col items-center rounded-lg">
                                         <figure className="mb-3">
                                             <img
-                                                src={constructArtPhotoUrl(artwork.artPhoto[0])}
+                                                src={artwork.artPhoto[0]}
                                                 alt={`Artwork ${idx}`}
                                                 className="w-32 h-32 object-cover rounded-md"
                                             />

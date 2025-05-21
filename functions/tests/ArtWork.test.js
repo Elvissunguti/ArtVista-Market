@@ -5,7 +5,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 // Import the router
-const artworkRouter = require("../routes/artworkRoutes");
+const artworkRouter = require("../routes/ArtWork");
 
 // Mock Models
 jest.mock("../Model/ArtWork");

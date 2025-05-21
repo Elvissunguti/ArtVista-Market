@@ -4,7 +4,7 @@ const passport = require("passport");
 const User = require("../Model/User");
 const Profile = require("../Model/Profile");
 const { admin, db } = require("../Utils/Firebase");
-
+const mongoose = require("mongoose");
 
 // Route to post a new message
 router.post(
@@ -12,138 +12,165 @@ router.post(
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const { content } = req.body;
-      const userId = req.user._id;
-      const artistId = req.params.artistId;
+      const { content, timeStamp } = req.body;
+      const senderId = req.user._id.toString();
+      const artistId = req.params.artistId.toString();
 
-      // Create and save the new message to Firestore
-      const newMessageRef = db.collection("messages").doc();
+      const participants = [senderId, artistId].sort();
+      const chatId = participants.join("_");
+
+      const newMessageRef = admin.firestore().collection("messages").doc();
       const newMessage = {
         content,
-        userId,
-        artistId,
-        timeStamp: admin.firestore.FieldValue.serverTimestamp(),
+        senderId,
+        chatId,
+        chatParticipants: participants,
+        timeStamp,
       };
+
       await newMessageRef.set(newMessage);
 
-      // Send response back to the client
-      res.json({ newMessage: { ...newMessage, id: newMessageRef.id } });
+      res.json({
+        success: true,
+        newMessage: {
+          ...newMessage,
+          id: newMessageRef.id,
+        },
+      });
     } catch (error) {
       console.error("Error creating a new message", error);
-      res.json({ error: "Error creating a new message" });
+      res.status(500).json({ error: "Failed to send message" });
     }
   }
 );
 
-// Real-time Firestore listener: Fetch messages and listen for updates
+// Route to fetch messages between current user and artist
 router.get(
   "/sent/:artistId",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const artistId = req.params.artistId;
-      const userId = req.user._id;
+      const artistId = req.params.artistId.toString();
+      const currentUserId = req.user._id.toString();
 
-      // Listen for changes to the 'messages' collection in Firestore
-      const messagesQuery = db
+      const participants = [currentUserId, artistId].sort();
+      const chatId = participants.join("_");
+
+      const messagesSnapshot = await db
         .collection("messages")
-        .where("userId", "in", [userId, artistId])
-        .where("artistId", "in", [userId, artistId])
-        .orderBy("timeStamp", "asc");
+        .where("chatId", "==", chatId)
+        .orderBy("timeStamp", "asc")
+        .get();
 
-      // Listen for real-time updates in Firestore
-      messagesQuery.onSnapshot(async (snapshot) => {
-        const messages = snapshot.docs.map(doc => ({
-          id: doc.id,
-          content: doc.data().content,
-          timeStamp: doc.data().timeStamp.toDate(),
-          senderId: doc.data().userId,
-        }));
+      const messages = messagesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        timeStamp: doc.data().timeStamp?.toDate() || null,
+      }));
 
-        // Fetch profile data of both the user and artist from MongoDB
-        const users = await User.find({ _id: { $in: [userId, artistId] } }, { userName: 1 });
-        const profiles = await Profile.find(
-          { userId: { $in: [userId, artistId] }, profilePic: { $exists: true } },
-          { userId: 1, profilePic: 1 }
-        );
+      const userIds = [currentUserId, artistId];
 
-        // Map profiles to user IDs for easy lookup
-        const profilesMap = users.reduce((map, user) => {
-          const profile = profiles.find(p => p.userId.toString() === user._id.toString());
-          map[user._id] = {
-            userName: user.userName,
-            profilePic: profile ? profile.profilePic : null,
-          };
-          return map;
-        }, {});
+      const users = await User.find(
+        { _id: { $in: userIds } },
+        { userName: 1 }
+      );
 
-        // Format the messages with user profile data
-        const formattedMessages = messages.map(msg => ({
-          id: msg.id,
-          content: msg.content,
-          timeStamp: msg.timeStamp,
-          sender: {
-            id: msg.senderId,
-            userName: (profilesMap[msg.senderId] && profilesMap[msg.senderId].userName) || "Unknown",
-            profilePic: (profilesMap[msg.senderId] && profilesMap[msg.senderId].profilePic) || null,
+      const profiles = await Profile.find(
+        { userId: { $in: userIds }, profilePic: { $exists: true } },
+        { userId: 1, profilePic: 1 }
+      );
 
-          },
-        }));
+      const userProfileMap = users.reduce((acc, user) => {
+        const profile = profiles.find(p => p.userId.toString() === user._id.toString());
+        acc[user._id.toString()] = {
+          userName: user.userName,
+          profilePic: profile ? profile.profilePic : null,
+        };
+        return acc;
+      }, {});
 
-        res.json({ data: formattedMessages });
-      });
+      const formattedMessages = messages.map(msg => ({
+        id: msg.id,
+        content: msg.content,
+        timeStamp: msg.timeStamp,
+        sender: {
+          id: msg.senderId,
+          userName: userProfileMap[msg.senderId]?.userName || "Unknown",
+          profilePic: userProfileMap[msg.senderId]?.profilePic || null,
+        },
+      }));
+
+      res.json({ data: formattedMessages });
     } catch (error) {
       console.error("Error fetching messages with profile data", error);
-      res.json({ error: "Error fetching messages" });
+      res.status(500).json({ error: "Error fetching messages" });
     }
   }
 );
 
-// Route to fetch all users the current user has communicated with, along with their profiles
+// Route to fetch all chat artists the current user has messaged
+
+
 router.get(
   "/get/chat",
   passport.authenticate("jwt", { session: false }),
   async (req, res) => {
     try {
-      const userId = req.user._id;
+      const userId = req.user._id.toString();
 
-      // Listen for all messages where the user is either the sender or receiver
-      const userMessagesQuery = db
-        .collection("messages")
-        .where("userId", "in", [userId]);
+      // 1. Query Firestore using strings only
+      const messagesSnapshot = await db
+      .collection("messages")
+      .where("chatParticipants", "array-contains", userId)
+      .get();
 
-      // Listen for real-time updates in Firestore
-      userMessagesQuery.onSnapshot(async (snapshot) => {
-        const artistIds = [...new Set(snapshot.docs.map(doc => doc.data().artistId))];
+      // 2. Extract other participant IDs (also strings)
+      const artistIds = [...new Set(
+        messagesSnapshot.docs
+          .map(doc => {
+            const participants = doc.data().chatParticipants || [];
+            return participants.find(p => p !== userId);
+          })
+          .filter(Boolean)
+      )];
+      
 
-        if (artistIds.length === 0) {
-          return res.json({ data: [] });
-        }
+      if (artistIds.length === 0) {
+        return res.json({ data: [] });
+      }
 
-        // Fetch user details and profile pictures from MongoDB
-        const usersDetails = await User.find({ _id: { $in: artistIds } }, { userName: 1 });
-        const profilesDetails = await Profile.find(
-          { userId: { $in: artistIds }, profilePic: { $exists: true } },
-          { userId: 1, profilePic: 1 }
+      // 3. Convert to ObjectIds for MongoDB queries
+      const objectIds = artistIds.map(id => new mongoose.Types.ObjectId(id));
+
+      // 4. Query MongoDB
+      const usersDetails = await User.find(
+        { _id: { $in: objectIds } },
+        { userName: 1 }
+      );
+
+      const profilesDetails = await Profile.find(
+        { userId: { $in: objectIds }, profilePic: { $exists: true } },
+        { userId: 1, profilePic: 1 }
+      );
+
+      const userProfiles = usersDetails.map(user => {
+        const profile = profilesDetails.find(
+          p => p.userId === user._id
         );
-
-        // Combine user and profile data for response
-        const userProfiles = usersDetails.map(user => {
-          const profile = profilesDetails.find(p => p.userId.toString() === user._id.toString());
-          return {
-            artistId: user._id,
-            userName: user.userName,
-            profilePic: profile ? profile.profilePic : null,
-          };
-        });
-
-        res.json({ data: userProfiles });
+        return {
+          artistId: user._id,
+          userName: user.userName,
+          profilePic: profile ? profile.profilePic : null,
+        };
       });
+
+      res.json({ data: userProfiles });
     } catch (error) {
       console.error("Error fetching chats", error);
-      res.json({ error: "Error fetching chat" });
+      res.status(500).json({ error: "Error fetching chat" });
     }
   }
 );
+
 
 module.exports = router;

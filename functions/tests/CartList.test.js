@@ -13,7 +13,7 @@ beforeAll(async () => {
   await mongoose.connect("mongodb://localhost:27017/testdb");
 
   testUser = await User.create({ userName: "testuser", cartList: [], cartListNumber: 0 });
-  token = jwt.sign({ _id: testUser._id }, process.env.JWT_SECRET || "testsecret");
+  token = jwt.sign({ _id: testUser._id }, process.env.JWT_SECRET || "SECRETKEY");
 
   testArt = await ArtWork.create({
     title: "Test Art",

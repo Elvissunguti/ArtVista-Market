@@ -4,6 +4,7 @@ const ArtWork = require("../Model/ArtWork");
 const Order = require("../Model/Order");
 const paypal = require("paypal-rest-sdk");
 const User = require("../Model/User");
+const mongoose = require("mongoose");
 const router = express.Router();
 
 // PayPal configuration
@@ -82,7 +83,8 @@ router.post("/make/:artworkIds",
         user.cartListNumber = user.cartList.length;
         await user.save();
 
-        return res.json({ success: true, message: "Order placed successfully with cash payment" });
+        return res.json({ success: true, orderId: order._id, message: "Order placed successfully with cash payment" });
+
       } else if (paymentMethod === "paypal") {
         // Create PayPal payment
         const create_payment_json = {
@@ -161,7 +163,8 @@ router.post("/make/:artworkIds",
                 user.cartListNumber = user.cartList.length;
                 await user.save();
     
-                return res.json({ success: true, message: "Order placed successfully with PayPal payment" });
+                return res.json({ success: true, orderId: order._id, message: "Order placed successfully with PayPal payment" });
+
             }
         });
     }
@@ -173,6 +176,62 @@ router.post("/make/:artworkIds",
     }
   }
 );
+
+
+router.get(
+  "/fetch/:orderId",
+  passport.authenticate("jwt", { session: false }),
+  async (req, res) => {
+    try {
+      const { orderId } = req.params;
+      const userId = req.user._id;
+  
+      const order = await Order.findOne({ _id: orderId, userId });
+  
+      if (!order) {
+        return res.status(404).json({ error: "Order not found" });
+      }
+  
+      // Check if artworks is an array of ObjectId (legacy)
+      const isLegacy = order.artworks.length && mongoose.isValidObjectId(order.artworks[0]);
+  
+      if (isLegacy) {
+        // Manual fetch if artworks is [ObjectId]
+        const artworks = await ArtWork.find({ _id: { $in: order.artworks } });
+  
+        return res.json({
+          success: true,
+          order: {
+            ...order.toObject(),
+            artworks: artworks.map(art => ({
+              artwork: art,
+            }))
+          }
+        });
+      }
+  
+      // Fallback if using new embedded structure (artworkId, artistId...)
+      const detailedArtworks = await Promise.all(order.artworks.map(async item => {
+        const art = await Artwork.findById(item.artworkId);
+        return {
+          ...item.toObject(),
+          artwork: art,
+        };
+      }));
+  
+      return res.json({
+        success: true,
+        order: {
+          ...order.toObject(),
+          artworks: detailedArtworks,
+        }
+      });
+  
+    } catch (error) {
+      console.error("Error fetching order:", error);
+      res.status(500).json({ error: "Server error fetching order" });
+    }
+  });
 
 
 
